@@ -1,0 +1,8 @@
+/target
+/src/main/resources/native
+**/*.rs.bk
+Cargo.lock
+.idea
+*.iml
+hs_err*
+.project
