@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>io.horizen</groupId>
+  <groupId>io.horizenlabs</groupId>
   <artifactId>sc-common-cryptolib</artifactId>
-  <version>0.3.0</version>
-  <inceptionYear>2020</inceptionYear>
+  <version>0.1.0-bn_382</version>
+  <inceptionYear>2021</inceptionYear>
   <packaging>jar</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
-  <description>${project.artifactId} is a Rust crate that exposes to Java, through JNI, the ginger-lib components needed by the Zendoo sidechain SDK.</description>
+  <description>${project.artifactId} is a Rust crate that exposes to Java, through JNI, the ginger-lib components that might be needed by applications built using the sidechain SDK.</description>
   <url>https://github.com/${project.github.organization}/${project.artifactId}</url>
   <licenses>
     <license>

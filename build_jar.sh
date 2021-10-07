@@ -5,34 +5,34 @@ set -euo pipefail
 cargo clean
 
 # Test with all features
-cargo test --features "tweedle"
+# cargo test --features "tweedle"
 cargo test --features "bn_382" 
 
-######################### Build with tweedle, test and publish ########################
+# ######################### Build with tweedle, test and publish ########################
 
-#cargo build -j$(($(nproc)+1)) --release --features "tweedle" --target=x86_64-pc-windows-gnu
-cargo build -j$(($(nproc)+1)) --release --features "tweedle" --target=x86_64-unknown-linux-gnu
+# #cargo build -j$(($(nproc)+1)) --release --features "tweedle" --target=x86_64-pc-windows-gnu
+# cargo build -j$(($(nproc)+1)) --release --features "tweedle" --target=x86_64-unknown-linux-gnu
 
-########################
+# ########################
 
-mkdir -p jni/src/main/resources/native/linux64
-cp target/x86_64-unknown-linux-gnu/release/libzendoo_sc.so jni/src/main/resources/native/linux64/libzendoo_sc.so
+# mkdir -p jni/src/main/resources/native/linux64
+# cp target/x86_64-unknown-linux-gnu/release/libzendoo_sc.so jni/src/main/resources/native/linux64/libzendoo_sc.so
 
-# mkdir -p jni/src/main/resources/native/windows64
-# cp target/x86_64-pc-windows-gnu/release/zendoo_sc.dll jni/src/main/resources/native/windows64/zendoo_sc.dll
+# # mkdir -p jni/src/main/resources/native/windows64
+# # cp target/x86_64-pc-windows-gnu/release/zendoo_sc.dll jni/src/main/resources/native/windows64/zendoo_sc.dll
 
-cd jni
-echo "Building jar"
-mvn clean install -P !build-extras -DskipTests=true -Dmaven.javadoc.skip=true -B
-echo "Testing jar"
-mvn test -P !build-extras -B
+# cd jni
+# echo "Building jar"
+# mvn clean install -P !build-extras -DskipTests=true -Dmaven.javadoc.skip=true -B
+# echo "Testing jar"
+# mvn test -P !build-extras -B
 
-# TODO: We need to find a way to publish on maven using different artifact name depending on the curve
-# (e.g. sc-common-cryptolib-tweedle, sc-common-cryptolib-bn382)
-# if [ "$CONTAINER_PUBLISH" = "true" ]; then
-#   echo "Deploying bundle to maven repository"
-#   mvn deploy -P sign,build-extras --settings ../ci/mvn_settings.xml -B
-# fi
+# # TODO: We need to find a way to publish on maven using different artifact name depending on the curve
+# # (e.g. sc-common-cryptolib-tweedle, sc-common-cryptolib-bn382)
+# # if [ "$CONTAINER_PUBLISH" = "true" ]; then
+# #   echo "Deploying bundle to maven repository"
+# #   mvn deploy -P sign,build-extras --settings ../ci/mvn_settings.xml -B
+# # fi
 
 ######################### Build with bn382 and publish ########################
 cargo clean
