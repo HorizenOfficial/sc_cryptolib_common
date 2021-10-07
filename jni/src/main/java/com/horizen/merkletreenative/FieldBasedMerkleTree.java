@@ -3,59 +3,50 @@ package com.horizen.merkletreenative;
 import com.horizen.librustsidechains.FieldElement;
 import com.horizen.librustsidechains.Library;
 
-public class InMemoryOptimizedMerkleTree implements MerkleTree<FieldElement> {
+import java.io.*;
+
+public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
     
-    private long inMemoryOptimizedMerkleTreePointer;
+    protected long inMemoryOptimizedMerkleTreePointer;
 
     static {
         Library.load();
     }
 
-    protected InMemoryOptimizedMerkleTree(long inMemoryOptimizedMerkleTreePointer) {
+    protected FieldBasedMerkleTree(long inMemoryOptimizedMerkleTreePointer) {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalArgumentException("inMemoryOptimizedMerkleTreePointer must be not null.");
         this.inMemoryOptimizedMerkleTreePointer = inMemoryOptimizedMerkleTreePointer;
     }
 
-    private InMemoryOptimizedMerkleTree() {
+    private FieldBasedMerkleTree() {
         this.inMemoryOptimizedMerkleTreePointer = 0;
     }
 
-    private static native InMemoryOptimizedMerkleTree nativeInit(int height, long processingStep);
+    private static native FieldBasedMerkleTree nativeInit(int height, long processingStep);
 
     /* Creates a new tree given its `height` and `processing_step`, that defines the
     *  number of leaves to store before triggering the computation of the hashes
     *  of the upper levels. Changing this parameter will affect the performances.
     *  Return NULL if it was not possible to initialize the tree.
     */
-    public static InMemoryOptimizedMerkleTree init(int height, long processingStep){
+    public static FieldBasedMerkleTree init(int height, long processingStep){
         return nativeInit(height, processingStep);
     }
 
-    private native byte[] nativeSerialize();
+    protected native byte[] nativeSerialize();
 
-    /**
-     * Serialize this instance to a byte array and return it.
-     */
-    @Override
-    public byte[] serialize() {
+    private void writeObject(ObjectOutputStream out) throws IOException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
-        return nativeSerialize();
+        out.write(nativeSerialize());
     }
 
-    private native InMemoryOptimizedMerkleTree nativeDeserialize(byte[] serializedTree);
+    protected static native FieldBasedMerkleTree nativeDeserialize(byte[] serializedTree);
 
-    /**
-    *  Deserialize a MerkleTree from its byte representation, as defined by the method serialize()
-    */
-    @Override
-    public InMemoryOptimizedMerkleTree deserialize(byte[] serializedTree) {
-        return nativeDeserialize(serializedTree);
-    }
-
-    public static InMemoryOptimizedMerkleTree staticDeserialize(byte[] serializedTree) {
-        return new InMemoryOptimizedMerkleTree().deserialize(serializedTree);
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        byte[] serialized = in.readAllBytes();
+        this.inMemoryOptimizedMerkleTreePointer = nativeDeserialize(serialized).inMemoryOptimizedMerkleTreePointer;
     }
 
     private native boolean nativeAppend(FieldElement input);
@@ -73,7 +64,7 @@ public class InMemoryOptimizedMerkleTree implements MerkleTree<FieldElement> {
         return nativeAppend(input);
     }
 
-    private native InMemoryOptimizedMerkleTree nativeFinalize();
+    private native FieldBasedMerkleTree nativeFinalize();
 
     /*
      * Finalize the tree by computing the root and returns the finalized tree. It is possible
@@ -81,7 +72,7 @@ public class InMemoryOptimizedMerkleTree implements MerkleTree<FieldElement> {
      * Return NULL if it was not possible to finalize the tree.
      */
     @Override
-    public InMemoryOptimizedMerkleTree finalizeTree() {
+    public FieldBasedMerkleTree finalizeTree() {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
         return nativeFinalize();
@@ -134,14 +125,14 @@ public class InMemoryOptimizedMerkleTree implements MerkleTree<FieldElement> {
         return getLeafIndex(leaf) != -1;
     }
 
-    private native MerklePath nativeGetMerklePath(long leafIndex);
+    private native FieldBasedMerklePath nativeGetMerklePath(long leafIndex);
 
     /*
     * Compute and return the MerklePath from the leaf at `leafIndex` to the root of the tree.
     * Return NULL if it was not possible to get the MerklePath.
     */
     @Override
-    public MerklePath getMerklePath(long leafIndex) {
+    public FieldBasedMerklePath getMerklePath(long leafIndex) {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
         return nativeGetMerklePath(leafIndex);
@@ -152,7 +143,7 @@ public class InMemoryOptimizedMerkleTree implements MerkleTree<FieldElement> {
     * Return NULL if it was not possible to get the MerklePath.
     */
     @Override
-    public MerklePath getMerklePath(FieldElement leaf) {        
+    public FieldBasedMerklePath getMerklePath(FieldElement leaf) {        
         long leafIndex = getLeafIndex(leaf);
         if (leafIndex == -1)
             throw new IllegalStateException("Address not found inside tree");
@@ -172,12 +163,12 @@ public class InMemoryOptimizedMerkleTree implements MerkleTree<FieldElement> {
         nativeReset();
     }
 
-    private native void nativeFreeInMemoryOptimizedMerkleTree(long inMemoryOptimizedMerkleTreePointer);
+    private native void nativeFreeMerkleTree(long inMemoryOptimizedMerkleTreePointer);
 
     @Override
     public void freeMerkleTree(){
         if (inMemoryOptimizedMerkleTreePointer != 0) {
-            nativeFreeInMemoryOptimizedMerkleTree(this.inMemoryOptimizedMerkleTreePointer);
+            nativeFreeMerkleTree(this.inMemoryOptimizedMerkleTreePointer);
             inMemoryOptimizedMerkleTreePointer = 0;
         }
     }

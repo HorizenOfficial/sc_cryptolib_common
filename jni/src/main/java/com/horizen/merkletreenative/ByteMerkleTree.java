@@ -1,10 +1,22 @@
 package com.horizen.merkletreenative;
 
 import com.horizen.librustsidechains.FieldElement;
+import java.io.*;
 
 public abstract class ByteMerkleTree implements MerkleTree<byte[]> {
 
-    InMemoryOptimizedMerkleTree tree;
+    FieldBasedMerkleTree tree;
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        if (tree.inMemoryOptimizedMerkleTreePointer == 0)
+            throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
+        out.write(tree.nativeSerialize());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        byte[] serialized = in.readAllBytes();
+        this.tree.inMemoryOptimizedMerkleTreePointer = FieldBasedMerkleTree.nativeDeserialize(serialized).inMemoryOptimizedMerkleTreePointer;
+    }
 
     /**
      * Convert input bytes into a FieldElement, according to internal policies.
@@ -68,7 +80,7 @@ public abstract class ByteMerkleTree implements MerkleTree<byte[]> {
     * Return NULL if it was not possible to get the MerklePath.
     */
     @Override
-    public MerklePath getMerklePath(long leafIndex) {
+    public FieldBasedMerklePath getMerklePath(long leafIndex) {
         return this.tree.getMerklePath(leafIndex);
     }
 
@@ -77,9 +89,9 @@ public abstract class ByteMerkleTree implements MerkleTree<byte[]> {
     * Return NULL if it was not possible to get the MerklePath.
     */
     @Override
-    public MerklePath getMerklePath(byte[] leaf){
+    public FieldBasedMerklePath getMerklePath(byte[] leaf){
         FieldElement fe = bytesToFieldElement(leaf);
-        MerklePath path = this.tree.getMerklePath(fe);
+        FieldBasedMerklePath path = this.tree.getMerklePath(fe);
         fe.freeFieldElement();
         return path; 
     }

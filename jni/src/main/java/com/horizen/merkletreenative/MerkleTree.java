@@ -1,18 +1,10 @@
 package com.horizen.merkletreenative;
 
+import java.io.Serializable;
+
 // TODO: Instead of defining serialize() and deserialize() function use the Java Serializable interface.
 //       This is true also for the other classes.
-public interface MerkleTree<T> extends AutoCloseable {
-
-    /**
-     * Serialize this instance to a byte array and return it.
-     */
-    public abstract byte[] serialize();
-
-    /**
-    *  Deserialize an instance of this class from its byte representation, as defined by the method serialize()
-    */
-    public abstract MerkleTree<T> deserialize(byte[] serializedTree);
+public interface MerkleTree<T> extends AutoCloseable, Serializable {
 
     /*
      * Append a new leaf `input` to this instance.
@@ -55,13 +47,13 @@ public interface MerkleTree<T> extends AutoCloseable {
     * Compute and return the MerklePath from the leaf at `leafIndex` to the root of the tree.
     * Return NULL if it was not possible to get the MerklePath.
     */
-    public abstract MerklePath getMerklePath(long leafIndex);
+    public abstract FieldBasedMerklePath getMerklePath(long leafIndex);
 
     /*
     * Compute and return the MerklePath from 'leaf' to the root of the tree.
     * Return NULL if it was not possible to get the MerklePath.
     */
-    public abstract MerklePath getMerklePath(T leaf);
+    public abstract FieldBasedMerklePath getMerklePath(T leaf);
 
     /*
      * Restore the internal state of this instance to its initial one.

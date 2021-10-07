@@ -3,7 +3,7 @@ package com.horizen.merkletreenative;
 import com.horizen.librustsidechains.Library;
 import com.horizen.librustsidechains.FieldElement;
 
-public class MerklePath implements AutoCloseable {
+public class FieldBasedMerklePath implements AutoCloseable {
 
     private long merklePathPointer;
 
@@ -11,7 +11,7 @@ public class MerklePath implements AutoCloseable {
         Library.load();
     }
 
-    private MerklePath(long merklePathPointer) {
+    private FieldBasedMerklePath(long merklePathPointer) {
         if (merklePathPointer == 0)
             throw new IllegalArgumentException("merklePathPointer must be not null.");
         this.merklePathPointer = merklePathPointer;
@@ -109,13 +109,13 @@ public class MerklePath implements AutoCloseable {
         return nativeSerialize();
     }
 
-    private static native MerklePath nativeDeserialize(byte[] merklePathBytes, boolean semanticChecks);
+    private static native FieldBasedMerklePath nativeDeserialize(byte[] merklePathBytes, boolean semanticChecks);
 
-    public static MerklePath deserialize(byte[] merklePathBytes, boolean semanticChecks) {
+    public static FieldBasedMerklePath deserialize(byte[] merklePathBytes, boolean semanticChecks) {
         return nativeDeserialize(merklePathBytes, semanticChecks);
     }
 
-    public static MerklePath deserialize(byte[] merklePathBytes) {
+    public static FieldBasedMerklePath deserialize(byte[] merklePathBytes) {
         return nativeDeserialize(merklePathBytes, true);
     }
 

@@ -820,7 +820,7 @@ ffi_export!(
 //////////// MERKLE PATH
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_MerklePath_nativeVerify(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerklePath_nativeVerify(
     _env: JNIEnv,
     _path: JObject,
     _height: jint,
@@ -863,7 +863,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_MerklePath_nativeVerifyWithoutLengthCheck(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerklePath_nativeVerifyWithoutLengthCheck(
     _env: JNIEnv,
     _path: JObject,
     _leaf: JObject,
@@ -906,7 +906,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_MerklePath_nativeApply(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerklePath_nativeApply(
     _env: JNIEnv,
     _path: JObject,
     _leaf: JObject,
@@ -933,7 +933,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_MerklePath_nativeIsLeftmost(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerklePath_nativeIsLeftmost(
     _env: JNIEnv,
     _path: JObject,
 ) -> jboolean
@@ -950,7 +950,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_MerklePath_nativeIsRightmost(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerklePath_nativeIsRightmost(
     _env: JNIEnv,
     _path: JObject,
 ) -> jboolean
@@ -967,7 +967,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_MerklePath_nativeAreRightLeavesEmpty(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerklePath_nativeAreRightLeavesEmpty(
     _env: JNIEnv,
     _path: JObject,
 ) -> jboolean
@@ -984,7 +984,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_MerklePath_nativeLeafIndex(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerklePath_nativeLeafIndex(
     _env: JNIEnv,
     _path: JObject,
 ) -> jlong
@@ -1001,7 +1001,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_MerklePath_nativeSerialize(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerklePath_nativeSerialize(
     _env: JNIEnv,
     _path: JObject,
 ) -> jbyteArray
@@ -1015,7 +1015,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_MerklePath_nativeDeserialize(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerklePath_nativeDeserialize(
     _env: JNIEnv,
     _class: JClass,
     _path_bytes: jbyteArray,
@@ -1027,12 +1027,12 @@ ffi_export!(
         _path_bytes,
         Some(_checked),
         None,
-        "com/horizen/merkletreenative/MerklePath"
+        "com/horizen/merkletreenative/FieldBasedMerklePath"
     )
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_MerklePath_nativeFreeMerklePath(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerklePath_nativeFreeMerklePath(
     _env: JNIEnv,
     _class: JClass,
     _path: *mut GingerMHTPath,
@@ -1043,28 +1043,28 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeInit(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeInit(
     _env: JNIEnv,
     _class: JClass,
     _height: jint,
     _processing_step: jlong,
 ) -> jobject
 {
-    // Create new InMemoryOptimizedMerkleTree Rust side
+    // Create new FieldBasedMerkleTree Rust side
     let mt = new_ginger_mht(
         _height as usize,
         _processing_step as usize
     );
 
-    // Create and return new InMemoryOptimizedMerkleTree Java side
+    // Create and return new FieldBasedMerkleTree Java side
     match mt {
-        Ok(mt) => return_jobject(&_env, mt, "com/horizen/merkletreenative/InMemoryOptimizedMerkleTree").into_inner(),
+        Ok(mt) => return_jobject(&_env, mt, "com/horizen/merkletreenative/FieldBasedMerkleTree").into_inner(),
         Err(_) => return std::ptr::null::<jobject>() as jobject //CRYPTO_ERROR
     }
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeAppend(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeAppend(
     _env: JNIEnv,
     _tree: JObject,
     _leaf: JObject,
@@ -1093,7 +1093,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeFinalize(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeFinalize(
     _env: JNIEnv,
     _tree: JObject,
 ) -> jobject
@@ -1107,13 +1107,13 @@ ffi_export!(
     };
 
     match finalize_ginger_mht(tree) {
-        Ok(tree_copy) => return_jobject(&_env, tree_copy, "com/horizen/merkletreenative/InMemoryOptimizedMerkleTree").into_inner(),
+        Ok(tree_copy) => return_jobject(&_env, tree_copy, "com/horizen/merkletreenative/FieldBasedMerkleTree").into_inner(),
         Err(_) => return std::ptr::null::<jobject>() as jobject //CRYPTO_ERROR
     }
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeFinalizeInPlace(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeFinalizeInPlace(
     _env: JNIEnv,
     _tree: JObject,
 ) -> jboolean
@@ -1133,7 +1133,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeRoot(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeRoot(
     _env: JNIEnv,
     _tree: JObject,
 ) -> jobject
@@ -1153,7 +1153,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeGetMerklePath(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeGetMerklePath(
     _env: JNIEnv,
     _tree: JObject,
     _leaf_index: jlong,
@@ -1168,14 +1168,14 @@ ffi_export!(
     };
 
     match get_ginger_mht_path(tree, _leaf_index as u64) {
-        Some(path) => return_jobject(&_env, path, "com/horizen/merkletreenative/MerklePath")
+        Some(path) => return_jobject(&_env, path, "com/horizen/merkletreenative/FieldBasedMerklePath")
             .into_inner(),
         None => std::ptr::null::<jobject>() as jobject
     }
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeGetLeafIndex(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeGetLeafIndex(
     _env: JNIEnv,
     _tree: JObject,
     _leaf: JObject,
@@ -1207,7 +1207,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeSerialize(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeSerialize(
     _env: JNIEnv,
     _tree: JObject,
 ) -> jbyteArray
@@ -1221,9 +1221,9 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeDeserialize(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeDeserialize(
     _env: JNIEnv,
-    _tree: JObject,
+    _class: JClass,
     _tree_bytes: jbyteArray,
 ) -> jobject
 {
@@ -1236,7 +1236,7 @@ ffi_export!(
     let tree = <GingerMHT as CanonicalDeserialize>::deserialize(obj_bytes.as_slice());
 
     match tree {
-        Ok(tree) => *return_jobject(&_env, tree, "com/horizen/merkletreenative/InMemoryOptimizedMerkleTree"),
+        Ok(tree) => *return_jobject(&_env, tree, "com/horizen/merkletreenative/FieldBasedMerkleTree"),
         Err(e) => {
             eprintln!("{:?}", e);
             std::ptr::null::<jobject>() as jobject
@@ -1245,7 +1245,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeReset(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeReset(
     _env: JNIEnv,
     _tree: JObject,
 )
@@ -1262,7 +1262,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeFreeInMemoryOptimizedMerkleTree(
+    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeFreeMerkleTree(
     _env: JNIEnv,
     _class: JClass,
     _tree: *mut GingerMHT,
