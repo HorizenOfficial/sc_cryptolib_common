@@ -223,6 +223,14 @@ pub fn get_ginger_mht_root(tree: &GingerMHT) -> Option<FieldElement> {
     tree.root()
 }
 
+pub fn get_leaf_index(tree: &GingerMHT, leaf: &FieldElement) -> Option<usize> {
+
+    // Search for address inside the leaves of the tree
+    let tree_leaves = tree.get_leaves();
+    tree_leaves.iter().position(|x| x == leaf)
+}
+
+// TODO: Add an is_finalized() function in GingerMHT
 pub fn get_ginger_mht_path(tree: &GingerMHT, leaf_index: u64) -> Option<GingerMHTPath> {
     tree.get_merkle_path(leaf_index as usize)
 }

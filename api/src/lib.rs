@@ -1175,6 +1175,76 @@ ffi_export!(
 });
 
 ffi_export!(
+    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeGetLeafIndex(
+    _env: JNIEnv,
+    _tree: JObject,
+    _leaf: JObject,
+) -> jlong
+{
+    // Read leaf
+    let leaf = {
+
+        let fe =_env.get_field(_leaf, "fieldElementPointer", "J")
+            .expect("Should be able to get field fieldElementPointer");
+
+        read_raw_pointer(&_env, fe.j().unwrap() as *const FieldElement)
+    };
+
+    // Read field element
+    let tree = {
+
+        let t =_env.get_field(_tree, "inMemoryOptimizedMerkleTreePointer", "J")
+            .expect("Should be able to get field inMemoryOptimizedMerkleTreePointer");
+
+        read_mut_raw_pointer(&_env, t.j().unwrap() as *mut GingerMHT)
+    };
+
+    // Check if element is in tree and if yes get its index
+    match get_leaf_index(tree, leaf) {
+        Some(idx) => idx as jlong,
+        None => -1
+    }
+});
+
+ffi_export!(
+    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeSerialize(
+    _env: JNIEnv,
+    _tree: JObject,
+) -> jbyteArray
+{
+    serialize_from_jobject::<GingerMHT>(
+        &_env,
+        _tree,
+        "inMemoryOptimizedMerkleTreePointer",
+        None
+    )
+});
+
+ffi_export!(
+    fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeDeserialize(
+    _env: JNIEnv,
+    _tree: JObject,
+    _tree_bytes: jbyteArray,
+) -> jobject
+{
+    // Not really necessary to do deep checks: no one can trick a node into using different _tree_bytes
+    // possibly deserializing an unconsistent tree that may lead to internal crashes (DOS).
+    // TODO: Is this true ?
+    let obj_bytes = _env.convert_byte_array(_tree_bytes)
+        .expect("Cannot read tree bytes.");
+
+    let tree = <GingerMHT as CanonicalDeserialize>::deserialize(obj_bytes.as_slice());
+
+    match tree {
+        Ok(tree) => *return_jobject(&_env, tree, "com/horizen/merkletreenative/InMemoryOptimizedMerkleTree"),
+        Err(e) => {
+            eprintln!("{:?}", e);
+            std::ptr::null::<jobject>() as jobject
+        },
+    }
+});
+
+ffi_export!(
     fn Java_com_horizen_merkletreenative_InMemoryOptimizedMerkleTree_nativeReset(
     _env: JNIEnv,
     _tree: JObject,

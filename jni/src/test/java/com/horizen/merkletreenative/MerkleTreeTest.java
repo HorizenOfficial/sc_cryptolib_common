@@ -5,13 +5,9 @@ import com.horizen.librustsidechains.FieldElement;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
-import org.junit.Test;
 
 import java.util.List;
 import java.util.ArrayList;
-
-import java.io.File;
-import java.io.FileInputStream;
 
 import static org.junit.Assert.*;
 
@@ -87,10 +83,40 @@ public class MerkleTreeTest {
 
         //Free memory
         zero.freeFieldElement();
-        mht.freeInMemoryOptimizedMerkleTree();
-        mhtCopy.freeInMemoryOptimizedMerkleTree();
+        mht.freeMerkleTree();
+        mhtCopy.freeMerkleTree();
         mhtRoot.freeFieldElement();
         mhtRootCopy.freeFieldElement();
+    }
+
+    @Test
+    public void testTreeSerializeDeserialize() throws Exception {
+
+        byte[] treeBytes;
+        FieldElement treeRoot;
+
+        try(InMemoryOptimizedMerkleTree tree = InMemoryOptimizedMerkleTree.init(height, numLeaves)) {
+            for (FieldElement leaf: leaves)
+                assertTrue(tree.append(leaf));
+
+            assertTrue("Merkle Tree finalization must succeed", tree.finalizeTreeInPlace());
+            treeRoot = tree.root();
+            assertNotNull("Must be able to get root from original tree", treeRoot);
+
+            treeBytes = tree.serialize();
+        }
+
+        try(InMemoryOptimizedMerkleTree treeDeserialized = InMemoryOptimizedMerkleTree.staticDeserialize(treeBytes)) {
+            FieldElement expectedRoot = treeDeserialized.root();
+            assertNotNull("Must be able to get root from original tree", expectedRoot);
+            assertEquals(expectedRoot, treeRoot);
+
+            expectedRoot.freeFieldElement();
+            treeRoot.freeFieldElement();
+
+            for (FieldElement leaf: leaves)
+                assertTrue(treeDeserialized.isLeafInTree(leaf));
+        }
     }
 
     @Test
@@ -160,7 +186,7 @@ public class MerkleTreeTest {
         }
 
         // Free memory
-        mht.freeInMemoryOptimizedMerkleTree();
+        mht.freeMerkleTree();
         mhtRoot.freeFieldElement();
         for (FieldElement leaf: testLeaves)
             leaf.freeFieldElement();
@@ -187,7 +213,7 @@ public class MerkleTreeTest {
 
             leaf.freeFieldElement();
             path.freeMerklePath();
-            mhtCopy.freeInMemoryOptimizedMerkleTree();
+            mhtCopy.freeMerkleTree();
         }
     }
 
