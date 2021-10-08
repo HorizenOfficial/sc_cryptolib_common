@@ -53,7 +53,7 @@ macro_rules! generate_merkle_tree_types {
         }
     
         pub type GingerMHT = FieldBasedOptimizedMHT<GingerMHTParams>;
-        pub type GingerMHTPath = FieldBasedMHTPath<GingerMHTParams>;
+        pub type GingerMHTPath = FieldBasedBinaryMHTPath<GingerMHTParams>;
 
     }
 }

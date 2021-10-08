@@ -24,6 +24,6 @@ tweedle = ["algebra/tweedle", "primitives/tweedle"]
 bn_382 = ["algebra/bn_382", "primitives/bn_382"]
 
 [lib]
-name = "sc_common_cryptolib"
+name = "sc_common"
 path = "src/lib.rs"
 crate_type = ["cdylib"]

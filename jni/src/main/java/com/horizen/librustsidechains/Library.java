@@ -7,7 +7,7 @@ public class Library {
 
     private static boolean loaded = false;
 
-    private static String commonLibName = "zendoo_sc";
+    private static String commonLibName = "sc_common";
 
     private static String windowsOsName = "windows";
     private static String linuxOsName = "linux";

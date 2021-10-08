@@ -1,5 +1,5 @@
 use algebra::{
-    ProjectiveCurve, AffineCurve, UniformRand,
+    ProjectiveCurve, AffineCurve, UniformRand, PrimeField
 };
 use primitives::{
     crh::FieldBasedHash,
@@ -12,9 +12,29 @@ use rand::{
 use rand_xorshift::XorShiftRng;
 use crate::type_mappings::*;
 
+
 //*******************************Serialization/Deserialization functions ***********************/
 use algebra::{serialize::*, SemanticallyValid};
-use std::{path::Path, fs::File, io::{Read, BufReader, BufWriter, Cursor, Error as IoError, ErrorKind}};
+use std::{fs::File, io::{Read, BufReader, BufWriter, Cursor, Error as IoError, ErrorKind}};
+
+
+pub fn read_field_element_from_u64(num: u64) -> FieldElement {
+    FieldElement::from_repr(BigInteger::from(num))
+}
+
+//Will return error if buffer.len > FIELD_SIZE. If buffer.len < FIELD_SIZE, padding 0s will be added
+pub fn read_field_element_from_buffer_with_padding<F: PrimeField>(buffer: &[u8]) -> Result<F, SerializationError>
+{
+    let buff_len = buffer.len();
+
+    //Pad to reach field element size
+    let mut new_buffer = Vec::new();
+    new_buffer.extend_from_slice(buffer);
+
+    for _ in buff_len..FIELD_SIZE { new_buffer.push(0u8) } //Add padding zeros to reach field size
+
+    algebra::serialize::CanonicalDeserialize::deserialize(new_buffer.as_slice())
+}
 
 fn _deserialize_inner<R: Read, T: CanonicalDeserialize + SemanticallyValid>(
     reader:                 R,
@@ -112,7 +132,7 @@ pub const DEFAULT_BUF_SIZE: usize = 1 << 20;
 /// `semantic_checks` can be optional, due to some types having no checks to be performed,
 /// or trivial checks already performed a priori during serialization.
 pub fn read_from_file<T: CanonicalDeserialize + SemanticallyValid>(
-    file_path:              &Path,
+    file_path:              &str,
     semantic_checks:        Option<bool>,
     compressed:             Option<bool>,
 ) ->  Result<T, SerializationError>
@@ -129,7 +149,7 @@ pub fn read_from_file<T: CanonicalDeserialize + SemanticallyValid>(
 /// `compressed` can be optional, due to some types being uncompressable.
 pub fn write_to_file<T: CanonicalSerialize>(
     to_write:               &T,
-    file_path:              &Path,
+    file_path:              &str,
     compressed:             Option<bool>,
 ) ->  Result<(), SerializationError>
 {
@@ -230,9 +250,13 @@ pub fn get_leaf_index(tree: &GingerMHT, leaf: &FieldElement) -> Option<usize> {
     tree_leaves.iter().position(|x| x == leaf)
 }
 
-// TODO: Add an is_finalized() function in GingerMHT
 pub fn get_ginger_mht_path(tree: &GingerMHT, leaf_index: u64) -> Option<GingerMHTPath> {
-    tree.get_merkle_path(leaf_index as usize)
+    use std::convert::TryInto;
+
+    match tree.get_merkle_path(leaf_index as usize) {
+        Some(path) => path.try_into().ok(),
+        None => None,
+    }
 }
 
 pub fn reset_ginger_mht(tree: &mut GingerMHT){
