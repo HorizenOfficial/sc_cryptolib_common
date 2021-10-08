@@ -46,25 +46,25 @@ pub mod type_mappings;
 use type_mappings::*;
 
 
-fn read_raw_pointer<'a, T>(env: &JNIEnv, input: *const T) -> &'a T {
+pub fn read_raw_pointer<'a, T>(env: &JNIEnv, input: *const T) -> &'a T {
     if input.is_null() {
         throw_and_exit!(env, "java/lang/NullPointerException", "Received null pointer");
     }
     unsafe { &* input }
 }
 
-fn read_mut_raw_pointer<'a, T>(env: &JNIEnv, input: *mut T) -> &'a mut T {
+pub fn read_mut_raw_pointer<'a, T>(env: &JNIEnv, input: *mut T) -> &'a mut T {
     if input.is_null() {
         throw_and_exit!(env, "java/lang/NullPointerException", "Received null pointer");
     }
     unsafe { &mut *input }
 }
 
-fn _read_nullable_raw_pointer<'a, T>(input: *const T) -> Option<&'a T> {
+pub fn read_nullable_raw_pointer<'a, T>(input: *const T) -> Option<&'a T> {
     unsafe { input.as_ref() }
 }
 
-fn serialize_from_raw_pointer<T: CanonicalSerialize>(
+pub fn serialize_from_raw_pointer<T: CanonicalSerialize>(
     _env:       &JNIEnv,
     to_write:   *const T,
     compressed: Option<bool>,
@@ -73,7 +73,7 @@ fn serialize_from_raw_pointer<T: CanonicalSerialize>(
         .expect(format!("unable to write {} to buffer", type_name::<T>()).as_str())
 }
 
-fn return_jobject<'a, T: Sized>(_env: &'a JNIEnv, obj: T, class_path: &str) -> JObject<'a>
+pub fn return_jobject<'a, T: Sized>(_env: &'a JNIEnv, obj: T, class_path: &str) -> JObject<'a>
 {
     //Return field element
     let obj_ptr: jlong = jlong::from(Box::into_raw(Box::new(obj)) as i64);
@@ -84,7 +84,7 @@ fn return_jobject<'a, T: Sized>(_env: &'a JNIEnv, obj: T, class_path: &str) -> J
         .expect("Should be able to create new jobject")
 }
 
-fn deserialize_to_jobject<T: CanonicalDeserialize + SemanticallyValid>(
+pub fn deserialize_to_jobject<T: CanonicalDeserialize + SemanticallyValid>(
     _env: &JNIEnv,
     obj_bytes: jbyteArray,
     checked: Option<jboolean>, // Can be none for types with trivial checks or without themn
@@ -107,7 +107,7 @@ fn deserialize_to_jobject<T: CanonicalDeserialize + SemanticallyValid>(
     }
 }
 
-fn serialize_from_jobject<T: CanonicalSerialize>(
+pub fn serialize_from_jobject<T: CanonicalSerialize>(
     _env: &JNIEnv,
     obj: JObject,
     ptr_name: &str,
@@ -123,7 +123,7 @@ fn serialize_from_jobject<T: CanonicalSerialize>(
         .expect("Cannot write object.")
 }
 
-fn _parse_jbyte_array_to_vec(_env: &JNIEnv, java_byte_array: &jbyteArray, length: usize) -> Vec<u8> {
+pub fn parse_jbyte_array_to_vec(_env: &JNIEnv, java_byte_array: &jbyteArray, length: usize) -> Vec<u8> {
     let vec = _env.convert_byte_array(*java_byte_array)
         .expect("Should be able to convert to Rust array");
 
@@ -134,7 +134,7 @@ fn _parse_jbyte_array_to_vec(_env: &JNIEnv, java_byte_array: &jbyteArray, length
     vec
 }
 
-fn _get_byte_array(_env: &JNIEnv, java_byte_array: &jbyteArray, buffer: &mut [u8]) {
+pub fn _get_byte_array(_env: &JNIEnv, java_byte_array: &jbyteArray, buffer: &mut [u8]) {
     let vec = _env.convert_byte_array(*java_byte_array)
         .expect("Should be able to convert to Rust array");
 
@@ -150,7 +150,7 @@ use jni::sys::{JNI_TRUE, JNI_FALSE};
 
 //Field element related functions
 
-fn return_field_element(_env: &JNIEnv, fe: FieldElement) -> jobject
+pub fn return_field_element(_env: &JNIEnv, fe: FieldElement) -> jobject
 {
     return_jobject(_env, fe, "com/horizen/librustsidechains/FieldElement")
         .into_inner()

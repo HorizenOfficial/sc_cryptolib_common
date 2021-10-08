@@ -16,10 +16,10 @@ cargo build -j$(($(nproc)+1)) --release --features "bn_382" --target=x86_64-unkn
 ########################
 
 mkdir -p jni/src/main/resources/native/linux64
-cp target/x86_64-unknown-linux-gnu/release/libzendoo_sc.so jni/src/main/resources/native/linux64/libzendoo_sc.so
+cp target/x86_64-unknown-linux-gnu/release/libsc_common.so jni/src/main/resources/native/linux64/libsc_common.so
 
 mkdir -p jni/src/main/resources/native/windows64
-cp target/x86_64-pc-windows-gnu/release/zendoo_sc.dll jni/src/main/resources/native/windows64/zendoo_sc.dll
+cp target/x86_64-pc-windows-gnu/release/libsc_common.dll jni/src/main/resources/native/windows64/libsc_common.dll
 
 cd jni
 echo "Building jar"
