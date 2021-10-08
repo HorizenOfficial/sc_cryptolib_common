@@ -1,5 +1,5 @@
 [package]
-name = "api"
+name = "common-api"
 version = "0.1.0"
 authors = ["DanieleDiBenedetto <daniele@horizenlabs.io>"]
 edition = "2018"
@@ -24,6 +24,6 @@ tweedle = ["algebra/tweedle", "primitives/tweedle"]
 bn_382 = ["algebra/bn_382", "primitives/bn_382"]
 
 [lib]
-name = "zendoo_sc"
+name = "sc_common_cryptolib"
 path = "src/lib.rs"
 crate_type = ["cdylib"]
