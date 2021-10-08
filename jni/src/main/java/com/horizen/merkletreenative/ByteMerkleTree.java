@@ -1,21 +1,17 @@
 package com.horizen.merkletreenative;
 
 import com.horizen.librustsidechains.FieldElement;
-import java.io.*;
 
 public abstract class ByteMerkleTree implements MerkleTree<byte[]> {
 
-    FieldBasedMerkleTree tree;
+    protected FieldBasedMerkleTree tree;
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        if (tree.inMemoryOptimizedMerkleTreePointer == 0)
-            throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
-        out.write(tree.nativeSerialize());
+    public ByteMerkleTree(FieldBasedMerkleTree tree) {
+        this.tree = tree;
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        byte[] serialized = in.readAllBytes();
-        this.tree.inMemoryOptimizedMerkleTreePointer = FieldBasedMerkleTree.nativeDeserialize(serialized).inMemoryOptimizedMerkleTreePointer;
+    public FieldBasedMerkleTree getTree() {
+        return this.tree;
     }
 
     /**
@@ -46,11 +42,8 @@ public abstract class ByteMerkleTree implements MerkleTree<byte[]> {
 
     /* Returns the root of the Merkle Tree. */
     @Override
-    public byte[] root() {
-        FieldElement root = this.tree.root();
-        byte[] serializedRoot = root.serializeFieldElement();
-        root.freeFieldElement();
-        return serializedRoot;
+    public FieldElement root() {
+        return this.tree.root();
     }
 
     /**

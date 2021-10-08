@@ -25,11 +25,6 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
 
     private static native FieldBasedMerkleTree nativeInit(int height, long processingStep);
 
-    /* Creates a new tree given its `height` and `processing_step`, that defines the
-    *  number of leaves to store before triggering the computation of the hashes
-    *  of the upper levels. Changing this parameter will affect the performances.
-    *  Return NULL if it was not possible to initialize the tree.
-    */
     public static FieldBasedMerkleTree init(int height, long processingStep){
         return nativeInit(height, processingStep);
     }
@@ -51,12 +46,6 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
 
     private native boolean nativeAppend(FieldElement input);
 
-    /*
-     * Append a new leaf `input` to this instance.
-     * Return false if the operation was not successfull
-     * (for the moment this happens whenever the maximum number
-     * of leaves is exceeded)
-     */
     @Override
     public boolean append(FieldElement input) {
         if (inMemoryOptimizedMerkleTreePointer == 0)
@@ -66,11 +55,6 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
 
     private native FieldBasedMerkleTree nativeFinalize();
 
-    /*
-     * Finalize the tree by computing the root and returns the finalized tree. It is possible
-     * to continue updating the original tree.
-     * Return NULL if it was not possible to finalize the tree.
-     */
     @Override
     public FieldBasedMerkleTree finalizeTree() {
         if (inMemoryOptimizedMerkleTreePointer == 0)
@@ -80,11 +64,6 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
 
     private native boolean nativeFinalizeInPlace();
 
-    /*
-     * Finalize the tree by computing the root and updates the actual instance. It is not possible
-     * to continue updating the tree, unless by restoring the original state (by calling reset()).
-     * Return True if the tree has been correctly finalized, False otherwise.
-     */
     @Override
     public boolean finalizeTreeInPlace() {
         if (inMemoryOptimizedMerkleTreePointer == 0)
@@ -94,10 +73,6 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
 
     private native FieldElement nativeRoot();
 
-    /* Returns the root of the Merkle Tree. This function must be called on a finalized tree.
-     * If not, the call will result in an exception.
-     * Return NULL if it was not possible to get the root.
-     */
     @Override
     public FieldElement root() {
         if (inMemoryOptimizedMerkleTreePointer == 0)
@@ -107,9 +82,6 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
 
     private native long nativeGetLeafIndex(FieldElement leaf);
     
-    /**
-     * Return the index of the leaf in the tree if present, -1 otherwise.
-     */
     @Override
     public long getLeafIndex(FieldElement leaf) {
         if (inMemoryOptimizedMerkleTreePointer == 0)
@@ -117,9 +89,6 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
         return nativeGetLeafIndex(leaf);
     }
 
-    /**
-     * Return true if leaf is present in tree, false otherwise.
-     */
     @Override
     public boolean isLeafInTree(FieldElement leaf) {
         return getLeafIndex(leaf) != -1;
@@ -127,10 +96,6 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
 
     private native FieldBasedMerklePath nativeGetMerklePath(long leafIndex);
 
-    /*
-    * Compute and return the MerklePath from the leaf at `leafIndex` to the root of the tree.
-    * Return NULL if it was not possible to get the MerklePath.
-    */
     @Override
     public FieldBasedMerklePath getMerklePath(long leafIndex) {
         if (inMemoryOptimizedMerkleTreePointer == 0)
@@ -138,10 +103,6 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
         return nativeGetMerklePath(leafIndex);
     }
 
-    /*
-    * Compute and return the MerklePath from 'leaf' to the root of the tree.
-    * Return NULL if it was not possible to get the MerklePath.
-    */
     @Override
     public FieldBasedMerklePath getMerklePath(FieldElement leaf) {        
         long leafIndex = getLeafIndex(leaf);
@@ -153,9 +114,6 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
 
     private native void nativeReset();
 
-    /*
-     * Restore the internal state of this instance to its initial one.
-     */
     @Override
     public void reset() {
         if (inMemoryOptimizedMerkleTreePointer == 0)

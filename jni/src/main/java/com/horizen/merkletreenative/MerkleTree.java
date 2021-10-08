@@ -1,14 +1,18 @@
 package com.horizen.merkletreenative;
 
+import com.horizen.librustsidechains.FieldElement;
 import java.io.Serializable;
 
-// TODO: Instead of defining serialize() and deserialize() function use the Java Serializable interface.
-//       This is true also for the other classes.
+/**
+ * Interface for a MerkleTree accepting leaves of arbitrary type but internally represented
+ * as Field Elements. Data returned by tree will always be of type FieldElement.
+ */
 public interface MerkleTree<T> extends AutoCloseable, Serializable {
 
-    /*
+    /**
      * Append a new leaf `input` to this instance.
-     * Return false if the operation was not successfull
+     * @param input data to append to the tree
+     * @return true if operation was successfull, false otherwise.
      */
     public abstract boolean append(T input);
 
@@ -31,7 +35,7 @@ public interface MerkleTree<T> extends AutoCloseable, Serializable {
      * If not, the call will result in an exception.
      * Return NULL if it was not possible to get the root.
      */
-    public abstract T root();
+    public abstract FieldElement root();
 
     /**
      * Return the index of the leaf in the tree if present, -1 otherwise.
