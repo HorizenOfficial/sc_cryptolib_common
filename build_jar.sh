@@ -2,15 +2,15 @@
 
 set -euo pipefail
 
-#cargo clean
+cargo clean
 
 # Test with all features
-# cargo test --features "tweedle"
-#cargo test --features "bn_382" 
+cargo test --features "tweedle"
+cargo test --features "bn_382" 
 
 # ######################### Build with tweedle, test and publish ########################
 
-# #cargo build -j$(($(nproc)+1)) --release --features "tweedle" --target=x86_64-pc-windows-gnu
+cargo build -j$(($(nproc)+1)) --release --features "tweedle" --target=x86_64-pc-windows-gnu
 cargo build -j$(($(nproc)+1)) --release --features "tweedle" --target=x86_64-unknown-linux-gnu
 
 # ########################
@@ -18,8 +18,8 @@ cargo build -j$(($(nproc)+1)) --release --features "tweedle" --target=x86_64-unk
 mkdir -p jni/src/main/resources/native/linux64
 cp target/x86_64-unknown-linux-gnu/release/libzendoo_sc.so jni/src/main/resources/native/linux64/libzendoo_sc.so
 
-# # mkdir -p jni/src/main/resources/native/windows64
-# # cp target/x86_64-pc-windows-gnu/release/zendoo_sc.dll jni/src/main/resources/native/windows64/zendoo_sc.dll
+# mkdir -p jni/src/main/resources/native/windows64
+# cp target/x86_64-pc-windows-gnu/release/zendoo_sc.dll jni/src/main/resources/native/windows64/zendoo_sc.dll
 
 cd jni
 echo "Building jar"
@@ -38,7 +38,7 @@ cd ..
 ######################### Build with bn382 and publish ########################
 cargo clean
 
-# cargo build -j$(($(nproc)+1)) --release --features "bn_382" --target=x86_64-pc-windows-gnu
+cargo build -j$(($(nproc)+1)) --release --features "bn_382" --target=x86_64-pc-windows-gnu
 cargo build -j$(($(nproc)+1)) --release --features "bn_382" --target=x86_64-unknown-linux-gnu
 
 ########################
@@ -46,8 +46,8 @@ cargo build -j$(($(nproc)+1)) --release --features "bn_382" --target=x86_64-unkn
 mkdir -p jni/src/main/resources/native/linux64
 cp target/x86_64-unknown-linux-gnu/release/libzendoo_sc.so jni/src/main/resources/native/linux64/libzendoo_sc.so
 
-# mkdir -p jni/src/main/resources/native/windows64
-# cp target/x86_64-pc-windows-gnu/release/zendoo_sc.dll jni/src/main/resources/native/windows64/zendoo_sc.dll
+mkdir -p jni/src/main/resources/native/windows64
+cp target/x86_64-pc-windows-gnu/release/zendoo_sc.dll jni/src/main/resources/native/windows64/zendoo_sc.dll
 
 cd jni
 echo "Building jar"
