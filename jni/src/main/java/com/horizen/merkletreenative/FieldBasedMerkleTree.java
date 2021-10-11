@@ -5,7 +5,7 @@ import com.horizen.librustsidechains.Library;
 
 import java.io.*;
 
-public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
+public class FieldBasedMerkleTree implements MerkleTree {
     
     protected long inMemoryOptimizedMerkleTreePointer;
 
@@ -51,10 +51,10 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
     private native boolean nativeAppend(FieldElement input) throws MerkleTreeException;
 
     @Override
-    public boolean append(FieldElement input) throws MerkleTreeException {
+    public boolean append(MerkleTreeLeaf input) throws MerkleTreeException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
-        return nativeAppend(input);
+        return nativeAppend(input.getLeafAsFieldElement());
     }
 
     private native FieldBasedMerkleTree nativeFinalize() throws MerkleTreeException;
@@ -87,14 +87,14 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
     private native long nativeGetLeafIndex(FieldElement leaf);
     
     @Override
-    public long getLeafIndex(FieldElement leaf) {
+    public long getLeafIndex(MerkleTreeLeaf leaf) {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
-        return nativeGetLeafIndex(leaf);
+        return nativeGetLeafIndex(leaf.getLeafAsFieldElement());
     }
 
     @Override
-    public boolean isLeafInTree(FieldElement leaf) {
+    public boolean isLeafInTree(MerkleTreeLeaf leaf) {
         return getLeafIndex(leaf) != -1;
     }
 
@@ -108,7 +108,7 @@ public class FieldBasedMerkleTree implements MerkleTree<FieldElement> {
     }
 
     @Override
-    public FieldBasedMerklePath getMerklePath(FieldElement leaf) throws MerkleTreeException {        
+    public FieldBasedMerklePath getMerklePath(MerkleTreeLeaf leaf) throws MerkleTreeException {        
         long leafIndex = getLeafIndex(leaf);
         if (leafIndex == -1)
             throw new IllegalStateException("Address not found inside tree");
