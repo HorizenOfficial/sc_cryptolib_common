@@ -22,8 +22,3 @@ blake2 = { version = "0.8.1", default-features = false }
 asm = [ "algebra/llvm_asm"]
 tweedle = ["algebra/tweedle", "primitives/tweedle"]
 bn_382 = ["algebra/bn_382", "primitives/bn_382"]
-
-[lib]
-name = "sc_common"
-path = "src/lib.rs"
-crate_type = ["cdylib"]

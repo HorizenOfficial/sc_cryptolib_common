@@ -1,7 +1,8 @@
 [workspace]
 
 members = [
-    "api"
+    "api",
+    "lib-sc-common"
 ]
 
 [profile.release]
