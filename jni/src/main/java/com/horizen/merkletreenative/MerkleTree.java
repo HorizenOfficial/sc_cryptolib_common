@@ -7,21 +7,21 @@ import java.io.Serializable;
  * Interface for a MerkleTree accepting leaves of arbitrary type but internally represented
  * as Field Elements. Data returned by tree will always be of type FieldElement.
  */
-public interface MerkleTree<T> extends AutoCloseable, Serializable {
+public interface MerkleTree extends AutoCloseable, Serializable {
 
     /**
      * Append a new leaf `input` to this instance.
      * @param input data to append to the tree
      * @return true if operation was successfull, false otherwise.
      */
-    public abstract boolean append(T input) throws MerkleTreeException;
+    public abstract boolean append(MerkleTreeLeaf input) throws MerkleTreeException;
 
     /*
      * Finalize the tree by computing the root and returns the finalized tree. It is possible
      * to continue updating the original tree.
      * Return NULL if it was not possible to finalize the tree.
      */
-    public abstract MerkleTree<T> finalizeTree() throws MerkleTreeException;
+    public abstract MerkleTree finalizeTree() throws MerkleTreeException;
 
     /*
      * Finalize the tree by computing the root and updates the actual instance. It is not possible
@@ -40,12 +40,12 @@ public interface MerkleTree<T> extends AutoCloseable, Serializable {
     /**
      * Return the index of the leaf in the tree if present, -1 otherwise.
      */
-    public abstract long getLeafIndex(T leaf);
+    public abstract long getLeafIndex(MerkleTreeLeaf leaf);
 
     /**
      * Return true if leaf is present in tree, false otherwise.
      */
-    public abstract boolean isLeafInTree(T leaf);
+    public abstract boolean isLeafInTree(MerkleTreeLeaf leaf);
 
     /*
     * Compute and return the MerklePath from the leaf at `leafIndex` to the root of the tree.
@@ -57,7 +57,7 @@ public interface MerkleTree<T> extends AutoCloseable, Serializable {
     * Compute and return the MerklePath from 'leaf' to the root of the tree.
     * Return NULL if it was not possible to get the MerklePath.
     */
-    public abstract FieldBasedMerklePath getMerklePath(T leaf) throws MerkleTreeException;
+    public abstract FieldBasedMerklePath getMerklePath(MerkleTreeLeaf leaf) throws MerkleTreeException;
 
     /*
      * Restore the internal state of this instance to its initial one.
@@ -69,4 +69,3 @@ public interface MerkleTree<T> extends AutoCloseable, Serializable {
      */
     public abstract void freeMerkleTree();
 }
-
