@@ -1,5 +1,7 @@
-use jni::JNIEnv;
+use jni::{JNIEnv, sys::jobject};
 use std::{error::Error, any::Any};
+
+pub const JNI_NULL: jobject = std::ptr::null::<jobject>() as jobject;
 
 /// Tries to get meaningful description from panic-error.
 pub(crate) fn any_to_string(any: Box<dyn Any + Send>) -> String {
@@ -74,7 +76,7 @@ macro_rules! ffi_export {
                 Ok(x) => return x,
                 Err(e1) => {
                     match ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(
-                        move || throw!(&$env, "java/lang/RuntimeException", &any_to_string(e1), std::ptr::null::<jobject>() as jobject)
+                        move || throw!(&$env, "java/lang/RuntimeException", &any_to_string(e1), JNI_NULL)
                     )) {
                         Ok(default) => default,
                         Err(e2) => {
@@ -104,7 +106,7 @@ macro_rules! ffi_export {
                 Ok(x) => return x,
                 Err(e1) => {
                     match ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(
-                        move || throw!(&$env, "java/lang/RuntimeException", &any_to_string(e1), std::ptr::null::<jobject>() as jobject)
+                        move || throw!(&$env, "java/lang/RuntimeException", &any_to_string(e1), JNI_NULL)
                     )) {
                         Ok(default) => default,
                         Err(e2) => {

@@ -23,7 +23,7 @@ public abstract class ByteMerkleTree implements MerkleTree<byte[]> {
      * Append bytes to tree and return true if operation was successfull, false otherwise.
      */
     @Override
-    public boolean append(byte[] bytes) {
+    public boolean append(byte[] bytes) throws MerkleTreeException {
         FieldElement fe = bytesToFieldElement(bytes);
         boolean result = this.tree.append(fe);
         fe.freeFieldElement();
@@ -36,13 +36,13 @@ public abstract class ByteMerkleTree implements MerkleTree<byte[]> {
      * Return True if the tree has been correctly finalized, False otherwise.
      */
     @Override
-    public boolean finalizeTreeInPlace() {
+    public boolean finalizeTreeInPlace() throws MerkleTreeException {
         return this.tree.finalizeTreeInPlace();
     }
 
     /* Returns the root of the Merkle Tree. */
     @Override
-    public FieldElement root() {
+    public FieldElement root() throws MerkleTreeException {
         return this.tree.root();
     }
 
@@ -73,7 +73,7 @@ public abstract class ByteMerkleTree implements MerkleTree<byte[]> {
     * Return NULL if it was not possible to get the MerklePath.
     */
     @Override
-    public FieldBasedMerklePath getMerklePath(long leafIndex) {
+    public FieldBasedMerklePath getMerklePath(long leafIndex) throws MerkleTreeException {
         return this.tree.getMerklePath(leafIndex);
     }
 
@@ -82,7 +82,7 @@ public abstract class ByteMerkleTree implements MerkleTree<byte[]> {
     * Return NULL if it was not possible to get the MerklePath.
     */
     @Override
-    public FieldBasedMerklePath getMerklePath(byte[] leaf){
+    public FieldBasedMerklePath getMerklePath(byte[] leaf) throws MerkleTreeException {
         FieldElement fe = bytesToFieldElement(leaf);
         FieldBasedMerklePath path = this.tree.getMerklePath(fe);
         fe.freeFieldElement();

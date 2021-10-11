@@ -40,13 +40,13 @@ public class MerkleTreeTest {
     }
 
     @Before
-    public void initTestParams() {
+    public void initTestParams() throws Exception {
         leaves = buildLeaves(1234567890L);
         expectedRoot = FieldElement.deserialize(expectedRootBytes);
     }
 
     @Test
-    public void testMerkleTrees() {
+    public void testMerkleTrees() throws Exception {
 
         //Get InMemoryOptimizedMerkleTree
         FieldBasedMerkleTree mht = FieldBasedMerkleTree.init(height, numLeaves);
@@ -93,6 +93,39 @@ public class MerkleTreeTest {
     }
 
     @Test
+    public void testTreeExceptions() throws Exception {
+
+        // Attempt to init an invalid Merkle Tree
+        try {
+            FieldBasedMerkleTree.init(100, 1 << 100);
+            assertTrue("Must be unable to init a MerkleTree with unsupported height", false);
+        } catch (MerkleTreeException mte) {
+            assertTrue(mte.getMessage().contains("Unsupported height"));
+        }
+
+        // Init valid tree
+        FieldBasedMerkleTree mht = FieldBasedMerkleTree.init(height, numLeaves);
+
+        // Attempt to get root of a non-finalized tree
+        try {
+            mht.root();
+            assertTrue("Must be unable to get the root of a non-finalized tree", false);
+        } catch (MerkleTreeException mte) {
+            assertTrue(mte.getMessage().contains("Unable to get MerkleTree root"));
+        }
+
+        // Attempt to get merkle path of a non-finalized tree
+        try {
+            mht.getMerklePath(0);
+            assertTrue("Must be unable to get a Merkle Path from of a non-finalized tree", false);
+        } catch (MerkleTreeException mte) {
+            assertTrue(mte.getMessage().contains("Unable to get MerklePath"));
+        }
+
+        mht.freeMerkleTree();
+    }
+
+    @Test
     public void testTreeSerializeDeserialize() throws Exception {
 
         byte[] treeBytes;
@@ -114,7 +147,6 @@ public class MerkleTreeTest {
                 treeBytes =  bos.toByteArray();
             }
         }
-        System.out.println("Tree object len: " + treeBytes.length);
 
         try (
             ByteArrayInputStream bis = new ByteArrayInputStream(treeBytes);
@@ -134,7 +166,7 @@ public class MerkleTreeTest {
     }
 
     @Test
-    public void testMerklePaths() {
+    public void testMerklePaths() throws Exception {
         List<FieldElement> testLeaves = new ArrayList<>();
         FieldBasedMerkleTree mht = FieldBasedMerkleTree.init(6, numLeaves);
         assertNotNull("Merkle Tree initialization must succeed", mht);
@@ -207,7 +239,30 @@ public class MerkleTreeTest {
     }
 
     @Test
-    public void testAreRightLeavesEmpty() {
+    public void testMerklePathExceptions() throws Exception {
+
+        // Init, finalize and get merkle path of a valid tree
+        FieldBasedMerkleTree mht = FieldBasedMerkleTree.init(height, numLeaves);
+        mht.finalizeTreeInPlace();
+        FieldBasedMerklePath path = mht.getMerklePath(0);
+        FieldElement leaf = FieldElement.createFromLong(0L);
+        FieldElement root = mht.root();
+
+        try {
+            path.verify(height + 1, leaf, root);
+            assertTrue("Must not be able to verify a Merkle Path smaller than tree height", false);
+        } catch (MerklePathException mpe) {
+            assertTrue(mpe.getMessage().contains("IncorrectPathLength"));
+        }
+
+        mht.freeMerkleTree();
+        path.freeMerklePath();
+        leaf.freeFieldElement();
+        root.freeFieldElement();
+    }
+
+    @Test
+    public void testAreRightLeavesEmpty() throws Exception {
         FieldBasedMerkleTree mht = FieldBasedMerkleTree.init(6, numLeaves);
         assertNotNull("Merkle Tree initialization must succeed", mht);
 

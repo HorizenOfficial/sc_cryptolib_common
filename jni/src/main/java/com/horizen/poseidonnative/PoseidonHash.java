@@ -78,7 +78,7 @@ public class PoseidonHash implements AutoCloseable {
         nativeUpdate(input);
     }
 
-    private native FieldElement nativeFinalize();
+    private native FieldElement nativeFinalize() throws PoseidonHashException;
 
     /*
     * Compute and return the digest.
@@ -88,7 +88,7 @@ public class PoseidonHash implements AutoCloseable {
     * - This instance was constructed by calling getInstanceVariableLength(True, ...)
     *   but the number of times update() has been called is not multiple of the hash rate.
     */
-    public FieldElement finalizeHash() {
+    public FieldElement finalizeHash() throws PoseidonHashException {
         if (poseidonHashPointer == 0)
             throw new IllegalStateException("PoseidonHash instance was freed.");
         return nativeFinalize();
@@ -117,7 +117,7 @@ public class PoseidonHash implements AutoCloseable {
      * procedure instead.
      */
     @Deprecated
-    public static FieldElement computePoseidonHash(FieldElement[] inputs){
+    public static FieldElement computePoseidonHash(FieldElement[] inputs)  throws PoseidonHashException {
         PoseidonHash digest = PoseidonHash.getInstanceConstantLength(inputs.length);
         for (FieldElement fe: inputs)
             digest.update(fe);
