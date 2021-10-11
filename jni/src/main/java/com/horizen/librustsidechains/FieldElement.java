@@ -49,9 +49,9 @@ public class FieldElement implements AutoCloseable {
         return nativeSerializeFieldElement();
     }
 
-    private static native FieldElement nativeDeserializeFieldElement(byte[] fieldElementBytes);
+    private static native FieldElement nativeDeserializeFieldElement(byte[] fieldElementBytes) throws FieldElementException;
 
-    public static FieldElement deserialize(byte[] fieldElementBytes) {
+    public static FieldElement deserialize(byte[] fieldElementBytes) throws FieldElementException {
         if (fieldElementBytes.length != FIELD_ELEMENT_LENGTH)
             throw new IllegalArgumentException(String.format("Incorrect field element length, %d expected, %d found",
                     FIELD_ELEMENT_LENGTH, fieldElementBytes.length));

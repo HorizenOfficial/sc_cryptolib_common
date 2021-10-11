@@ -40,7 +40,12 @@ public class PoseidonHashTest {
             for (int i = 0; i < hashInput.size() - 1; i++)
                 digest.update(hashInput.get(i));
 
-            assertNull("Finalizing with smaller input size than specified must be forbidden", digest.finalizeHash());
+            try {
+                digest.finalizeHash();
+                assertTrue("Finalizing with smaller input size than specified must be forbidden", false); // Must be unreachable
+            } catch (PoseidonHashException phe) {
+                assertTrue(phe.getMessage().contains("attempt to finalize with an input of invalid size"));
+            }
 
             // Update with last input
             digest.update(hashInput.get(hashInput.size() - 1));
@@ -57,7 +62,13 @@ public class PoseidonHashTest {
             }
 
             digest.update(hashInput.get(hashInput.size() - 1));
-            assertNull("Finalizing with bigger input size than specified must be forbidden", digest.finalizeHash());
+
+            try {
+                digest.finalizeHash();
+                assertTrue("Finalizing with bigger input size than specified must be forbidden", false); // Must be unreachable
+            } catch (PoseidonHashException phe) {
+                assertTrue(phe.getMessage().contains("attempt to finalize with an input of invalid size"));
+            }
         }
     }
 
@@ -111,7 +122,12 @@ public class PoseidonHashTest {
             for (int i = 0; i < hashInput.size() - 1; i++)
                 digest.update(hashInput.get(i));
 
-            assertNull("Finalizing with input size non mod rate must be forbidden", digest.finalizeHash());
+            try {
+                digest.finalizeHash();
+                assertTrue("Finalizing with input size non mod rate must be forbidden", false); // Must be unreachable
+            } catch (PoseidonHashException phe) {
+                assertTrue(phe.getMessage().contains("attempt to finalize with an input of invalid size"));
+            }
 
             // Update with last input
             digest.update(hashInput.get(hashInput.size() - 1));

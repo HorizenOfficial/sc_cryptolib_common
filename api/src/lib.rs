@@ -1,5 +1,10 @@
 use algebra::{SemanticallyValid, serialize::*};
 use std::any::type_name;
+use jni::{
+    objects::{JClass, JObject, JValue},
+    sys::{jbyteArray, jboolean, jint, jlong, jobject, jobjectArray, JNI_TRUE, JNI_FALSE},
+    JNIEnv,
+};
 
 pub mod ginger_calls;
 use ginger_calls::*;
@@ -11,7 +16,6 @@ use exception::*;
 #[macro_use]
 pub mod type_mappings;
 use type_mappings::*;
-
 
 pub fn read_raw_pointer<'a, T>(env: &JNIEnv, input: *const T) -> &'a T {
     if input.is_null() {
@@ -27,6 +31,7 @@ pub fn read_mut_raw_pointer<'a, T>(env: &JNIEnv, input: *mut T) -> &'a mut T {
     unsafe { &mut *input }
 }
 
+#[allow(dead_code)]
 pub fn read_nullable_raw_pointer<'a, T>(input: *const T) -> Option<&'a T> {
     unsafe { input.as_ref() }
 }
@@ -57,21 +62,16 @@ pub fn deserialize_to_jobject<T: CanonicalDeserialize + SemanticallyValid>(
     checked: Option<jboolean>, // Can be none for types with trivial checks or without themn
     compressed: Option<jboolean>, // Can be none for uncompressable types
     class_path: &str,
-) -> jobject
+) -> Result<jobject, SerializationError>
 {
     let obj_bytes = _env.convert_byte_array(obj_bytes)
         .expect("Cannot read bytes.");
 
-    let obj = deserialize_from_buffer::<T>(
+    deserialize_from_buffer::<T>(
         obj_bytes.as_slice(),
         checked.map(|jni_bool| jni_bool == JNI_TRUE),
         compressed.map(|jni_bool| jni_bool == JNI_TRUE)
-    );
-
-    match obj {
-        Ok(obj) => *return_jobject(&_env, obj, class_path),
-        Err(_) => std::ptr::null::<jobject>() as jobject,
-    }
+    ).map(|obj| *return_jobject(_env, obj, class_path))
 }
 
 pub fn serialize_from_jobject<T: CanonicalSerialize>(
@@ -90,6 +90,7 @@ pub fn serialize_from_jobject<T: CanonicalSerialize>(
         .expect("Cannot write object.")
 }
 
+#[allow(dead_code)]
 pub fn parse_jbyte_array_to_vec(_env: &JNIEnv, java_byte_array: &jbyteArray, length: usize) -> Vec<u8> {
     let vec = _env.convert_byte_array(*java_byte_array)
         .expect("Should be able to convert to Rust array");
@@ -101,7 +102,8 @@ pub fn parse_jbyte_array_to_vec(_env: &JNIEnv, java_byte_array: &jbyteArray, len
     vec
 }
 
-pub fn _get_byte_array(_env: &JNIEnv, java_byte_array: &jbyteArray, buffer: &mut [u8]) {
+#[allow(dead_code)]
+pub fn get_byte_array(_env: &JNIEnv, java_byte_array: &jbyteArray, buffer: &mut [u8]) {
     let vec = _env.convert_byte_array(*java_byte_array)
         .expect("Should be able to convert to Rust array");
 
@@ -109,11 +111,6 @@ pub fn _get_byte_array(_env: &JNIEnv, java_byte_array: &jbyteArray, buffer: &mut
         buffer[pos] = *e;
     }
 }
-
-use jni::JNIEnv;
-use jni::objects::{JClass, JObject, JValue};
-use jni::sys::{jbyteArray, jboolean, jint, jlong, jobject, jobjectArray};
-use jni::sys::{JNI_TRUE, JNI_FALSE};
 
 //Field element related functions
 
@@ -123,6 +120,7 @@ pub fn return_field_element(_env: &JNIEnv, fe: FieldElement) -> jobject
         .into_inner()
 }
 
+// Used only for testing
 ffi_export!(
     fn Java_com_horizen_librustsidechains_Library_nativePanickingFunction(
     _env: JNIEnv,
@@ -162,7 +160,12 @@ ffi_export!(
         None,
         None,
         "com/horizen/librustsidechains/FieldElement",
-    )
+    ).unwrap_or_else(|e| throw!(
+        &_env,
+        "com/horizen/librustsidechains/FieldElementException",
+        format!("Unable to deserialize field element: {:?}", e).as_str(),
+        JNI_NULL
+    ))
 });
 
 ffi_export!(
@@ -294,7 +297,12 @@ ffi_export!(
         Some(_check_public_key),
         Some(_compressed),
         "com/horizen/schnorrnative/SchnorrPublicKey"
-    )
+    ).unwrap_or_else(|e| throw!(
+        &_env,
+        "com/horizen/schnorrnative/SchnorrSignatureException",
+        format!("Unable to deserialize SchnorrPublicKey: {:?}", e).as_str(),
+        JNI_NULL
+    ))
 });
 
 ffi_export!(
@@ -346,7 +354,12 @@ ffi_export!(
             None,
             None,
             "com/horizen/schnorrnative/SchnorrSecretKey",
-        )
+        ).unwrap_or_else(|e| throw!(
+            &_env,
+            "com/horizen/schnorrnative/SchnorrSignatureException",
+            format!("Unable to deserialize SchnorrSecretKey: {:?}", e).as_str(),
+            JNI_NULL
+        ))
     }
 );
 
@@ -400,7 +413,12 @@ ffi_export!(
         Some(_check_sig),
         None,
         "com/horizen/schnorrnative/SchnorrSignature"
-    )
+    ).unwrap_or_else(|e| throw!(
+        &_env,
+        "com/horizen/schnorrnative/SchnorrSignatureException",
+        format!("Unable to deserialize SchnorrSignature: {:?}", e).as_str(),
+        JNI_NULL
+    ))
 });
 
 ffi_export!(
@@ -470,6 +488,7 @@ ffi_export!(
                                    "secretKey",
                                    "Lcom/horizen/schnorrnative/SchnorrSecretKey;"
     ).expect("Should be able to get field secretKey").l().unwrap();
+    
     let secret_key = {
 
         let s =_env.get_field(sk_object, "secretKeyPointer", "J")
@@ -502,13 +521,17 @@ ffi_export!(
     };
 
     //Sign message and return opaque pointer to sig
-    let signature = match schnorr_sign(message, secret_key, public_key) {
-        Ok(sig) => sig,
-        Err(_) => return std::ptr::null::<jobject>() as jobject //CRYPTO_ERROR
-    };
-
-    return_jobject(&_env, signature, "com/horizen/schnorrnative/SchnorrSignature")
-        .into_inner()
+    schnorr_sign(
+        message, secret_key, public_key
+    ).map_or_else(
+        |e| throw!(
+            &_env,
+            "com/horizen/schnorrnative/SchnorrSignatureException",
+            format!("Unable to sign message: {:?}", e).as_str(),
+            JNI_NULL
+        ),
+        |signature| *return_jobject(&_env, signature, "com/horizen/schnorrnative/SchnorrSignature")
+    )
 });
 
 ffi_export!(
@@ -579,14 +602,17 @@ ffi_export!(
     };
 
     //Verify sig
-    match schnorr_verify_signature(message, public_key, signature) {
-        Ok(result) => if result {
-            JNI_TRUE
-        } else {
+    schnorr_verify_signature(
+        message, public_key, signature
+    ).map_or_else(
+        |e| throw!(
+            &_env,
+            "com/horizen/schnorrnative/SchnorrSignatureException",
+            format!("Unable to verify signature: {:?}", e).as_str(),
             JNI_FALSE
-        },
-        Err(_) => JNI_FALSE //CRYPTO_ERROR
-    }
+        ),
+        |result| if result { JNI_TRUE } else { JNI_FALSE }
+    )
 });
 
 ffi_export!(
@@ -718,12 +744,15 @@ ffi_export!(
     };
 
     //Get digest
-    let fe = match finalize_poseidon_hash(digest) {
-        Ok(fe) => fe,
-        Err(_) => return std::ptr::null::<jobject>() as jobject //CRYPTO_ERROR
-    };
-
-    return_field_element(&_env, fe)
+    finalize_poseidon_hash(digest).map_or_else(
+        |e| throw!(
+            &_env,
+            "com/horizen/poseidonnative/PoseidonHashException",
+            format!("Unable to finalize hash: {:?}", e).as_str(),
+            JNI_NULL
+        ),
+        |fe| return_field_element(&_env, fe)
+    )
 });
 
 ffi_export!(
@@ -823,10 +852,15 @@ ffi_export!(
         return JNI_FALSE;
     }
 
-    match verify_ginger_merkle_path(path, _height as usize, leaf, root) {
-        Ok(result) => if result { JNI_TRUE } else { JNI_FALSE },
-        Err(_) => JNI_FALSE // CRYPTO_ERROR
-    }
+    verify_ginger_merkle_path(path, _height as usize, leaf, root).map_or_else(
+        |e| throw!(
+            &_env,
+            "com/horizen/merkletreenative/MerklePathException",
+            format!("Unable to verify MerklePath: {:?}", e).as_str(),
+            JNI_FALSE
+        ),
+        |result| if result { JNI_TRUE } else { JNI_FALSE }
+    )
 });
 
 ffi_export!(
@@ -995,7 +1029,12 @@ ffi_export!(
         Some(_checked),
         None,
         "com/horizen/merkletreenative/FieldBasedMerklePath"
-    )
+    ).unwrap_or_else(|e| throw!(
+        &_env,
+        "com/horizen/merkletreenative/MerklePathException",
+        format!("Unable to deserialize MerklePath: {:?}", e).as_str(),
+        JNI_NULL
+    ))
 });
 
 ffi_export!(
@@ -1018,16 +1057,18 @@ ffi_export!(
 ) -> jobject
 {
     // Create new FieldBasedMerkleTree Rust side
-    let mt = new_ginger_mht(
+    new_ginger_mht(
         _height as usize,
         _processing_step as usize
-    );
-
-    // Create and return new FieldBasedMerkleTree Java side
-    match mt {
-        Ok(mt) => return_jobject(&_env, mt, "com/horizen/merkletreenative/FieldBasedMerkleTree").into_inner(),
-        Err(_) => return std::ptr::null::<jobject>() as jobject //CRYPTO_ERROR
-    }
+    ).map_or_else(
+        |e| throw!(
+            &_env,
+            "com/horizen/merkletreenative/MerkleTreeException",
+            format!("Unable to inizialize MerkleTree: {:?}", e).as_str(),
+            JNI_NULL
+        ),
+        |mt| return_jobject(&_env, mt, "com/horizen/merkletreenative/FieldBasedMerkleTree").into_inner()
+    )
 });
 
 ffi_export!(
@@ -1053,10 +1094,15 @@ ffi_export!(
         read_mut_raw_pointer(&_env, t.j().unwrap() as *mut GingerMHT)
     };
 
-    match append_leaf_to_ginger_mht(tree, leaf) {
-        Ok(_) => JNI_TRUE,
-        Err(_) => JNI_FALSE,
-    }
+    append_leaf_to_ginger_mht(tree, leaf).map_or_else(
+        |e| throw!(
+            &_env,
+            "com/horizen/merkletreenative/MerkleTreeException",
+            format!("Unable to append leaf to MerkleTree: {:?}", e).as_str(),
+            JNI_FALSE
+        ),
+        |_| JNI_TRUE
+    )
 });
 
 ffi_export!(
@@ -1073,10 +1119,15 @@ ffi_export!(
         read_raw_pointer(&_env, t.j().unwrap() as *const GingerMHT)
     };
 
-    match finalize_ginger_mht(tree) {
-        Ok(tree_copy) => return_jobject(&_env, tree_copy, "com/horizen/merkletreenative/FieldBasedMerkleTree").into_inner(),
-        Err(_) => return std::ptr::null::<jobject>() as jobject //CRYPTO_ERROR
-    }
+    finalize_ginger_mht(tree).map_or_else(
+        |e| throw!(
+            &_env,
+            "com/horizen/merkletreenative/MerkleTreeException",
+            format!("Unable to finalize MerkleTree: {:?}", e).as_str(),
+            JNI_NULL
+        ),
+        |tree_copy| *return_jobject(&_env, tree_copy, "com/horizen/merkletreenative/FieldBasedMerkleTree")
+    )
 });
 
 ffi_export!(
@@ -1093,10 +1144,15 @@ ffi_export!(
         read_mut_raw_pointer(&_env, t.j().unwrap() as *mut GingerMHT)
     };
 
-    match finalize_ginger_mht_in_place(tree) {
-        Ok(_) => JNI_TRUE,
-        Err(_) => JNI_FALSE
-    }
+    finalize_ginger_mht_in_place(tree).map_or_else(
+        |e| throw!(
+            &_env,
+            "com/horizen/merkletreenative/MerkleTreeException",
+            format!("Unable to finalize MerkleTree in place: {:?}", e).as_str(),
+            JNI_FALSE
+        ),
+        |_| JNI_TRUE
+    )
 });
 
 ffi_export!(
@@ -1113,10 +1169,15 @@ ffi_export!(
         read_raw_pointer(&_env, t.j().unwrap() as *const GingerMHT)
     };
 
-    match get_ginger_mht_root(tree) {
-        Some(root) => return_field_element(&_env, root),
-        None => std::ptr::null::<jobject>() as jobject
-    }
+    get_ginger_mht_root(tree).map_or_else(
+        || throw!(
+            &_env,
+            "com/horizen/merkletreenative/MerkleTreeException",
+            "Unable to get MerkleTree root",
+            JNI_NULL
+        ),
+        |root| return_field_element(&_env, root)
+    )
 });
 
 ffi_export!(
@@ -1134,11 +1195,15 @@ ffi_export!(
         read_raw_pointer(&_env, t.j().unwrap() as *const GingerMHT)
     };
 
-    match get_ginger_mht_path(tree, _leaf_index as u64) {
-        Some(path) => return_jobject(&_env, path, "com/horizen/merkletreenative/FieldBasedMerklePath")
-            .into_inner(),
-        None => std::ptr::null::<jobject>() as jobject
-    }
+    get_ginger_mht_path(tree, _leaf_index as u64).map_or_else(
+        || throw!(
+            &_env,
+            "com/horizen/merkletreenative/MerkleTreeException",
+            "Unable to get MerklePath",
+            JNI_NULL
+        ),
+        |path| *return_jobject(&_env, path, "com/horizen/merkletreenative/FieldBasedMerklePath")
+    )
 });
 
 ffi_export!(
@@ -1200,15 +1265,15 @@ ffi_export!(
     let obj_bytes = _env.convert_byte_array(_tree_bytes)
         .expect("Cannot read tree bytes.");
 
-    let tree = <GingerMHT as CanonicalDeserialize>::deserialize(obj_bytes.as_slice());
-
-    match tree {
-        Ok(tree) => *return_jobject(&_env, tree, "com/horizen/merkletreenative/FieldBasedMerkleTree"),
-        Err(e) => {
-            eprintln!("{:?}", e);
-            std::ptr::null::<jobject>() as jobject
-        },
-    }
+    <GingerMHT as CanonicalDeserialize>::deserialize(obj_bytes.as_slice()).map_or_else(
+        |e| throw!(
+            &_env,
+            "com/horizen/merkletreenative/MerkleTreeException",
+            format!("Unable to deserialize MerkleTree: {:?}", e).as_str(),
+            JNI_NULL
+        ),
+        |tree| *return_jobject(&_env, tree, "com/horizen/merkletreenative/FieldBasedMerkleTree")
+    )
 });
 
 ffi_export!(

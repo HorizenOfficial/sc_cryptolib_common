@@ -1,11 +1,12 @@
 package com.horizen.librustsidechains;
 
+import org.junit.Rule;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Random;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
+
+import java.util.Arrays;
 
 public class FieldElementTest {
 
@@ -44,5 +45,19 @@ public class FieldElementTest {
                 }
             }
         }
+    }
+
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
+
+    @Test
+    public void testDeserializeInvalid() throws Exception {
+        exceptionRule.expect(FieldElementException.class);
+        exceptionRule.expectMessage("Attempt to deserialize a field element over the modulus");
+
+        byte[] invalidFeBytes = new byte[FieldElement.FIELD_ELEMENT_LENGTH];
+        Arrays.fill(invalidFeBytes, (byte)255);
+
+        FieldElement.deserialize(invalidFeBytes);
     }
 }

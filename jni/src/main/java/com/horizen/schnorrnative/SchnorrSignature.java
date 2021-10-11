@@ -27,18 +27,18 @@ public class SchnorrSignature implements AutoCloseable
 
   private native byte[] nativeSerializeSignature();
 
-  private static native SchnorrSignature nativeDeserializeSignature(byte[] signatureBytes, boolean checkSignature);
+  private static native SchnorrSignature nativeDeserializeSignature(byte[] signatureBytes, boolean checkSignature) throws SchnorrSignatureException;
 
   private static native void nativefreeSignature(long signaturePointer);
 
-  public static SchnorrSignature deserialize(byte[] signatureBytes, boolean checkSignature) {
+  public static SchnorrSignature deserialize(byte[] signatureBytes, boolean checkSignature) throws SchnorrSignatureException {
     if (signatureBytes.length != SIGNATURE_LENGTH)
       throw new IllegalArgumentException(String.format("Incorrect signature length, %d expected, %d found", SIGNATURE_LENGTH, signatureBytes.length));
 
     return nativeDeserializeSignature(signatureBytes, checkSignature);
   }
 
-  public static SchnorrSignature deserialize(byte[] signatureBytes) {
+  public static SchnorrSignature deserialize(byte[] signatureBytes) throws SchnorrSignatureException {
     return deserialize(signatureBytes, true);
   }
 

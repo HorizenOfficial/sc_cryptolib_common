@@ -22,20 +22,20 @@ public class SchnorrPublicKey implements AutoCloseable
     this.publicKeyPointer = publicKeyPointer;
   }
 
-  private static native SchnorrPublicKey nativeDeserializePublicKey(byte[] publicKeyBytes, boolean checkPublicKey, boolean compressed);
+  private static native SchnorrPublicKey nativeDeserializePublicKey(byte[] publicKeyBytes, boolean checkPublicKey, boolean compressed) throws SchnorrSignatureException;
 
-  public static SchnorrPublicKey deserialize(byte[] publicKeyBytes, boolean checkPublicKey, boolean compressed) {
+  public static SchnorrPublicKey deserialize(byte[] publicKeyBytes, boolean checkPublicKey, boolean compressed) throws SchnorrSignatureException {
     if (publicKeyBytes.length != PUBLIC_KEY_LENGTH)
       throw new IllegalArgumentException(String.format("Incorrect public key length, %d expected, %d found", PUBLIC_KEY_LENGTH, publicKeyBytes.length));
 
     return nativeDeserializePublicKey(publicKeyBytes, checkPublicKey, compressed);
   }
 
-  public static SchnorrPublicKey deserialize(byte[] publicKeyBytes, boolean checkPublicKey) {
+  public static SchnorrPublicKey deserialize(byte[] publicKeyBytes, boolean checkPublicKey) throws SchnorrSignatureException {
     return deserialize(publicKeyBytes, checkPublicKey, true);
   }
 
-  public static SchnorrPublicKey deserialize(byte[] publicKeyBytes) {
+  public static SchnorrPublicKey deserialize(byte[] publicKeyBytes) throws SchnorrSignatureException {
     return deserialize(publicKeyBytes, true, true);
   }
 
@@ -62,11 +62,11 @@ public class SchnorrPublicKey implements AutoCloseable
     }
   }
 
-  private native boolean nativeVerifySignature(SchnorrSignature signature, FieldElement message); // jni call to Rust impl
+  private native boolean nativeVerifySignature(SchnorrSignature signature, FieldElement message) throws SchnorrSignatureException; // jni call to Rust impl
 
   private native boolean nativeVerifyKey(); // jni call to Rust impl
 
-  public boolean verifySignature(SchnorrSignature signature, FieldElement message) {
+  public boolean verifySignature(SchnorrSignature signature, FieldElement message) throws SchnorrSignatureException {
     if (publicKeyPointer == 0)
       throw new IllegalStateException("Public key was freed.");
 

@@ -17,12 +17,12 @@ public class FieldBasedMerklePath implements AutoCloseable {
         this.merklePathPointer = merklePathPointer;
     }
 
-    private native boolean nativeVerify(int merkleTreeHeight, FieldElement leaf, FieldElement root);
+    private native boolean nativeVerify(int merkleTreeHeight, FieldElement leaf, FieldElement root) throws MerklePathException;
 
     /*
     * Verify the Merkle Path for `leaf` given the `root` of a Merkle Tree with height `merkleTreeHeight`.
     */
-    public boolean verify(int merkleTreeHeight, FieldElement leaf, FieldElement root) {
+    public boolean verify(int merkleTreeHeight, FieldElement leaf, FieldElement root) throws MerklePathException {
         if (merklePathPointer == 0)
             throw new IllegalStateException("MerklePath instance was freed.");
         return nativeVerify(merkleTreeHeight, leaf, root);
@@ -109,13 +109,13 @@ public class FieldBasedMerklePath implements AutoCloseable {
         return nativeSerialize();
     }
 
-    private static native FieldBasedMerklePath nativeDeserialize(byte[] merklePathBytes, boolean semanticChecks);
+    private static native FieldBasedMerklePath nativeDeserialize(byte[] merklePathBytes, boolean semanticChecks)  throws MerklePathException;
 
-    public static FieldBasedMerklePath deserialize(byte[] merklePathBytes, boolean semanticChecks) {
+    public static FieldBasedMerklePath deserialize(byte[] merklePathBytes, boolean semanticChecks) throws MerklePathException {
         return nativeDeserialize(merklePathBytes, semanticChecks);
     }
 
-    public static FieldBasedMerklePath deserialize(byte[] merklePathBytes) {
+    public static FieldBasedMerklePath deserialize(byte[] merklePathBytes) throws MerklePathException {
         return nativeDeserialize(merklePathBytes, true);
     }
 

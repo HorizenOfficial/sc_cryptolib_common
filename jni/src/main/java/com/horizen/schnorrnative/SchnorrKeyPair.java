@@ -27,9 +27,9 @@ public class SchnorrKeyPair implements AutoCloseable {
         return nativeGenerate();
     }
 
-    private native SchnorrSignature nativeSignMessage(FieldElement message);
+    private native SchnorrSignature nativeSignMessage(FieldElement message) throws SchnorrSignatureException;
 
-    public SchnorrSignature signMessage(FieldElement message) {
+    public SchnorrSignature signMessage(FieldElement message) throws SchnorrSignatureException {
         return nativeSignMessage(message);
     }
 
