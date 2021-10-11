@@ -1,9 +1,15 @@
 package com.horizen.librustsidechains;
 
 import org.junit.Test;
+import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 
 public class LibraryTest {
+
+    @BeforeClass
+    public static void onTestsInit() {
+        System.out.println("****************TEST CORRECT PANIC HANDLING****************");
+    }
 
     @Test
     public void testLoad() {
