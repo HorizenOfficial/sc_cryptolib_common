@@ -203,6 +203,22 @@ ffi_export!(
 });
 
 ffi_export!(
+    fn Java_com_horizen_librustsidechains_FieldElement_nativeClone(
+    _env: JNIEnv,
+    _field_element: JObject,
+) -> jobject
+{
+    let fe = {
+        let f =_env.get_field(_field_element, "fieldElementPointer", "J")
+            .expect("Should be able to get field fieldElementPointer_1");
+
+        read_raw_pointer(&_env, f.j().unwrap() as *const FieldElement)
+    };
+
+    return_field_element(&_env, fe.clone())
+});
+
+ffi_export!(
     fn Java_com_horizen_librustsidechains_FieldElement_nativePrintFieldElementBytes(
     _env: JNIEnv,
     _field_element: JObject,

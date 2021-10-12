@@ -54,7 +54,10 @@ public class FieldBasedMerkleTree implements MerkleTree {
     public boolean append(MerkleTreeLeaf input) throws MerkleTreeException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
-        return nativeAppend(input.getLeafAsFieldElement());
+        FieldElement leafFe = input.getLeafAsFieldElement();
+        boolean result = nativeAppend(leafFe);
+        leafFe.freeFieldElement();
+        return result;
     }
 
     private native FieldBasedMerkleTree nativeFinalize() throws MerkleTreeException;
@@ -90,7 +93,10 @@ public class FieldBasedMerkleTree implements MerkleTree {
     public long getLeafIndex(MerkleTreeLeaf leaf) {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
-        return nativeGetLeafIndex(leaf.getLeafAsFieldElement());
+        FieldElement leafFe = leaf.getLeafAsFieldElement();
+        long idx = nativeGetLeafIndex(leaf.getLeafAsFieldElement());
+        leafFe.freeFieldElement();
+        return idx;
     }
 
     @Override
