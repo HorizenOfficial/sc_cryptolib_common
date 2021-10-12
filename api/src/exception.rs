@@ -4,7 +4,7 @@ use std::{error::Error, any::Any};
 pub const JNI_NULL: jobject = std::ptr::null::<jobject>() as jobject;
 
 /// Tries to get meaningful description from panic-error.
-pub(crate) fn any_to_string(any: Box<dyn Any + Send>) -> String {
+pub fn any_to_string(any: Box<dyn Any + Send>) -> String {
     if let Some(s) = any.downcast_ref::<&str>() {
         (*s).to_string()
     } else if let Some(s) = any.downcast_ref::<String>() {
@@ -16,7 +16,7 @@ pub(crate) fn any_to_string(any: Box<dyn Any + Send>) -> String {
     }
 }
 
-pub(crate) fn _throw_inner(env: &JNIEnv, exception: &str, description: &str) {
+pub fn _throw_inner(env: &JNIEnv, exception: &str, description: &str) {
     // Do nothing if there is a pending Java-exception that will be thrown
     // automatically by the JVM when the native method returns.
     if !env.exception_check().unwrap() {
