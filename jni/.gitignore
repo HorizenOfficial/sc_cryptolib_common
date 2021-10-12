@@ -6,3 +6,5 @@ Cargo.lock
 *.iml
 hs_err*
 .project
+.classpath
+.settings
