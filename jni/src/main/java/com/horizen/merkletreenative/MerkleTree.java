@@ -14,7 +14,7 @@ public interface MerkleTree extends AutoCloseable, Serializable {
      * @param input data to append to the tree
      * @return true if operation was successfull, false otherwise.
      */
-    public abstract boolean append(MerkleTreeLeaf input) throws MerkleTreeException;
+    public abstract boolean append(MerkleTreeLeaf input) throws MerkleTreeException, MerkleTreeLeafException;
 
     /*
      * Finalize the tree by computing the root and returns the finalized tree. It is possible
@@ -40,12 +40,12 @@ public interface MerkleTree extends AutoCloseable, Serializable {
     /**
      * Return the index of the leaf in the tree if present, -1 otherwise.
      */
-    public abstract long getLeafIndex(MerkleTreeLeaf leaf);
+    public abstract long getLeafIndex(MerkleTreeLeaf leaf) throws MerkleTreeLeafException;
 
     /**
      * Return true if leaf is present in tree, false otherwise.
      */
-    public abstract boolean isLeafInTree(MerkleTreeLeaf leaf);
+    public abstract boolean isLeafInTree(MerkleTreeLeaf leaf) throws MerkleTreeLeafException;
 
     /*
     * Compute and return the MerklePath from the leaf at `leafIndex` to the root of the tree.
@@ -57,7 +57,7 @@ public interface MerkleTree extends AutoCloseable, Serializable {
     * Compute and return the MerklePath from 'leaf' to the root of the tree.
     * Return NULL if it was not possible to get the MerklePath.
     */
-    public abstract FieldBasedMerklePath getMerklePath(MerkleTreeLeaf leaf) throws MerkleTreeException;
+    public abstract FieldBasedMerklePath getMerklePath(MerkleTreeLeaf leaf) throws MerkleTreeException, MerkleTreeLeafException;
 
     /*
      * Restore the internal state of this instance to its initial one.

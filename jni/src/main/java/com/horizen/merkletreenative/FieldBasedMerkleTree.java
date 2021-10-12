@@ -51,7 +51,7 @@ public class FieldBasedMerkleTree implements MerkleTree {
     private native boolean nativeAppend(FieldElement input) throws MerkleTreeException;
 
     @Override
-    public boolean append(MerkleTreeLeaf input) throws MerkleTreeException {
+    public boolean append(MerkleTreeLeaf input) throws MerkleTreeException, MerkleTreeLeafException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
         FieldElement leafFe = input.getLeafAsFieldElement();
@@ -90,7 +90,7 @@ public class FieldBasedMerkleTree implements MerkleTree {
     private native long nativeGetLeafIndex(FieldElement leaf);
     
     @Override
-    public long getLeafIndex(MerkleTreeLeaf leaf) {
+    public long getLeafIndex(MerkleTreeLeaf leaf) throws MerkleTreeLeafException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
         FieldElement leafFe = leaf.getLeafAsFieldElement();
@@ -100,7 +100,7 @@ public class FieldBasedMerkleTree implements MerkleTree {
     }
 
     @Override
-    public boolean isLeafInTree(MerkleTreeLeaf leaf) {
+    public boolean isLeafInTree(MerkleTreeLeaf leaf) throws MerkleTreeLeafException {
         return getLeafIndex(leaf) != -1;
     }
 
@@ -114,7 +114,7 @@ public class FieldBasedMerkleTree implements MerkleTree {
     }
 
     @Override
-    public FieldBasedMerklePath getMerklePath(MerkleTreeLeaf leaf) throws MerkleTreeException {        
+    public FieldBasedMerklePath getMerklePath(MerkleTreeLeaf leaf) throws MerkleTreeException, MerkleTreeLeafException {        
         long leafIndex = getLeafIndex(leaf);
         if (leafIndex == -1)
             throw new IllegalStateException("Address not found inside tree");
