@@ -1,8 +1,10 @@
 package com.horizen.librustsidechains;
 
+import com.horizen.merkletreenative.MerkleTreeLeaf;
 import java.util.Random;
+import java.lang.Cloneable;
 
-public class FieldElement implements AutoCloseable {
+public class FieldElement implements MerkleTreeLeaf, Cloneable {
 
     public static final int FIELD_ELEMENT_LENGTH;
 
@@ -59,6 +61,18 @@ public class FieldElement implements AutoCloseable {
         return nativeDeserializeFieldElement(fieldElementBytes);
     }
 
+    private native FieldElement nativeClone();
+
+    @Override
+    public FieldElement clone() throws CloneNotSupportedException {
+        if (fieldElementPointer == 0)
+            throw new IllegalStateException("Field element was freed.");
+        FieldElement clone = nativeClone();
+        if (this.fieldElementPointer == clone.fieldElementPointer)
+            throw new CloneNotSupportedException("Field element clone failed");
+        return clone;
+    }
+
     // Declared protected for testing purposes
     protected native void nativePrintFieldElementBytes();
 
@@ -96,5 +110,10 @@ public class FieldElement implements AutoCloseable {
     @Override
     public void close() {
         freeFieldElement();
+    }
+
+    @Override
+    public FieldElement getLeafAsFieldElement() {
+        return this;
     }
 }

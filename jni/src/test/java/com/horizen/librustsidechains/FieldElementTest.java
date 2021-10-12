@@ -47,6 +47,30 @@ public class FieldElementTest {
         }
     }
 
+    @Test
+    public void testFieldElementClone() {
+        try {
+            FieldElement fe = FieldElement.createRandom();
+            FieldElement feClone;
+
+            // Clone fe
+            feClone = fe.clone();
+            
+            // Free original field element
+            fe.freeFieldElement();
+
+            // Check the clone is still usable by calling a function
+            feClone.serializeFieldElement();
+
+            // Free clone
+            feClone.freeFieldElement();
+        } catch (CloneNotSupportedException cnse) {
+            assertTrue("Must be able to clone FieldElement", false);
+        } catch (IllegalStateException ise) {
+            assertTrue("Must be able to use cloned FieldElement after the original has been freed", false);
+        }
+    }
+
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
