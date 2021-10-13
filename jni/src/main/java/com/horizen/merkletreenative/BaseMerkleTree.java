@@ -5,7 +5,7 @@ import com.horizen.librustsidechains.Library;
 
 import java.io.*;
 
-public class FieldBasedMerkleTree implements MerkleTree {
+public class BaseMerkleTree implements MerkleTree {
     
     protected long inMemoryOptimizedMerkleTreePointer;
 
@@ -13,19 +13,19 @@ public class FieldBasedMerkleTree implements MerkleTree {
         Library.load();
     }
 
-    protected FieldBasedMerkleTree(long inMemoryOptimizedMerkleTreePointer) {
+    protected BaseMerkleTree(long inMemoryOptimizedMerkleTreePointer) {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalArgumentException("inMemoryOptimizedMerkleTreePointer must be not null.");
         this.inMemoryOptimizedMerkleTreePointer = inMemoryOptimizedMerkleTreePointer;
     }
 
-    private FieldBasedMerkleTree() {
+    private BaseMerkleTree() {
         this.inMemoryOptimizedMerkleTreePointer = 0;
     }
 
-    private static native FieldBasedMerkleTree nativeInit(int height, long processingStep) throws MerkleTreeException;
+    private static native BaseMerkleTree nativeInit(int height, long processingStep) throws MerkleTreeException;
 
-    public static FieldBasedMerkleTree init(int height, long processingStep) throws MerkleTreeException {
+    public static BaseMerkleTree init(int height, long processingStep) throws MerkleTreeException {
         return nativeInit(height, processingStep);
     }
 
@@ -37,7 +37,7 @@ public class FieldBasedMerkleTree implements MerkleTree {
         out.write(nativeSerialize());
     }
 
-    protected static native FieldBasedMerkleTree nativeDeserialize(byte[] serializedTree) throws MerkleTreeException;
+    protected static native BaseMerkleTree nativeDeserialize(byte[] serializedTree) throws MerkleTreeException;
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         byte[] serialized = in.readAllBytes();
@@ -60,10 +60,10 @@ public class FieldBasedMerkleTree implements MerkleTree {
         return result;
     }
 
-    private native FieldBasedMerkleTree nativeFinalize() throws MerkleTreeException;
+    private native BaseMerkleTree nativeFinalize() throws MerkleTreeException;
 
     @Override
-    public FieldBasedMerkleTree finalizeTree() throws MerkleTreeException {
+    public BaseMerkleTree finalizeTree() throws MerkleTreeException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
         return nativeFinalize();

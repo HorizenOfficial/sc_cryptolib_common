@@ -49,7 +49,7 @@ public class MerkleTreeTest {
     public void testMerkleTrees() throws Exception {
 
         //Get InMemoryOptimizedMerkleTree
-        FieldBasedMerkleTree mht = FieldBasedMerkleTree.init(height, numLeaves);
+        BaseMerkleTree mht = BaseMerkleTree.init(height, numLeaves);
         assertNotNull("Merkle Tree initialization must succeed", mht);
 
         // Must place the leaves at the same positions of the previous trees
@@ -77,7 +77,7 @@ public class MerkleTreeTest {
         assertEquals("InMemoryOptimizedMerkleTree root is not as expected", mhtRoot, expectedRoot);
 
         //It is the same with finalizeTree()
-        FieldBasedMerkleTree mhtCopy = mht.finalizeTree();
+        BaseMerkleTree mhtCopy = mht.finalizeTree();
         assertNotNull("Merkle Tree finalization must succeed", mhtCopy);
 
         FieldElement mhtRootCopy = mhtCopy.root();
@@ -97,14 +97,14 @@ public class MerkleTreeTest {
 
         // Attempt to init an invalid Merkle Tree
         try {
-            FieldBasedMerkleTree.init(100, 1 << 100);
+            BaseMerkleTree.init(100, 1 << 100);
             assertTrue("Must be unable to init a MerkleTree with unsupported height", false);
         } catch (MerkleTreeException mte) {
             assertTrue(mte.getMessage().contains("Unsupported height"));
         }
 
         // Init valid tree
-        FieldBasedMerkleTree mht = FieldBasedMerkleTree.init(height, numLeaves);
+        BaseMerkleTree mht = BaseMerkleTree.init(height, numLeaves);
 
         // Attempt to get root of a non-finalized tree
         try {
@@ -131,7 +131,7 @@ public class MerkleTreeTest {
         byte[] treeBytes;
         FieldElement treeRoot;
 
-        try(FieldBasedMerkleTree tree = FieldBasedMerkleTree.init(height, numLeaves)) {
+        try(BaseMerkleTree tree = BaseMerkleTree.init(height, numLeaves)) {
             for (FieldElement leaf: leaves)
                 assertTrue(tree.append(leaf.clone()));
 
@@ -151,7 +151,7 @@ public class MerkleTreeTest {
         try (
             ByteArrayInputStream bis = new ByteArrayInputStream(treeBytes);
             ObjectInputStream in = new ObjectInputStream(bis);
-            FieldBasedMerkleTree treeDeserialized = (FieldBasedMerkleTree)in.readObject()
+            BaseMerkleTree treeDeserialized = (BaseMerkleTree)in.readObject()
         ) {
             FieldElement expectedRoot = treeDeserialized.root();
             assertNotNull("Must be able to get root from original tree", expectedRoot);
@@ -168,7 +168,7 @@ public class MerkleTreeTest {
     @Test
     public void testMerklePaths() throws Exception {
         List<FieldElement> testLeaves = new ArrayList<>();
-        FieldBasedMerkleTree mht = FieldBasedMerkleTree.init(6, numLeaves);
+        BaseMerkleTree mht = BaseMerkleTree.init(6, numLeaves);
         assertNotNull("Merkle Tree initialization must succeed", mht);
 
         int numLeaves = 64;
@@ -242,7 +242,7 @@ public class MerkleTreeTest {
     public void testMerklePathExceptions() throws Exception {
 
         // Init, finalize and get merkle path of a valid tree
-        FieldBasedMerkleTree mht = FieldBasedMerkleTree.init(height, numLeaves);
+        BaseMerkleTree mht = BaseMerkleTree.init(height, numLeaves);
         mht.finalizeTreeInPlace();
         FieldBasedMerklePath path = mht.getMerklePath(0);
         FieldElement leaf = FieldElement.createFromLong(0L);
@@ -263,7 +263,7 @@ public class MerkleTreeTest {
 
     @Test
     public void testAreRightLeavesEmpty() throws Exception {
-        FieldBasedMerkleTree mht = FieldBasedMerkleTree.init(6, numLeaves);
+        BaseMerkleTree mht = BaseMerkleTree.init(6, numLeaves);
         assertNotNull("Merkle Tree initialization must succeed", mht);
 
         int numLeaves = 64;
@@ -273,7 +273,7 @@ public class MerkleTreeTest {
             FieldElement leaf = FieldElement.createRandom(i);
             assertTrue("Leaf append must be successfull", mht.append(leaf.clone()));
 
-            FieldBasedMerkleTree mhtCopy = mht.finalizeTree();
+            BaseMerkleTree mhtCopy = mht.finalizeTree();
             assertNotNull("Merkle Tree finalization must succeed", mhtCopy);
 
             FieldBasedMerklePath path = mhtCopy.getMerklePath((long)i);
