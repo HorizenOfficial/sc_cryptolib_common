@@ -1065,14 +1065,14 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeInit(
+    fn Java_com_horizen_merkletreenative_BaseMerkleTree_nativeInit(
     _env: JNIEnv,
     _class: JClass,
     _height: jint,
     _processing_step: jlong,
 ) -> jobject
 {
-    // Create new FieldBasedMerkleTree Rust side
+    // Create new BaseMerkleTree Rust side
     new_ginger_mht(
         _height as usize,
         _processing_step as usize
@@ -1083,12 +1083,12 @@ ffi_export!(
             format!("Unable to inizialize MerkleTree: {:?}", e).as_str(),
             JNI_NULL
         ),
-        |mt| return_jobject(&_env, mt, "com/horizen/merkletreenative/FieldBasedMerkleTree").into_inner()
+        |mt| return_jobject(&_env, mt, "com/horizen/merkletreenative/BaseMerkleTree").into_inner()
     )
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeAppend(
+    fn Java_com_horizen_merkletreenative_BaseMerkleTree_nativeAppend(
     _env: JNIEnv,
     _tree: JObject,
     _leaf: JObject,
@@ -1122,7 +1122,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeFinalize(
+    fn Java_com_horizen_merkletreenative_BaseMerkleTree_nativeFinalize(
     _env: JNIEnv,
     _tree: JObject,
 ) -> jobject
@@ -1142,12 +1142,12 @@ ffi_export!(
             format!("Unable to finalize MerkleTree: {:?}", e).as_str(),
             JNI_NULL
         ),
-        |tree_copy| *return_jobject(&_env, tree_copy, "com/horizen/merkletreenative/FieldBasedMerkleTree")
+        |tree_copy| *return_jobject(&_env, tree_copy, "com/horizen/merkletreenative/BaseMerkleTree")
     )
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeFinalizeInPlace(
+    fn Java_com_horizen_merkletreenative_BaseMerkleTree_nativeFinalizeInPlace(
     _env: JNIEnv,
     _tree: JObject,
 ) -> jboolean
@@ -1172,7 +1172,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeRoot(
+    fn Java_com_horizen_merkletreenative_BaseMerkleTree_nativeRoot(
     _env: JNIEnv,
     _tree: JObject,
 ) -> jobject
@@ -1197,7 +1197,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeGetMerklePath(
+    fn Java_com_horizen_merkletreenative_BaseMerkleTree_nativeGetMerklePath(
     _env: JNIEnv,
     _tree: JObject,
     _leaf_index: jlong,
@@ -1223,7 +1223,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeGetLeafIndex(
+    fn Java_com_horizen_merkletreenative_BaseMerkleTree_nativeGetLeafIndex(
     _env: JNIEnv,
     _tree: JObject,
     _leaf: JObject,
@@ -1255,7 +1255,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeSerialize(
+    fn Java_com_horizen_merkletreenative_BaseMerkleTree_nativeSerialize(
     _env: JNIEnv,
     _tree: JObject,
 ) -> jbyteArray
@@ -1269,7 +1269,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeDeserialize(
+    fn Java_com_horizen_merkletreenative_BaseMerkleTree_nativeDeserialize(
     _env: JNIEnv,
     _class: JClass,
     _tree_bytes: jbyteArray,
@@ -1288,12 +1288,12 @@ ffi_export!(
             format!("Unable to deserialize MerkleTree: {:?}", e).as_str(),
             JNI_NULL
         ),
-        |tree| *return_jobject(&_env, tree, "com/horizen/merkletreenative/FieldBasedMerkleTree")
+        |tree| *return_jobject(&_env, tree, "com/horizen/merkletreenative/BaseMerkleTree")
     )
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeReset(
+    fn Java_com_horizen_merkletreenative_BaseMerkleTree_nativeReset(
     _env: JNIEnv,
     _tree: JObject,
 )
@@ -1310,7 +1310,7 @@ ffi_export!(
 });
 
 ffi_export!(
-    fn Java_com_horizen_merkletreenative_FieldBasedMerkleTree_nativeFreeMerkleTree(
+    fn Java_com_horizen_merkletreenative_BaseMerkleTree_nativeFreeMerkleTree(
     _env: JNIEnv,
     _class: JClass,
     _tree: *mut GingerMHT,
