@@ -119,11 +119,11 @@ public class FieldBasedMerklePath implements AutoCloseable {
         return nativeDeserialize(merklePathBytes, true);
     }
 
-    private native void nativeFreeMerklePath(long merklePathPointer);
+    private native void nativeFreeMerklePath();
 
     public void freeMerklePath(){
         if (merklePathPointer != 0) {
-            nativeFreeMerklePath(this.merklePathPointer);
+            nativeFreeMerklePath();
             merklePathPointer = 0;
         }
     }

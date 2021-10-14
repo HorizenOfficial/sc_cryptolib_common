@@ -82,11 +82,11 @@ public class FieldElement implements MerkleTreeLeaf, Cloneable {
         nativePrintFieldElementBytes();
     }
 
-    private static native void nativeFreeFieldElement(long fieldElementPointer);
+    private native void nativeFreeFieldElement();
 
     public void freeFieldElement() {
         if (fieldElementPointer != 0) {
-            nativeFreeFieldElement(this.fieldElementPointer);
+            nativeFreeFieldElement();
             fieldElementPointer = 0;
         }
     }

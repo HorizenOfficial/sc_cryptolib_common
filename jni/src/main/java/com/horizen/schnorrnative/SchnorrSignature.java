@@ -29,7 +29,7 @@ public class SchnorrSignature implements AutoCloseable
 
   private static native SchnorrSignature nativeDeserializeSignature(byte[] signatureBytes, boolean checkSignature) throws SchnorrSignatureException;
 
-  private static native void nativefreeSignature(long signaturePointer);
+  private native void nativefreeSignature();
 
   public static SchnorrSignature deserialize(byte[] signatureBytes, boolean checkSignature) throws SchnorrSignatureException {
     if (signatureBytes.length != SIGNATURE_LENGTH)
@@ -56,10 +56,9 @@ public class SchnorrSignature implements AutoCloseable
     return nativeIsValidSignature();
   }
 
-
   public void freeSignature() {
     if (signaturePointer != 0) {
-      nativefreeSignature(this.signaturePointer);
+      nativefreeSignature();
       signaturePointer = 0;
     }
   }

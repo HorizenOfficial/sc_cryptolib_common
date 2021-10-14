@@ -135,12 +135,12 @@ public class BaseMerkleTree implements MerkleTree {
         nativeReset();
     }
 
-    private native void nativeFreeMerkleTree(long inMemoryOptimizedMerkleTreePointer);
+    private native void nativeFreeMerkleTree();
 
     @Override
     public void freeMerkleTree(){
         if (inMemoryOptimizedMerkleTreePointer != 0) {
-            nativeFreeMerkleTree(this.inMemoryOptimizedMerkleTreePointer);
+            nativeFreeMerkleTree();
             inMemoryOptimizedMerkleTreePointer = 0;
         }
     }
