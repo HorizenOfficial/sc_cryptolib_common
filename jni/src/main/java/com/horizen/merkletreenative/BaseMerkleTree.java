@@ -29,6 +29,10 @@ public class BaseMerkleTree implements MerkleTree {
         return nativeInit(height, processingStep);
     }
 
+    public static BaseMerkleTree init(int height) throws MerkleTreeException {
+        return nativeInit(height, 1 << height);
+    }
+
     protected native byte[] nativeSerialize();
 
     private void writeObject(ObjectOutputStream out) throws IOException {
