@@ -62,7 +62,7 @@ public class FieldElement implements MerkleTreeLeaf, Cloneable {
      */
     public static FieldElement deserialize(byte[] fieldElementBytes) throws FieldElementException {
         if (fieldElementBytes.length > FIELD_ELEMENT_LENGTH)
-            throw new FieldElementException(String.format("Incorrect field element length, %d expected, %d found",
+            throw new FieldElementException(String.format("Field element length exceeded: limit %d , %d found",
                     FIELD_ELEMENT_LENGTH, fieldElementBytes.length));
 
         return nativeDeserializeFieldElement(fieldElementBytes);
