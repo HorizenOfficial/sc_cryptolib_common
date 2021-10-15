@@ -58,9 +58,9 @@ public class BaseMerkleTree implements MerkleTree {
     public void append(MerkleTreeLeaf input) throws MerkleTreeException, MerkleTreeLeafException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
-        try(FieldElement leafFe = input.getLeafAsFieldElement()){
-            nativeAppend(leafFe);
-        }
+        FieldElement leafFe = input.getLeafAsFieldElement();
+        nativeAppend(leafFe);
+        leafFe.freeFieldElement();
     }
 
     private native BaseMerkleTree nativeFinalize() throws MerkleTreeException;
@@ -145,7 +145,7 @@ public class BaseMerkleTree implements MerkleTree {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws MerkleTreeException {
         freeMerkleTree();
     }
 }

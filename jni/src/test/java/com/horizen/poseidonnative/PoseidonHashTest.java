@@ -36,7 +36,6 @@ public class PoseidonHashTest {
             PoseidonHash digest = PoseidonHash.getInstanceConstantLength(hashInput.size())
         )
         {
-            assertNotNull("expectedHash deserialization must not fail", expectedHash);
             for (int i = 0; i < hashInput.size() - 1; i++)
                 digest.update(hashInput.get(i));
 
@@ -87,7 +86,6 @@ public class PoseidonHashTest {
             PoseidonHash digest = PoseidonHash.getInstanceVariableLength(false)
         )
         {
-            assertNotNull("expectedHash deserialization must not fail", expectedHash);
             for (int i = 0; i < hashInput.size() - 1; i++)
                 digest.update(hashInput.get(i));
 
@@ -118,7 +116,6 @@ public class PoseidonHashTest {
             PoseidonHash digest = PoseidonHash.getInstanceVariableLength(true)
         )
         {
-            assertNotNull("expectedHash deserialization must not fail", expectedHash);
             for (int i = 0; i < hashInput.size() - 1; i++)
                 digest.update(hashInput.get(i));
 

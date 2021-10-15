@@ -2,6 +2,7 @@ package com.horizen.librustsidechains;
 
 import com.horizen.merkletreenative.MerkleTreeLeaf;
 import java.util.Random;
+import java.util.*;
 import java.lang.Cloneable;
 
 public class FieldElement implements MerkleTreeLeaf, Cloneable {
@@ -53,9 +54,15 @@ public class FieldElement implements MerkleTreeLeaf, Cloneable {
 
     private static native FieldElement nativeDeserializeFieldElement(byte[] fieldElementBytes) throws FieldElementException;
 
+    /**
+     * Deserialize a FieldElement from "fieldElementBytes"
+     * @param fieldElementBytes bytes of the FieldElement to be deserialized
+     * @return The deserialized FieldElement
+     * @throws FieldElementException If fieldElementBytes.len() > FIELD_ELEMENT_LENGTH or if the bytes represent an invalid FieldElement
+     */
     public static FieldElement deserialize(byte[] fieldElementBytes) throws FieldElementException {
-        if (fieldElementBytes.length != FIELD_ELEMENT_LENGTH)
-            throw new IllegalArgumentException(String.format("Incorrect field element length, %d expected, %d found",
+        if (fieldElementBytes.length > FIELD_ELEMENT_LENGTH)
+            throw new FieldElementException(String.format("Field element length exceeded: limit %d , %d found",
                     FIELD_ELEMENT_LENGTH, fieldElementBytes.length));
 
         return nativeDeserializeFieldElement(fieldElementBytes);
@@ -108,7 +115,7 @@ public class FieldElement implements MerkleTreeLeaf, Cloneable {
     }
 
     @Override
-    public void close() {
+    public void close() throws FieldElementException {
         freeFieldElement();
     }
 

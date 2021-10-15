@@ -50,7 +50,6 @@ public class MerkleTreeTest {
 
         //Get InMemoryOptimizedMerkleTree
         BaseMerkleTree mht = BaseMerkleTree.init(height, numLeaves);
-        assertNotNull("Merkle Tree initialization must succeed", mht);
 
         // Must place the leaves at the same positions of the previous trees
         List<FieldElement> mhtLeaves = new ArrayList<>();
@@ -73,15 +72,12 @@ public class MerkleTreeTest {
 
         //Compute root and assert equality with the expected one
         FieldElement mhtRoot = mht.root();
-        assertNotNull("Root must not be NULL", mhtRoot);
         assertEquals("InMemoryOptimizedMerkleTree root is not as expected", mhtRoot, expectedRoot);
 
         //It is the same with finalizeTree()
         BaseMerkleTree mhtCopy = mht.finalizeTree();
-        assertNotNull("Merkle Tree finalization must succeed", mhtCopy);
 
         FieldElement mhtRootCopy = mhtCopy.root();
-        assertNotNull("Root must not be NULL", mhtRootCopy);
         assertEquals("InMemoryOptimizedMerkleTree copy root is not as expected", mhtRootCopy, expectedRoot);
 
         //Free memory
@@ -137,7 +133,6 @@ public class MerkleTreeTest {
 
             tree.finalizeTreeInPlace();
             treeRoot = tree.root();
-            assertNotNull("Must be able to get root from original tree", treeRoot);
 
             try (
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -154,7 +149,6 @@ public class MerkleTreeTest {
             BaseMerkleTree treeDeserialized = (BaseMerkleTree)in.readObject()
         ) {
             FieldElement expectedRoot = treeDeserialized.root();
-            assertNotNull("Must be able to get root from original tree", expectedRoot);
             assertEquals(expectedRoot, treeRoot);
 
             expectedRoot.freeFieldElement();
@@ -169,7 +163,6 @@ public class MerkleTreeTest {
     public void testMerklePaths() throws Exception {
         List<FieldElement> testLeaves = new ArrayList<>();
         BaseMerkleTree mht = BaseMerkleTree.init(6, numLeaves);
-        assertNotNull("Merkle Tree initialization must succeed", mht);
 
         int numLeaves = 64;
 
@@ -187,13 +180,11 @@ public class MerkleTreeTest {
         //Finalize the tree and get the root
         mht.finalizeTreeInPlace();
         FieldElement mhtRoot = mht.root();
-        assertNotNull("Root must not be NULL", mhtRoot);
 
         for (int i = 0; i < numLeaves; i ++) {
 
             // Get/Verify Merkle Path
             FieldBasedMerklePath path = mht.getMerklePath((long)i);
-            assertNotNull("Path must not be NULL", path);
             assertTrue("Merkle Path must be verified", path.verify(testLeaves.get(i), mhtRoot));
 
             // Serialization/Deserialization test
@@ -264,7 +255,6 @@ public class MerkleTreeTest {
     @Test
     public void testAreRightLeavesEmpty() throws Exception {
         BaseMerkleTree mht = BaseMerkleTree.init(6, numLeaves);
-        assertNotNull("Merkle Tree initialization must succeed", mht);
 
         int numLeaves = 64;
 
@@ -274,10 +264,8 @@ public class MerkleTreeTest {
             mht.append(leaf.clone());
 
             BaseMerkleTree mhtCopy = mht.finalizeTree();
-            assertNotNull("Merkle Tree finalization must succeed", mhtCopy);
 
             FieldBasedMerklePath path = mhtCopy.getMerklePath((long)i);
-            assertNotNull("Path must not be NULL", path);
             assertTrue(path.areRightLeavesEmpty());
 
             leaf.freeFieldElement();
