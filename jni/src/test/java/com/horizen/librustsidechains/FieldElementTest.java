@@ -97,7 +97,7 @@ public class FieldElementTest {
 
             assertFalse("Must be unable to deserialize a FieldElement from a byte array bigger than FIELD_ELEMENT_LENGTH", true);
         } catch (FieldElementException fee) {
-            assertTrue(fee.getMessage().contains("Incorrect field element length"));
+            assertTrue(fee.getMessage().contains("Field element length exceeded"));
         }
 
     }
