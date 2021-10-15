@@ -115,7 +115,7 @@ public class FieldElement implements MerkleTreeLeaf, Cloneable {
     }
 
     @Override
-    public void close() {
+    public void close() throws FieldElementException {
         freeFieldElement();
     }
 

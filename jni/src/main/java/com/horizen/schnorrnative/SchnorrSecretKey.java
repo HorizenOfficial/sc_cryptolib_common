@@ -58,7 +58,7 @@ public class SchnorrSecretKey implements AutoCloseable
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws SchnorrSignatureException {
         freeSecretKey();
     }
 }
