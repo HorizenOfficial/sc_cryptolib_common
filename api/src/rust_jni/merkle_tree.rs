@@ -21,7 +21,7 @@ ffi_export!(
         return JNI_FALSE;
     }
 
-    map_or_throw!(
+    map_to_jboolean_or_throw_exc(
         _env,
         verify_ginger_merkle_path(path, _height as usize, leaf, root),
         "com/horizen/merkletreenative/MerklePathException",
@@ -67,7 +67,7 @@ ffi_export!(
 
     let root = get_root_from_path(path, leaf);
 
-    return_field_element(&_env, root)
+    return_field_element(_env, root)
 });
 
 ffi_export!(
@@ -121,7 +121,7 @@ ffi_export!(
 ) -> jbyteArray
 {
     serialize_from_jobject::<GingerMHTPath>(
-        &_env,
+        _env,
         _path,
         "merklePathPointer",
         None
@@ -137,7 +137,7 @@ ffi_export!(
 ) -> jobject
 {
     deserialize_to_jobject::<GingerMHTPath>(
-        &_env,
+        _env,
         _path_bytes,
         Some(_checked),
         None,
@@ -165,7 +165,7 @@ ffi_export!(
 ) -> jobject
 {
     // Create new BaseMerkleTree Rust side
-    map_or_throw!(
+    map_to_jobject_or_throw_exc(
         _env,
         new_ginger_mht(_height as usize, _processing_step as usize),
         "com/horizen/merkletreenative/BaseMerkleTree",
@@ -179,13 +179,13 @@ ffi_export!(
     _env: JNIEnv,
     _tree: JObject,
     _leaf: JObject,
-) -> jboolean
+)
 {
     let leaf = parse_rust_struct_from_jobject::<FieldElement>(&_env, _leaf, "fieldElementPointer");
 
     let tree = parse_mut_rust_struct_from_jobject::<GingerMHT>(&_env, _tree, "inMemoryOptimizedMerkleTreePointer");
 
-    map_or_throw!(
+    ok_or_throw_exc!(
         _env,
         append_leaf_to_ginger_mht(tree, leaf),
         "com/horizen/merkletreenative/MerkleTreeException",
@@ -201,7 +201,7 @@ ffi_export!(
 {
     let tree = parse_rust_struct_from_jobject::<GingerMHT>(&_env, _tree, "inMemoryOptimizedMerkleTreePointer");
 
-    map_or_throw!(
+    map_to_jobject_or_throw_exc(
         _env,
         finalize_ginger_mht(tree),
         "com/horizen/merkletreenative/BaseMerkleTree",
@@ -214,11 +214,11 @@ ffi_export!(
     fn Java_com_horizen_merkletreenative_BaseMerkleTree_nativeFinalizeInPlace(
     _env: JNIEnv,
     _tree: JObject,
-) -> jboolean
+)
 {
     let tree = parse_mut_rust_struct_from_jobject::<GingerMHT>(&_env, _tree, "inMemoryOptimizedMerkleTreePointer");
 
-    map_or_throw!(
+    ok_or_throw_exc!(
         _env,
         finalize_ginger_mht_in_place(tree),
         "com/horizen/merkletreenative/MerkleTreeException",
@@ -234,7 +234,7 @@ ffi_export!(
 {
     let tree = parse_rust_struct_from_jobject::<GingerMHT>(&_env, _tree, "inMemoryOptimizedMerkleTreePointer");
     
-    map_or_throw!(
+    map_to_jobject_or_throw_exc(
         _env,
         get_ginger_mht_root(tree),
         "com/horizen/librustsidechains/FieldElement",
@@ -252,7 +252,7 @@ ffi_export!(
 {
     let tree = parse_rust_struct_from_jobject::<GingerMHT>(&_env, _tree, "inMemoryOptimizedMerkleTreePointer");
 
-    map_or_throw!(
+    map_to_jobject_or_throw_exc(
         _env,
         get_ginger_mht_path(tree, _leaf_index as u64),
         "com/horizen/merkletreenative/FieldBasedMerklePath",
@@ -286,7 +286,7 @@ ffi_export!(
 ) -> jbyteArray
 {
     serialize_from_jobject::<GingerMHT>(
-        &_env,
+        _env,
         _tree,
         "inMemoryOptimizedMerkleTreePointer",
         None
@@ -306,7 +306,7 @@ ffi_export!(
     let obj_bytes = _env.convert_byte_array(_tree_bytes)
         .expect("Cannot read tree bytes.");
 
-    map_or_throw!(
+    map_to_jobject_or_throw_exc(
         _env,
         <GingerMHT as CanonicalDeserialize>::deserialize(obj_bytes.as_slice()),
         "com/horizen/merkletreenative/BaseMerkleTree",

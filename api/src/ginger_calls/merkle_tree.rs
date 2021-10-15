@@ -4,18 +4,18 @@ pub fn new_ginger_mht(height: usize, processing_step: usize) -> Result<GingerMHT
     GingerMHT::init(height, processing_step)
 }
 
-pub fn append_leaf_to_ginger_mht(tree: &mut GingerMHT, leaf: &FieldElement) -> Result<bool, Error> {
+pub fn append_leaf_to_ginger_mht(tree: &mut GingerMHT, leaf: &FieldElement) -> Result<(), Error> {
     let _ = tree.append(*leaf)?;
-    Ok(true)
+    Ok(())
 }
 
 pub fn finalize_ginger_mht(tree: &GingerMHT) -> Result<GingerMHT, Error> {
     tree.finalize()
 }
 
-pub fn finalize_ginger_mht_in_place(tree: &mut GingerMHT) -> Result<bool, Error>{
+pub fn finalize_ginger_mht_in_place(tree: &mut GingerMHT) -> Result<(), Error>{
     tree.finalize_in_place()?;
-    Ok(true)
+    Ok(())
 }
 
 pub fn get_ginger_mht_root(tree: &GingerMHT) -> Result<FieldElement, Error> {

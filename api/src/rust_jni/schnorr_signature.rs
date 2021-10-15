@@ -16,7 +16,7 @@ ffi_export!(
     _compressed: jboolean,
 ) -> jbyteArray
 {
-    serialize_from_jobject::<SchnorrPk>(&_env, _schnorr_public_key, "publicKeyPointer", Some(_compressed))
+    serialize_from_jobject::<SchnorrPk>(_env, _schnorr_public_key, "publicKeyPointer", Some(_compressed))
 });
 
 ffi_export!(
@@ -29,7 +29,7 @@ ffi_export!(
 ) -> jobject
 {
     deserialize_to_jobject::<SchnorrPk>(
-        &_env,
+        _env,
         _public_key_bytes,
         Some(_check_public_key),
         Some(_compressed),
@@ -61,7 +61,7 @@ ffi_export!(
 ) -> jbyteArray
 {
     serialize_from_jobject::<SchnorrSk>(
-        &_env,
+        _env,
         _schnorr_secret_key,
         "secretKeyPointer",
         None
@@ -76,7 +76,7 @@ ffi_export!(
     ) -> jobject
     {
         deserialize_to_jobject::<SchnorrSk>(
-            &_env,
+            _env,
             _secret_key_bytes,
             None,
             None,
@@ -109,7 +109,7 @@ ffi_export!(
 ) -> jbyteArray
 {
     serialize_from_jobject::<SchnorrSig>(
-        &_env,
+        _env,
         _schnorr_sig,
         "signaturePointer",
         None
@@ -125,7 +125,7 @@ ffi_export!(
 ) -> jobject
 {
     deserialize_to_jobject::<SchnorrSig>(
-        &_env,
+        _env,
         _sig_bytes,
         Some(_check_sig),
         None,
@@ -213,7 +213,7 @@ ffi_export!(
     let message = parse_rust_struct_from_jobject::<FieldElement>(&_env, _message, "fieldElementPointer");
 
     //Sign message and return opaque pointer to sig
-    map_or_throw!(
+    map_to_jobject_or_throw_exc(
         _env,
         schnorr_sign(message, secret_key, public_key),
         "com/horizen/schnorrnative/SchnorrSignature",
@@ -269,7 +269,7 @@ ffi_export!(
     let signature = parse_rust_struct_from_jobject::<SchnorrSig>(&_env, _signature, "signaturePointer");
 
     //Verify sig
-    map_or_throw!(
+    map_to_jboolean_or_throw_exc(
         _env,
         schnorr_verify_signature(message, public_key, signature),
         "com/horizen/schnorrnative/SchnorrSignatureException",

@@ -14,7 +14,7 @@ ffi_export!(
 ) -> jbyteArray
 {
     serialize_from_jobject::<FieldElement>(
-        &_env,
+        _env,
         _field_element,
         "fieldElementPointer",
         None
@@ -29,7 +29,7 @@ ffi_export!(
 ) -> jobject
 {
     deserialize_to_jobject::<FieldElement>(
-        &_env,
+        _env,
         _field_element_bytes,
         None,
         None,
@@ -52,7 +52,7 @@ ffi_export!(
     //Create random field element
     let fe = get_random_field_element(_seed as u64);
 
-    return_field_element(&_env, fe)
+    return_field_element(_env, fe)
 });
 
 ffi_export!(
@@ -69,7 +69,7 @@ ffi_export!(
     //Create field element from _long
     let fe = FieldElement::from(_long as u64);
 
-    return_field_element(&_env, fe)
+    return_field_element(_env, fe)
 });
 
 ffi_export!(
@@ -79,7 +79,7 @@ ffi_export!(
 ) -> jobject
 {
     let fe = parse_rust_struct_from_jobject::<FieldElement>(&_env, _field_element, "fieldElementPointer");
-    return_field_element(&_env, fe.clone())
+    return_field_element(_env, fe.clone())
 });
 
 ffi_export!(

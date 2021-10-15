@@ -52,16 +52,15 @@ public class BaseMerkleTree implements MerkleTree {
         }
     }
 
-    private native boolean nativeAppend(FieldElement input) throws MerkleTreeException;
+    private native void nativeAppend(FieldElement input) throws MerkleTreeException;
 
     @Override
-    public boolean append(MerkleTreeLeaf input) throws MerkleTreeException, MerkleTreeLeafException {
+    public void append(MerkleTreeLeaf input) throws MerkleTreeException, MerkleTreeLeafException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
-        FieldElement leafFe = input.getLeafAsFieldElement();
-        boolean result = nativeAppend(leafFe);
-        leafFe.freeFieldElement();
-        return result;
+        try(FieldElement leafFe = input.getLeafAsFieldElement()){
+            nativeAppend(leafFe);
+        }
     }
 
     private native BaseMerkleTree nativeFinalize() throws MerkleTreeException;
@@ -73,13 +72,13 @@ public class BaseMerkleTree implements MerkleTree {
         return nativeFinalize();
     }
 
-    private native boolean nativeFinalizeInPlace() throws MerkleTreeException;
+    private native void nativeFinalizeInPlace() throws MerkleTreeException;
 
     @Override
-    public boolean finalizeTreeInPlace() throws MerkleTreeException {
+    public void finalizeTreeInPlace() throws MerkleTreeException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
-        return nativeFinalizeInPlace();
+        nativeFinalizeInPlace();
     }
 
     private native FieldElement nativeRoot() throws MerkleTreeException;

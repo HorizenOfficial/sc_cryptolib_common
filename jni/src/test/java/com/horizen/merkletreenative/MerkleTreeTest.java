@@ -66,10 +66,10 @@ public class MerkleTreeTest {
 
         //Append all the leaves to mht
         for (FieldElement leaf: mhtLeaves)
-            assertTrue("Leaf append must be successfull", mht.append(leaf.clone()));
+            mht.append(leaf.clone());
 
         //Finalize the tree
-        assertTrue("Merkle Tree finalization must succeed", mht.finalizeTreeInPlace());
+        mht.finalizeTreeInPlace();
 
         //Compute root and assert equality with the expected one
         FieldElement mhtRoot = mht.root();
@@ -133,9 +133,9 @@ public class MerkleTreeTest {
 
         try(BaseMerkleTree tree = BaseMerkleTree.init(height, numLeaves)) {
             for (FieldElement leaf: leaves)
-                assertTrue(tree.append(leaf.clone()));
+                tree.append(leaf.clone());
 
-            assertTrue("Merkle Tree finalization must succeed", tree.finalizeTreeInPlace());
+            tree.finalizeTreeInPlace();
             treeRoot = tree.root();
             assertNotNull("Must be able to get root from original tree", treeRoot);
 
@@ -177,7 +177,7 @@ public class MerkleTreeTest {
         for (int i = 0; i < numLeaves/2; i ++) {
             FieldElement leaf = FieldElement.createRandom(i);
             testLeaves.add(leaf);
-            assertTrue("Leaf append must be successfull", mht.append(leaf.clone()));
+            mht.append(leaf.clone());
         }
         for (int i = numLeaves/2; i < numLeaves; i ++) {
             FieldElement leaf = FieldElement.createFromLong(0L);
@@ -185,7 +185,7 @@ public class MerkleTreeTest {
         }
 
         //Finalize the tree and get the root
-        assertTrue("Merkle Tree finalization must succeed", mht.finalizeTreeInPlace());
+        mht.finalizeTreeInPlace();
         FieldElement mhtRoot = mht.root();
         assertNotNull("Root must not be NULL", mhtRoot);
 
@@ -271,7 +271,7 @@ public class MerkleTreeTest {
         // Generate random leaves
         for (int i = 0; i < numLeaves; i ++) {
             FieldElement leaf = FieldElement.createRandom(i);
-            assertTrue("Leaf append must be successfull", mht.append(leaf.clone()));
+            mht.append(leaf.clone());
 
             BaseMerkleTree mhtCopy = mht.finalizeTree();
             assertNotNull("Merkle Tree finalization must succeed", mhtCopy);

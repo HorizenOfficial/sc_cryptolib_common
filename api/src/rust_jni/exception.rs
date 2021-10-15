@@ -54,27 +54,16 @@ macro_rules! throw_and_exit {
     };
 }
 
+/// Given a type Result<(), E> throw exception if Err() otherwise do nothing
 #[macro_export]
-/// Map a type Result<T, E> to a jobject/jboolean if Ok(),
-/// otherwise throw exception and return default.
-macro_rules! map_or_throw {
-
-    // Return type: jobject
-    ($env:expr, $result: expr, $obj_path: expr, $exception:expr, $description:expr) => {{
-        ($result).map_or_else(
-            |e| throw!(&$env, $exception, format!("{:?}: {:?}", $description, e).as_str(), JNI_NULL),
-            |ret| *return_jobject(&$env, ret, $obj_path)
+macro_rules! ok_or_throw_exc {
+    ($env:expr, $result: expr, $exception:expr, $description:expr) => {
+        ($result).unwrap_or_else(
+            |e| throw!(&$env, $exception, format!("{:?}: {:?}", $description, e).as_str()),
         )
-    }};
-
-    // Return type: jboolean
-    ($env:expr, $result:expr, $exception:expr, $description:expr) => {{
-        ($result).map_or_else(
-            |e| throw!(&$env, $exception, format!("{:?}: {:?}", $description, e).as_str(), JNI_FALSE),
-            |ret| if ret { JNI_TRUE } else { JNI_FALSE }
-        )
-    }};
+    };
 }
+
 
 /// Transform a function into an implementation of a Java side native function.
 /// Requirements:

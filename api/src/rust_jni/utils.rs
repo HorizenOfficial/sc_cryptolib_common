@@ -3,7 +3,7 @@ use algebra::{
     serialize::*, SemanticallyValid
 };
 use crate::ginger_calls::serialization::*;
-use std::any::type_name;
+use std::{any::type_name, fmt::Debug};
 
 pub fn read_raw_pointer<'a, T>(env: &JNIEnv, input: *const T) -> &'a T {
     if input.is_null() {
@@ -106,8 +106,62 @@ pub fn return_jobject<'a, T: Sized>(_env: &'a JNIEnv, obj: T, class_path: &str) 
         .expect("Should be able to create new jobject")
 }
 
+/// Map a Result<T, E> to a jobject if Ok(), otherwise throw exception and return default JNI_NULL.
+pub fn map_to_jobject_or_throw_exc<'a, T: Sized, E: Debug>(
+    env: JNIEnv,
+    res: Result<T, E>,
+    class_path: &str,
+    exception_path: &str,
+    description: &str
+) -> jobject
+{
+    res.map_or_else(
+        |e| throw!(&env, exception_path, format!("{:?}: {:?}", description, e).as_str(), JNI_NULL),
+        |ret| return_jobject(&env, ret, class_path).into_inner()
+    )
+}
+
+/// Map a type Result<bool, E> to a jboolean set to JNI_TRUE if Ok(true), JNI_FALSE if Ok(false)
+/// otherwise throw exception and return default JNI_FALSE.
+pub fn map_to_jboolean_or_throw_exc<'a, E: Debug>(
+    env: JNIEnv,
+    res: Result<bool, E>,
+    exception_path: &str,
+    description: &str
+) -> jboolean
+{
+    res.map_or_else(
+        |e| throw!(&env, exception_path, format!("{:?}: {:?}", description, e).as_str(), JNI_FALSE),
+        |ret| if ret { JNI_TRUE } else { JNI_FALSE }
+    )
+}
+
+pub fn map_to_jbytearray_or_throw_exc<'a, T: CanonicalSerialize + SemanticallyValid, E: Debug>(
+    env: JNIEnv,
+    res: Result<T, E>,
+    compressed: Option<bool>,
+    result_name: &str,
+    exception_path: &str,
+    description: &str
+) -> jbyteArray
+{
+    res.map_or_else(
+        |e| throw!(&env, exception_path, format!("{:?}: {:?}", description, e).as_str(), JNI_NULL),
+        |ret| {
+
+            //Serialize ret
+            let ret_bytes = serialize_to_buffer(&ret, compressed)
+                .expect(format!("Should be able to write {:?} into bytes", result_name).as_str());
+
+            //Return jbyteArray
+            env.byte_array_from_slice(ret_bytes.as_ref())
+                .expect("Should be able to convert Rust slice into jbytearray")
+        }
+    )
+}
+
 pub fn deserialize_to_jobject<T: CanonicalDeserialize + SemanticallyValid>(
-    _env: &JNIEnv,
+    _env: JNIEnv,
     obj_bytes: jbyteArray,
     checked: Option<jboolean>, // Can be none for types with trivial checks or without themn
     compressed: Option<jboolean>, // Can be none for uncompressable types
@@ -118,7 +172,7 @@ pub fn deserialize_to_jobject<T: CanonicalDeserialize + SemanticallyValid>(
     let obj_bytes = _env.convert_byte_array(obj_bytes)
         .expect("Cannot read bytes.");
     
-    map_or_throw!(
+    map_to_jobject_or_throw_exc(
         _env,
         deserialize_from_buffer::<T>(
             obj_bytes.as_slice(),
@@ -131,15 +185,15 @@ pub fn deserialize_to_jobject<T: CanonicalDeserialize + SemanticallyValid>(
     )
 }
 pub fn serialize_from_jobject<T: CanonicalSerialize>(
-    _env: &JNIEnv,
+    _env: JNIEnv,
     obj: JObject,
     ptr_name: &str,
     compressed: Option<jboolean>, // Can be none for uncompressable types
 ) -> jbyteArray
 {
     let obj_bytes = serialize_from_raw_pointer(
-        _env,
-        parse_long_from_jobject(_env, obj, ptr_name) as *const T,
+        &_env,
+        parse_long_from_jobject(&_env, obj, ptr_name) as *const T,
         compressed.map(|jni_bool| jni_bool == JNI_TRUE)
     );
 
@@ -147,8 +201,8 @@ pub fn serialize_from_jobject<T: CanonicalSerialize>(
         .expect("Cannot write object.")
 }
 
-pub fn return_field_element(_env: &JNIEnv, fe: FieldElement) -> jobject
+pub fn return_field_element(_env: JNIEnv, fe: FieldElement) -> jobject
 {
-    return_jobject(_env, fe, "com/horizen/librustsidechains/FieldElement")
+    return_jobject(&_env, fe, "com/horizen/librustsidechains/FieldElement")
         .into_inner()
 }

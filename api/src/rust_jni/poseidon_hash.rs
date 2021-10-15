@@ -100,7 +100,7 @@ ffi_export!(
     let digest = parse_rust_struct_from_jobject::<FieldHash>(&_env, _h, "poseidonHashPointer");
 
     //Get digest
-    map_or_throw!(
+    map_to_jobject_or_throw_exc(
         _env,
         finalize_poseidon_hash(digest),
         "com/horizen/librustsidechains/FieldElement",
