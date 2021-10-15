@@ -1,19 +1,19 @@
 use {
     algebra::curves::bn_382::g::{
-        Affine as Bn382DualAffine, Projective as Bn382DualProjective, Bn382GParameters as Bn382DualParameters
+        Affine as Bn382DualAffine, Bn382GParameters as Bn382DualParameters,
+        Projective as Bn382DualProjective,
     },
-    primitives::crh::poseidon::parameters::bn382::{BN382FrPoseidonHash, BN382FrBatchPoseidonHash},
+    primitives::crh::poseidon::parameters::bn382::{BN382FrBatchPoseidonHash, BN382FrPoseidonHash},
     primitives::merkle_tree::bn382::BN382_MHT_POSEIDON_PARAMETERS,
 };
 
-use algebra::{Field, FpParameters, ModelParameters, PrimeField,};
+use algebra::{Field, FpParameters, ModelParameters, PrimeField};
 use primitives::{
     merkle_tree::*,
-    signature::{
-    schnorr::field_based_schnorr::{
-        FieldBasedSchnorrSignatureScheme, FieldBasedSchnorrSignature,
+    signature::schnorr::field_based_schnorr::{
+        FieldBasedSchnorrSignature, FieldBasedSchnorrSignatureScheme,
     },
-}};
+};
 
 pub type Error = Box<dyn std::error::Error>;
 

@@ -24,12 +24,12 @@ pub(crate) fn into_i8(v: Vec<u8>) -> Vec<i8> {
 mod test {
     use super::*;
     use algebra::{Field, UniformRand};
-    use rand::rngs::OsRng;
     use field_element::*;
+    use rand::rngs::OsRng;
     use serialization::*;
 
     #[test]
-    fn sample_calls_schnorr_sig_prove_verify(){
+    fn sample_calls_schnorr_sig_prove_verify() {
         use schnorr_signature::*;
 
         let mut rng = OsRng;
@@ -46,7 +46,8 @@ mod test {
         //Serialize/deserialize pk
         let pk_serialized = serialize_to_buffer(&pk, Some(true)).unwrap();
         assert_eq!(pk_serialized.len(), SCHNORR_PK_SIZE);
-        let pk_deserialized: SchnorrPk = deserialize_from_buffer(&pk_serialized, Some(true), Some(true)).unwrap();
+        let pk_deserialized: SchnorrPk =
+            deserialize_from_buffer(&pk_serialized, Some(true), Some(true)).unwrap();
         assert_eq!(pk, pk_deserialized);
 
         //Serialize/deserialize sk
@@ -85,12 +86,12 @@ mod test {
 
         // Add leaves
         let mut mht_leaves = Vec::with_capacity(leaves_num);
-        for i in 0..leaves_num/2 {
+        for i in 0..leaves_num / 2 {
             let leaf = get_random_field_element(i as u64);
             mht_leaves.push(leaf);
             append_leaf_to_ginger_mht(&mut mht, &leaf).unwrap();
         }
-        for _ in leaves_num/2..leaves_num {
+        for _ in leaves_num / 2..leaves_num {
             mht_leaves.push(FieldElement::zero());
         }
 
@@ -99,24 +100,28 @@ mod test {
         let mht_root = get_ginger_mht_root(&mht).expect("Tree must've been finalized");
 
         for i in 0..leaves_num {
-
             //Create and verify merkle paths for each leaf
             let path = get_ginger_mht_path(&mht, i as u64).unwrap();
-            assert!(verify_ginger_merkle_path_without_length_check(&path,&mht_leaves[i], &mht_root));
+            assert!(verify_ginger_merkle_path_without_length_check(
+                &path,
+                &mht_leaves[i],
+                &mht_root
+            ));
 
             // Check leaf index is the correct one
             assert_eq!(i as u64, get_leaf_index_from_path(&path));
 
-            if i == 0 { // leftmost check
+            if i == 0 {
+                // leftmost check
                 assert!(is_path_leftmost(&path));
-            }
-            else if i == (leaves_num / 2) - 1 { // non-empty rightmost check
+            } else if i == (leaves_num / 2) - 1 {
+                // non-empty rightmost check
                 assert!(are_right_leaves_empty(&path));
-            }
-            else if i == leaves_num - 1 { //rightmost check
+            } else if i == leaves_num - 1 {
+                //rightmost check
                 assert!(is_path_rightmost(&path));
-            }
-            else { // Other cases check
+            } else {
+                // Other cases check
                 assert!(!is_path_leftmost(&path));
                 assert!(!is_path_rightmost(&path));
 
@@ -127,13 +132,14 @@ mod test {
 
             // Serialization/deserialization test
             let path_serialized = serialize_to_buffer(&path, None).unwrap();
-            let path_deserialized: GingerMHTPath = deserialize_from_buffer(&path_serialized, Some(true), None).unwrap();
+            let path_deserialized: GingerMHTPath =
+                deserialize_from_buffer(&path_serialized, Some(true), None).unwrap();
             assert_eq!(path, path_deserialized);
         }
     }
 
     #[test]
-    fn sample_calls_poseidon_hash(){
+    fn sample_calls_poseidon_hash() {
         use poseidon_hash::*;
 
         let mut rng = OsRng;

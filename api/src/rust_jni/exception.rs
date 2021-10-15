@@ -1,5 +1,5 @@
 use super::*;
-use std::{error::Error, any::Any};
+use std::{any::Any, error::Error};
 
 pub const JNI_NULL: jobject = std::ptr::null::<jobject>() as jobject;
 
@@ -20,7 +20,8 @@ pub fn _throw_inner(env: &JNIEnv, exception: &str, description: &str) {
     // Do nothing if there is a pending Java-exception that will be thrown
     // automatically by the JVM when the native method returns.
     if !env.exception_check().unwrap() {
-        let exception_class = env.find_class(exception)
+        let exception_class = env
+            .find_class(exception)
             .expect(&format!("Unable to find {} class", exception));
 
         env.throw_new(exception_class, description)
@@ -34,12 +35,12 @@ pub fn _throw_inner(env: &JNIEnv, exception: &str, description: &str) {
 macro_rules! throw {
     ($env:expr, $exception:expr, $description:expr, $default: expr) => {{
         _throw_inner($env, $exception, $description);
-        return $default
+        return $default;
     }};
 
     ($env:expr, $exception:expr, $description:expr) => {{
         _throw_inner($env, $exception, $description);
-        return
+        return;
     }};
 }
 
@@ -50,7 +51,10 @@ macro_rules! throw {
 macro_rules! throw_and_exit {
     ($env:expr, $exception:expr, $description:expr) => {
         _throw_inner($env, $exception, $description);
-        panic!("Thrown exception: {} for reason: {}", $exception, $description)
+        panic!(
+            "Thrown exception: {} for reason: {}",
+            $exception, $description
+        )
     };
 }
 
@@ -58,12 +62,15 @@ macro_rules! throw_and_exit {
 #[macro_export]
 macro_rules! ok_or_throw_exc {
     ($env:expr, $result: expr, $exception:expr, $description:expr) => {
-        ($result).unwrap_or_else(
-            |e| throw!(&$env, $exception, format!("{:?}: {:?}", $description, e).as_str()),
-        )
+        ($result).unwrap_or_else(|e| {
+            throw!(
+                &$env,
+                $exception,
+                format!("{:?}: {:?}", $description, e).as_str()
+            )
+        })
     };
 }
-
 
 /// Transform a function into an implementation of a Java side native function.
 /// Requirements:

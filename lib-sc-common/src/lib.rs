@@ -28,7 +28,7 @@
     unused_must_use,
     unused_mut,
     unused_unsafe,
-    private_in_public,
+    private_in_public
 )]
 
 pub use common_api::*;

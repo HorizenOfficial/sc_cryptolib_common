@@ -1,8 +1,8 @@
 use super::*;
 use jni::{
     objects::{JClass, JObject, JValue},
-    sys::{jbyteArray, jint, jboolean, jlong, jobject, jobjectArray, JNI_TRUE, JNI_FALSE},
-    JNIEnv
+    sys::{jboolean, jbyteArray, jint, jlong, jobject, jobjectArray, JNI_FALSE, JNI_TRUE},
+    JNIEnv,
 };
 
 pub mod utils;
@@ -18,7 +18,9 @@ pub mod schnorr_signature;
 
 ffi_export!(
     fn Java_com_horizen_librustsidechains_Library_nativePanickingFunction(
-    _env: JNIEnv,
-    _class: JClass,
-) { panic!("Oh no ! A panic occured !") });
-
+        _env: JNIEnv,
+        _class: JClass,
+    ) {
+        panic!("Oh no ! A panic occured !")
+    }
+);

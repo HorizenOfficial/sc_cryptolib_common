@@ -1,14 +1,14 @@
-use std::{fs::File, io::{BufReader, BufWriter, Cursor, Error as IoError, ErrorKind}};
-use algebra::{
-    serialize::*, SemanticallyValid
+use algebra::{serialize::*, SemanticallyValid};
+use std::{
+    fs::File,
+    io::{BufReader, BufWriter, Cursor, Error as IoError, ErrorKind},
 };
 
 fn _deserialize_inner<R: Read, T: CanonicalDeserialize + SemanticallyValid>(
-    reader:                 R,
-    semantic_checks:        Option<bool>,
-    compressed:             Option<bool>,
-) ->  Result<T, SerializationError>
-{
+    reader: R,
+    semantic_checks: Option<bool>,
+    compressed: Option<bool>,
+) -> Result<T, SerializationError> {
     let semantic_checks = semantic_checks.unwrap_or(false);
     let compressed = compressed.unwrap_or(false);
 
@@ -19,7 +19,7 @@ fn _deserialize_inner<R: Read, T: CanonicalDeserialize + SemanticallyValid>(
     }?;
 
     if semantic_checks && !t.is_valid() {
-        return Err(SerializationError::InvalidData)
+        return Err(SerializationError::InvalidData);
     }
 
     Ok(t)
@@ -31,11 +31,10 @@ fn _deserialize_inner<R: Read, T: CanonicalDeserialize + SemanticallyValid>(
 /// `semantic_checks` can be optional, due to some types having no checks to be performed,
 /// or trivial checks already performed a priori during serialization.
 pub fn deserialize_from_buffer<T: CanonicalDeserialize + SemanticallyValid>(
-    buffer:                 &[u8],
-    semantic_checks:        Option<bool>,
-    compressed:             Option<bool>,
-) ->  Result<T, SerializationError>
-{
+    buffer: &[u8],
+    semantic_checks: Option<bool>,
+    compressed: Option<bool>,
+) -> Result<T, SerializationError> {
     _deserialize_inner(buffer, semantic_checks, compressed)
 }
 
@@ -46,11 +45,10 @@ pub fn deserialize_from_buffer<T: CanonicalDeserialize + SemanticallyValid>(
 /// or trivial checks already performed a priori during serialization.
 /// If there are still bytes to read in `buffer` after deserializing T, this function returns an error.
 pub fn deserialize_from_buffer_strict<T: CanonicalDeserialize + SemanticallyValid>(
-    buffer:                 &[u8],
-    semantic_checks:        Option<bool>,
-    compressed:             Option<bool>,
-) ->  Result<T, SerializationError>
-{
+    buffer: &[u8],
+    semantic_checks: Option<bool>,
+    compressed: Option<bool>,
+) -> Result<T, SerializationError> {
     // Wrap buffer in a cursor
     let buff_len = buffer.len() as u64;
     let mut buffer = Cursor::new(buffer);
@@ -62,7 +60,10 @@ pub fn deserialize_from_buffer_strict<T: CanonicalDeserialize + SemanticallyVali
     if position != buff_len {
         return Err(SerializationError::IoError(IoError::new(
             ErrorKind::InvalidInput,
-            format!("Oversized data. Read {} but buff len is {}", position, buff_len)
+            format!(
+                "Oversized data. Read {} but buff len is {}",
+                position, buff_len
+            ),
         )));
     }
 
@@ -73,10 +74,9 @@ pub fn deserialize_from_buffer_strict<T: CanonicalDeserialize + SemanticallyVali
 /// depending on the value of `compressed` flag.
 /// `compressed` can be optional, due to some types being uncompressable.
 pub fn serialize_to_buffer<T: CanonicalSerialize>(
-    to_write:               &T,
-    compressed:             Option<bool>,
-) ->  Result<Vec<u8>, SerializationError>
-{
+    to_write: &T,
+    compressed: Option<bool>,
+) -> Result<Vec<u8>, SerializationError> {
     let compressed = compressed.unwrap_or(false);
 
     let mut buffer;
@@ -99,13 +99,11 @@ pub const DEFAULT_BUF_SIZE: usize = 1 << 20;
 /// `semantic_checks` can be optional, due to some types having no checks to be performed,
 /// or trivial checks already performed a priori during serialization.
 pub fn read_from_file<T: CanonicalDeserialize + SemanticallyValid>(
-    file_path:              &str,
-    semantic_checks:        Option<bool>,
-    compressed:             Option<bool>,
-) ->  Result<T, SerializationError>
-{
-    let fs = File::open(file_path)
-        .map_err(|e| SerializationError::IoError(e))?;
+    file_path: &str,
+    semantic_checks: Option<bool>,
+    compressed: Option<bool>,
+) -> Result<T, SerializationError> {
+    let fs = File::open(file_path).map_err(|e| SerializationError::IoError(e))?;
     let reader = BufReader::with_capacity(DEFAULT_BUF_SIZE, fs);
 
     _deserialize_inner(reader, semantic_checks, compressed)
@@ -115,15 +113,13 @@ pub fn read_from_file<T: CanonicalDeserialize + SemanticallyValid>(
 /// depending on the value of `compressed` flag.
 /// `compressed` can be optional, due to some types being uncompressable.
 pub fn write_to_file<T: CanonicalSerialize>(
-    to_write:               &T,
-    file_path:              &str,
-    compressed:             Option<bool>,
-) ->  Result<(), SerializationError>
-{
+    to_write: &T,
+    file_path: &str,
+    compressed: Option<bool>,
+) -> Result<(), SerializationError> {
     let compressed = compressed.unwrap_or(false);
 
-    let fs = File::create(file_path)
-        .map_err(|e| SerializationError::IoError(e))?;
+    let fs = File::create(file_path).map_err(|e| SerializationError::IoError(e))?;
     let mut writer = BufWriter::with_capacity(DEFAULT_BUF_SIZE, fs);
 
     if compressed {

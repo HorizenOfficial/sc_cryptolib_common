@@ -1,19 +1,19 @@
 use {
-    algebra::{
-        curves::tweedle::dum::{Affine as DumAffine, Projective as DumProjective, TweedledumParameters},
+    algebra::curves::tweedle::dum::{
+        Affine as DumAffine, Projective as DumProjective, TweedledumParameters,
     },
-    primitives::crh::poseidon::parameters::tweedle_dee::{TweedleFrPoseidonHash, TweedleFrBatchPoseidonHash},
+    primitives::crh::poseidon::parameters::tweedle_dee::{
+        TweedleFrBatchPoseidonHash, TweedleFrPoseidonHash,
+    },
     primitives::merkle_tree::tweedle_dee::TWEEDLE_DEE_MHT_POSEIDON_PARAMETERS,
 };
 
-use algebra::{Field, FpParameters, ModelParameters, PrimeField,};
+use algebra::{Field, FpParameters, ModelParameters, PrimeField};
 use primitives::{
     merkle_tree::*,
-    signature::{
-        schnorr::field_based_schnorr::{
-            FieldBasedSchnorrSignatureScheme, FieldBasedSchnorrSignature,
-        },
-    }
+    signature::schnorr::field_based_schnorr::{
+        FieldBasedSchnorrSignature, FieldBasedSchnorrSignatureScheme,
+    },
 };
 
 pub type Error = Box<dyn std::error::Error>;

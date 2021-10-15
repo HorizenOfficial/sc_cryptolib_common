@@ -1,9 +1,6 @@
 use super::*;
 use algebra::{AffineCurve, ProjectiveCurve};
-use primitives::{
-    signature::FieldBasedSignatureScheme,
-    schnorr::field_based_schnorr::*
-};
+use primitives::{schnorr::field_based_schnorr::*, signature::FieldBasedSignatureScheme};
 use rand::rngs::OsRng;
 
 pub fn schnorr_generate_key() -> (SchnorrPk, SchnorrSk) {
@@ -20,11 +17,28 @@ pub fn schnorr_verify_public_key(pk: &SchnorrPk) -> bool {
     SchnorrSigScheme::keyverify(&FieldBasedSchnorrPk(pk.into_projective()))
 }
 
-pub fn schnorr_sign(msg: &FieldElement, sk: &SchnorrSk, pk: &SchnorrPk) -> Result<SchnorrSig, Error> {
+pub fn schnorr_sign(
+    msg: &FieldElement,
+    sk: &SchnorrSk,
+    pk: &SchnorrPk,
+) -> Result<SchnorrSig, Error> {
     let mut rng = OsRng;
-    SchnorrSigScheme::sign(&mut rng, &FieldBasedSchnorrPk(pk.into_projective()), sk, msg.clone())
+    SchnorrSigScheme::sign(
+        &mut rng,
+        &FieldBasedSchnorrPk(pk.into_projective()),
+        sk,
+        msg.clone(),
+    )
 }
 
-pub fn schnorr_verify_signature(msg: &FieldElement, pk: &SchnorrPk, signature: &SchnorrSig) -> Result<bool, Error> {
-    SchnorrSigScheme::verify(&FieldBasedSchnorrPk(pk.into_projective()), msg.clone(), signature)
+pub fn schnorr_verify_signature(
+    msg: &FieldElement,
+    pk: &SchnorrPk,
+    signature: &SchnorrSig,
+) -> Result<bool, Error> {
+    SchnorrSigScheme::verify(
+        &FieldBasedSchnorrPk(pk.into_projective()),
+        msg.clone(),
+        signature,
+    )
 }
