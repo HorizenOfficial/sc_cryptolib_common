@@ -28,13 +28,13 @@ ffi_export!(
     _field_element_bytes: jbyteArray,
 ) -> jobject
 {
-    deserialize_to_jobject::<FieldElement>(
+    let fe_bytes = _env.convert_byte_array(_field_element_bytes).expect("Cannot read field element bytes.");
+    map_to_jobject_or_throw_exc::<FieldElement, _>(
         _env,
-        _field_element_bytes,
-        None,
-        None,
+        read_field_element_from_buffer_with_padding(fe_bytes.as_slice()),
         "com/horizen/librustsidechains/FieldElement",
-        "com/horizen/librustsidechains/FieldElementException"
+        "com/horizen/librustsidechains/FieldElementException",
+        "Unable to deserialize FieldElement"
     )
 });
 

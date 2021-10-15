@@ -12,7 +12,6 @@ public class SchnorrKeyPairTest {
 
         try(SchnorrKeyPair keyPair = SchnorrKeyPair.generate())
         {
-            assertNotNull("Key pair generation was unsuccessful.", keyPair);
             assertTrue("Public key verification failed.", keyPair.getPublicKey().verifyKey());
         }
     }
@@ -44,8 +43,6 @@ public class SchnorrKeyPairTest {
             SchnorrSignature sig = SchnorrSignature.deserialize(sigBytes)
         )
         {
-            assertNotNull("sk deserialization must not fail", sk);
-            assertNotNull("message deserialization must not fail", message);
             assertTrue("Signature must be verified", keyPair.getPublicKey().verifySignature(sig, message));
         }
 
@@ -64,12 +61,10 @@ public class SchnorrKeyPairTest {
                 FieldElement wrongFieldElement = FieldElement.createRandom()
             )
             {
-                assertNotNull("Key pair generation was unsuccessful.", keyPair);
                 assertTrue("Public key verification failed.", keyPair.getPublicKey().verifyKey());
 
                 try(SchnorrSignature signature = keyPair.signMessage(fieldElement))
                 {
-                    assertNotNull("Attempt to sign message failed.", signature);
                     assertTrue("Signature must be verified", keyPair.getPublicKey().verifySignature(signature, fieldElement));
                     assertFalse("Signature must not be verified", keyPair.getPublicKey().verifySignature(signature, wrongFieldElement));
                 }
