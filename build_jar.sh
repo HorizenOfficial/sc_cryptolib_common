@@ -19,7 +19,7 @@ mkdir -p jni/src/main/resources/native/linux64
 cp target/x86_64-unknown-linux-gnu/release/libsc_common.so jni/src/main/resources/native/linux64/libsc_common.so
 
 mkdir -p jni/src/main/resources/native/windows64
-cp target/x86_64-pc-windows-gnu/release/libsc_common.dll jni/src/main/resources/native/windows64/libsc_common.dll
+cp target/x86_64-pc-windows-gnu/release/sc_common.dll jni/src/main/resources/native/windows64/sc_common.dll
 
 cd jni
 echo "Building jar"
@@ -47,7 +47,7 @@ mkdir -p jni/src/main/resources/native/linux64
 cp target/x86_64-unknown-linux-gnu/release/libsc_common.so jni/src/main/resources/native/linux64/libsc_common.so
 
 mkdir -p jni/src/main/resources/native/windows64
-cp target/x86_64-pc-windows-gnu/release/libsc_common.dll jni/src/main/resources/native/windows64/libsc_common.dll
+cp target/x86_64-pc-windows-gnu/release/sc_common.dll jni/src/main/resources/native/windows64/sc_common.dll
 
 cd jni
 echo "Building jar"
