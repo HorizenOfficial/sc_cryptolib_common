@@ -60,7 +60,6 @@ echo "CARGOARGS: ${CARGOARGS:-unset}, RUSTFLAGS: ${RUSTFLAGS:-unset}, RUST_CROSS
 
 # Fix ownership of everything in /build recursively
 chown -fR "$CURRENT_UID":"$CURRENT_GID" /build
-chown -fR "$CURRENT_UID":"$CURRENT_GID" /sc_common
 
 # We need to unfortunately do this as we can't guarantee that the unprivileged
 # user doesn't need to install a different version of Rust.
