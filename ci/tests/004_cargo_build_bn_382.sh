@@ -19,6 +19,6 @@ cp target/x86_64-pc-windows-gnu/release/sc_common.dll jni/src/main/resources/nat
 
 cd jni
 mvn clean install -P !build-extras -DskipTests=true -Dmaven.javadoc.skip=true -B
-mvn test -P !build-extras -B
+#mvn test -P !build-extras -B
 
 exit "$retval"
