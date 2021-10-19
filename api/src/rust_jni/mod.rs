@@ -17,7 +17,7 @@ pub mod poseidon_hash;
 pub mod schnorr_signature;
 
 ffi_export!(
-    fn Java_com_horizen_librustsidechains_Library_nativePanickingFunction(
+    fn Java_com_horizen_common_librustsidechains_Library_nativePanickingFunction(
         _env: JNIEnv,
         _class: JClass,
     ) {

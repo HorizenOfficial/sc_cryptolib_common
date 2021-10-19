@@ -2,7 +2,7 @@ use super::*;
 use crate::ginger_calls::{field_element::*, into_i8};
 
 ffi_export!(
-    fn Java_com_horizen_librustsidechains_FieldElement_nativeGetFieldElementSize(
+    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeGetFieldElementSize(
         _env: JNIEnv,
         _field_element_class: JClass,
     ) -> jint {
@@ -11,7 +11,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_librustsidechains_FieldElement_nativeSerializeFieldElement(
+    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeSerializeFieldElement(
         _env: JNIEnv,
         _field_element: JObject,
     ) -> jbyteArray {
@@ -20,7 +20,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_librustsidechains_FieldElement_nativeDeserializeFieldElement(
+    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeDeserializeFieldElement(
         _env: JNIEnv,
         _class: JClass,
         _field_element_bytes: jbyteArray,
@@ -31,15 +31,15 @@ ffi_export!(
         map_to_jobject_or_throw_exc::<FieldElement, _>(
             _env,
             read_field_element_from_buffer_with_padding(fe_bytes.as_slice()),
-            "com/horizen/librustsidechains/FieldElement",
-            "com/horizen/librustsidechains/FieldElementException",
+            "com/horizen/common/librustsidechains/FieldElement",
+            "com/horizen/common/librustsidechains/FieldElementException",
             "Unable to deserialize FieldElement",
         )
     }
 );
 
 ffi_export!(
-    fn Java_com_horizen_librustsidechains_FieldElement_nativeCreateRandom(
+    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeCreateRandom(
         _env: JNIEnv,
         // this is the class that owns our
         // static method. Not going to be
@@ -56,7 +56,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_librustsidechains_FieldElement_nativeCreateFromLong(
+    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeCreateFromLong(
         _env: JNIEnv,
         // this is the class that owns our
         // static method. Not going to be
@@ -73,7 +73,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_librustsidechains_FieldElement_nativeClone(
+    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeClone(
         _env: JNIEnv,
         _field_element: JObject,
     ) -> jobject {
@@ -87,7 +87,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_librustsidechains_FieldElement_nativePrintFieldElementBytes(
+    fn Java_com_horizen_common_librustsidechains_FieldElement_nativePrintFieldElementBytes(
         _env: JNIEnv,
         _field_element: JObject,
     ) {
@@ -103,7 +103,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_librustsidechains_FieldElement_nativeFreeFieldElement(
+    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeFreeFieldElement(
         _env: JNIEnv,
         _fe: JObject,
     ) {
@@ -112,7 +112,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_librustsidechains_FieldElement_nativeEquals(
+    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeEquals(
         _env: JNIEnv,
         // this is the class that owns our
         // static method. Not going to be

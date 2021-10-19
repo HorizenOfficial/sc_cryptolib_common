@@ -261,5 +261,5 @@ pub fn serialize_from_jobject<T: CanonicalSerialize>(
 }
 
 pub fn return_field_element(_env: JNIEnv, fe: FieldElement) -> jobject {
-    return_jobject(&_env, fe, "com/horizen/librustsidechains/FieldElement").into_inner()
+    return_jobject(&_env, fe, "com/horizen/common/librustsidechains/FieldElement").into_inner()
 }
