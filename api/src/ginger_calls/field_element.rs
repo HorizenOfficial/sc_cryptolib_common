@@ -26,6 +26,10 @@ pub fn read_field_element_from_buffer_with_padding<F: PrimeField>(
 
 //*******************************Generic functions**********************************************
 
+pub fn get_secure_random_field_element() -> FieldElement {
+    FieldElement::rand(&mut OsRng::default())
+}
+
 // NOTE: This function relies on a non-cryptographically safe RNG, therefore it
 // must be used ONLY for testing purposes
 pub fn get_random_field_element(seed: u64) -> FieldElement {

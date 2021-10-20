@@ -41,10 +41,6 @@ ffi_export!(
 ffi_export!(
     fn Java_com_horizen_common_librustsidechains_FieldElement_nativeCreateRandom(
         _env: JNIEnv,
-        // this is the class that owns our
-        // static method. Not going to be
-        // used, but still needs to have
-        // an argument slot
         _class: JClass,
         _seed: jlong,
     ) -> jobject {
@@ -56,12 +52,20 @@ ffi_export!(
 );
 
 ffi_export!(
+    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeCreateSecureRandom(
+        _env: JNIEnv,
+        _class: JClass,
+    ) -> jobject {
+        //Create secure random field element
+        let fe = get_secure_random_field_element();
+
+        return_field_element(_env, fe)
+    }
+);
+
+ffi_export!(
     fn Java_com_horizen_common_librustsidechains_FieldElement_nativeCreateFromLong(
         _env: JNIEnv,
-        // this is the class that owns our
-        // static method. Not going to be
-        // used, but still needs to have
-        // an argument slot
         _class: JClass,
         _long: jlong,
     ) -> jobject {
@@ -114,10 +118,6 @@ ffi_export!(
 ffi_export!(
     fn Java_com_horizen_common_librustsidechains_FieldElement_nativeEquals(
         _env: JNIEnv,
-        // this is the class that owns our
-        // static method. Not going to be
-        // used, but still needs to have
-        // an argument slot
         _field_element_1: JObject,
         _field_element_2: JObject,
     ) -> jboolean {

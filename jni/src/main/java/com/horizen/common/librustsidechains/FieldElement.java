@@ -29,6 +29,12 @@ public class FieldElement implements MerkleTreeLeaf, Cloneable {
         return nativeCreateFromLong(value);
     }
 
+    private static native FieldElement nativeCreateSecureRandom();
+
+    public static FieldElement createSecureRandom() {
+        return nativeCreateSecureRandom();
+    }
+
     private static native FieldElement nativeCreateRandom(long seed);
 
     /*  NOTE: This function relies on a non-cryptographically safe RNG, therefore it
