@@ -37,7 +37,7 @@ mod test {
         let msg = FieldElement::rand(&mut rng);
         {
             let msg_bytes = serialize_to_buffer(&msg, None).unwrap();
-            println!("msg bytes: {:?}", into_i8(msg_bytes.clone()));
+            println!("msg bytes: {:?}", into_i8(msg_bytes));
         }
 
         let (pk, sk) = schnorr_generate_key(); //Keygen
@@ -100,13 +100,11 @@ mod test {
         finalize_ginger_mht_in_place(&mut mht).unwrap();
         let mht_root = get_ginger_mht_root(&mht).expect("Tree must've been finalized");
 
-        for i in 0..leaves_num {
+        for (i, leaf) in mht_leaves.iter().enumerate() {
             //Create and verify merkle paths for each leaf
             let path = get_ginger_mht_path(&mht, i as u64).unwrap();
             assert!(verify_ginger_merkle_path_without_length_check(
-                &path,
-                &mht_leaves[i],
-                &mht_root
+                &path, leaf, &mht_root
             ));
 
             // Check leaf index is the correct one
@@ -171,7 +169,7 @@ mod test {
         let msg = FieldElement::rand(&mut rng);
         {
             let msg_bytes = serialize_to_buffer(&msg, None).unwrap();
-            println!("msg bytes: {:?}", into_i8(msg_bytes.clone()));
+            println!("msg bytes: {:?}", into_i8(msg_bytes));
         }
 
         let (pk, sk) = vrf_generate_key(); //Keygen

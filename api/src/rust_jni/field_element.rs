@@ -86,7 +86,7 @@ ffi_export!(
             _field_element,
             "fieldElementPointer",
         );
-        return_field_element(_env, fe.clone())
+        return_field_element(_env, *fe)
     }
 );
 

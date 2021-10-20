@@ -27,7 +27,7 @@ pub fn schnorr_sign(
         &mut rng,
         &FieldBasedSchnorrPk(pk.into_projective()),
         sk,
-        msg.clone(),
+        *msg,
     )
 }
 
@@ -36,9 +36,5 @@ pub fn schnorr_verify_signature(
     pk: &SchnorrPk,
     signature: &SchnorrSig,
 ) -> Result<bool, Error> {
-    SchnorrSigScheme::verify(
-        &FieldBasedSchnorrPk(pk.into_projective()),
-        msg.clone(),
-        signature,
-    )
+    SchnorrSigScheme::verify(&FieldBasedSchnorrPk(pk.into_projective()), *msg, signature)
 }

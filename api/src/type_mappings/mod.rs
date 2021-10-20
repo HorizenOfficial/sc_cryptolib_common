@@ -16,7 +16,7 @@ use algebra::{AffineCurve, FpParameters, FromCompressedBits, PrimeField};
 use bit_vec::BitVec;
 use blake2s_simd::{Hash, Params};
 
-const GH_FIRST_BLOCK: &'static [u8; 64] =
+const GH_FIRST_BLOCK: &[u8; 64] =
     b"53756e4d65726375727956656e757345617274684d6172734a75706974657253";
 
 pub fn hash_to_curve<F: PrimeField, G: AffineCurve + FromCompressedBits>(

@@ -33,7 +33,7 @@ pub fn vrf_prove(
         &VRF_GH_PARAMS,
         &FieldBasedEcVrfPk(pk.into_projective()),
         sk,
-        msg.clone(),
+        *msg,
     )?;
 
     //Convert gamma from proof to field elements
@@ -42,7 +42,7 @@ pub fn vrf_prove(
     //Compute VRF output
     let output = {
         let mut h = FieldHash::init_constant_length(3, None);
-        h.update(msg.clone());
+        h.update(*msg);
         gamma_coords.into_iter().for_each(|c| {
             h.update(c);
         });
@@ -60,7 +60,7 @@ pub fn vrf_proof_to_hash(
     VRFScheme::proof_to_hash(
         &VRF_GH_PARAMS,
         &FieldBasedEcVrfPk(pk.into_projective()),
-        msg.clone(),
+        *msg,
         proof,
     )
 }
