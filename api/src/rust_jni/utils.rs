@@ -1,5 +1,5 @@
 use super::*;
-use crate::ginger_calls::serialization::*;
+use crate::ginger_calls::{field_element::read_field_element_from_buffer_with_padding, serialization::*};
 use algebra::{serialize::*, SemanticallyValid};
 use std::{any::type_name, fmt::Debug};
 
@@ -113,6 +113,32 @@ pub fn parse_rust_struct_from_jobject<'a, T: Sized>(
     )
 }
 
+#[macro_export]
+macro_rules! parse_rust_struct_vec_from_jobject_array {
+    ($_env: expr, $obj_array: expr, $rust_struct_array: expr, $array_name: expr, $field_name: expr) => {
+        // Array can be empty
+        for i in 0..$_env.get_array_length($obj_array).expect(format!("Should be able to read {:?} array size", $array_name).as_str())
+        {
+            let obj = $_env.get_object_array_element($obj_array, i).expect(
+                format!(
+                    "Should be able to read elem {} of the {:?} array",
+                    i,
+                    $array_name
+                )
+                .as_str(),
+            );
+
+            let rust_struct = parse_rust_struct_from_jobject(
+                &$_env,
+                obj,
+                $field_name,
+            );
+
+            $rust_struct_array.push(rust_struct);
+        }
+    };
+}
+
 pub fn parse_mut_rust_struct_from_jobject<'a, T: Sized>(
     _env: &'a JNIEnv,
     obj: JObject<'a>,
@@ -150,6 +176,8 @@ pub fn return_jobject<'a, T: Sized>(_env: &'a JNIEnv, obj: T, class_path: &str) 
 }
 
 /// Map a Result<T, E> to a jobject if Ok(), otherwise throw exception and return default JNI_NULL.
+/// To be used mainly as final instruction of a Rust implementation of a JNI function returning a
+/// jobject.
 pub fn map_to_jobject_or_throw_exc<'a, T: Sized, E: Debug>(
     env: JNIEnv,
     res: Result<T, E>,
@@ -172,6 +200,8 @@ pub fn map_to_jobject_or_throw_exc<'a, T: Sized, E: Debug>(
 
 /// Map a type Result<bool, E> to a jboolean set to JNI_TRUE if Ok(true), JNI_FALSE if Ok(false)
 /// otherwise throw exception and return default JNI_FALSE.
+/// To be used mainly as final instruction of a Rust implementation of a JNI function returning a
+/// jboolean.
 pub fn map_to_jboolean_or_throw_exc<'a, E: Debug>(
     env: JNIEnv,
     res: Result<bool, E>,
@@ -191,6 +221,8 @@ pub fn map_to_jboolean_or_throw_exc<'a, E: Debug>(
     )
 }
 
+/// To be used mainly as final instruction of a Rust implementation of a JNI function returning a
+/// jbyteArray.
 pub fn map_to_jbytearray_or_throw_exc<'a, T: CanonicalSerialize + SemanticallyValid, E: Debug>(
     env: JNIEnv,
     res: Result<T, E>,
@@ -259,6 +291,17 @@ pub fn serialize_from_jobject<T: CanonicalSerialize>(
     _env.byte_array_from_slice(obj_bytes.as_slice())
         .expect("Cannot write object.")
 }
+
+pub fn parse_field_element_from_jbyte_array<'a>(
+    _env: &'a JNIEnv,
+    bytes: jbyteArray,
+) -> Result<FieldElement, Error> 
+{
+    let fe_bytes = parse_fixed_jbyte_array(&_env, bytes, FIELD_SIZE)?;
+    let fe = read_field_element_from_buffer_with_padding(fe_bytes.as_slice())?;
+    Ok(fe)
+}
+
 
 pub fn return_field_element(_env: JNIEnv, fe: FieldElement) -> jobject {
     return_jobject(&_env, fe, "com/horizen/common/librustsidechains/FieldElement").into_inner()

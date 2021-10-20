@@ -16,31 +16,18 @@ ffi_export!(
         _class: JClass,
         _input_size: jint,
         _personalization: jobjectArray,
-    ) -> jobject {
-        //Read _personalization as array of FieldElement
-        let personalization_len = _env
-            .get_array_length(_personalization)
-            .expect("Should be able to read personalization array size");
+    ) -> jobject 
+    {
+        // Read personalization as vector of field element
         let mut personalization = vec![];
-
-        // Array can be empty
-        for i in 0..personalization_len {
-            let field_obj = _env.get_object_array_element(_personalization, i).expect(
-                format!(
-                    "Should be able to read elem {} of the personalization array",
-                    i
-                )
-                .as_str(),
-            );
-
-            let field = parse_rust_struct_from_jobject::<FieldElement>(
-                &_env,
-                field_obj,
-                "fieldElementPointer",
-            );
-
-            personalization.push(field);
-        }
+        
+        parse_rust_struct_vec_from_jobject_array!(
+            _env,
+            _personalization,
+            personalization,
+            "personalization",
+            "fieldElementPointer"
+        );
 
         //Instantiate PoseidonHash
         let h = get_poseidon_hash_constant_length(
@@ -64,30 +51,17 @@ ffi_export!(
         _mod_rate: jboolean,
         _personalization: jobjectArray,
     ) -> jobject {
-        //Read _personalization as array of FieldElement
-        let personalization_len = _env
-            .get_array_length(_personalization)
-            .expect("Should be able to read personalization array size");
+        
+        // Read personalization as vector of field element
         let mut personalization = vec![];
-
-        // Array can be empty
-        for i in 0..personalization_len {
-            let field_obj = _env.get_object_array_element(_personalization, i).expect(
-                format!(
-                    "Should be able to read elem {} of the personalization array",
-                    i
-                )
-                .as_str(),
-            );
-
-            let field = parse_rust_struct_from_jobject::<FieldElement>(
-                &_env,
-                field_obj,
-                "fieldElementPointer",
-            );
-
-            personalization.push(field);
-        }
+        
+        parse_rust_struct_vec_from_jobject_array!(
+            _env,
+            _personalization,
+            personalization,
+            "personalization",
+            "fieldElementPointer"
+        );
 
         //Instantiate PoseidonHash
         let h = get_poseidon_hash_variable_length(
@@ -151,30 +125,16 @@ ffi_export!(
         let digest =
             parse_mut_rust_struct_from_jobject::<FieldHash>(&_env, _h, "poseidonHashPointer");
 
-        //Read _personalization as array of FieldElement
-        let personalization_len = _env
-            .get_array_length(_personalization)
-            .expect("Should be able to read personalization array size");
+        // Read personalization as vector of field element
         let mut personalization = vec![];
-
-        // Array can be empty
-        for i in 0..personalization_len {
-            let field_obj = _env.get_object_array_element(_personalization, i).expect(
-                format!(
-                    "Should be able to read elem {} of the personalization array",
-                    i
-                )
-                .as_str(),
-            );
-
-            let field = parse_rust_struct_from_jobject::<FieldElement>(
-                &_env,
-                field_obj,
-                "fieldElementPointer",
-            );
-
-            personalization.push(field);
-        }
+        
+        parse_rust_struct_vec_from_jobject_array!(
+            _env,
+            _personalization,
+            personalization,
+            "personalization",
+            "fieldElementPointer"
+        );
 
         let personalization = if personalization.is_empty() {
             None

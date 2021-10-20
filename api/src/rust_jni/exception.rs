@@ -58,10 +58,26 @@ macro_rules! throw_and_exit {
     };
 }
 
-/// Given a type Result<(), E> throw exception if Err() otherwise do nothing
+/// Given a type Result<T, E> throw exception if Err() otherwise do nothing
 #[macro_export]
 macro_rules! ok_or_throw_exc {
-    ($env:expr, $result: expr, $exception:expr, $description:expr) => {
+
+    // For types Result<T, E>, for which is necessary to specify a default return type
+    // in Err() case
+    ($env:expr, $result: expr, $exception:expr, $description:expr, $default:expr) => {{
+        match $result {
+            Ok(res) => res,
+            Err(e) => throw!(
+                $env,
+                $exception,
+                format!("{:?}: {:?}", $description, e).as_str(),
+                $default
+            )
+        }
+    }};
+
+    // For types Result<(), E>
+    ($env:expr, $result: expr, $exception:expr, $description:expr) => {{
         ($result).unwrap_or_else(|e| {
             throw!(
                 &$env,
@@ -69,7 +85,7 @@ macro_rules! ok_or_throw_exc {
                 format!("{:?}: {:?}", $description, e).as_str()
             )
         })
-    };
+    }};
 }
 
 /// Transform a function into an implementation of a Java side native function.
