@@ -22,7 +22,7 @@ use bit_vec::BitVec;
 const GH_FIRST_BLOCK: &'static [u8; 64]
 = b"53756e4d65726375727956656e757345617274684d6172734a75706974657253";
 
-pub(crate) fn hash_to_curve<F: PrimeField, G: AffineCurve + FromCompressedBits>(
+pub fn hash_to_curve<F: PrimeField, G: AffineCurve + FromCompressedBits>(
     tag: &[u8],
     personalization: &[u8]
 ) -> Option<G> {

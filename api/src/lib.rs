@@ -5,4 +5,4 @@ pub mod rust_jni;
 
 #[macro_use]
 pub mod type_mappings;
-use type_mappings::*;
+pub use type_mappings::*;
