@@ -15,6 +15,7 @@ pub mod field_element;
 pub mod merkle_tree;
 pub mod poseidon_hash;
 pub mod schnorr_signature;
+pub mod vrf;
 
 ffi_export!(
     fn Java_com_horizen_common_librustsidechains_Library_nativePanickingFunction(

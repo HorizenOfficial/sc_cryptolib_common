@@ -4,6 +4,7 @@ pub mod field_element;
 pub mod merkle_tree;
 pub mod poseidon_hash;
 pub mod schnorr_signature;
+pub mod vrf;
 pub mod serialization;
 
 pub(crate) fn into_i8(v: Vec<u8>) -> Vec<i8> {
@@ -160,5 +161,57 @@ mod test {
 
         //finalize() is idempotent
         assert_eq!(h_output, finalize_poseidon_hash(&h).unwrap());
+    }
+
+    #[test]
+    fn sample_calls_vrf_prove_verify(){
+        use vrf::*;
+        
+        let mut rng = OsRng;
+        let msg = FieldElement::rand(&mut rng);
+        {
+            let msg_bytes = serialize_to_buffer(&msg, None).unwrap();
+            println!("msg bytes: {:?}", into_i8(msg_bytes.clone()));
+        }
+
+        let (pk, sk) = vrf_generate_key(); //Keygen
+        assert_eq!(vrf_get_public_key(&sk), pk); //Get pk
+        assert!(vrf_verify_public_key(&pk)); //Verify pk
+
+        //Serialize/deserialize pk
+        let pk_serialized = serialize_to_buffer(&pk, Some(true)).unwrap();
+        assert_eq!(pk_serialized.len(), VRF_PK_SIZE);
+        let pk_deserialized: VRFPk = deserialize_from_buffer(&pk_serialized, Some(true), Some(true)).unwrap();
+        assert_eq!(pk, pk_deserialized);
+
+        //Serialize/deserialize sk
+        let sk_serialized = serialize_to_buffer(&sk, None).unwrap();
+        assert_eq!(sk_serialized.len(), VRF_SK_SIZE);
+        println!("sk bytes: {:?}", into_i8(sk_serialized.clone()));
+        let sk_deserialized = deserialize_from_buffer(&sk_serialized, None, None).unwrap();
+        assert_eq!(sk, sk_deserialized);
+
+        let (vrf_proof, vrf_out) = vrf_prove(&msg, &sk, &pk).unwrap(); //Create vrf proof for msg
+        assert!(is_valid(&vrf_proof));
+
+        //Serialize/deserialize vrf proof
+        let proof_serialized = serialize_to_buffer(&vrf_proof, Some(true)).unwrap();
+        assert_eq!(proof_serialized.len(), VRF_PROOF_SIZE);
+        println!("proof bytes: {:?}", into_i8(proof_serialized.clone()));
+        let proof_deserialized = deserialize_from_buffer(&proof_serialized, Some(true), Some(true)).unwrap();
+        assert_eq!(vrf_proof, proof_deserialized);
+
+        //Serialize/deserialize vrf out (i.e. a field element)
+        let vrf_out_serialized = serialize_to_buffer(&vrf_out, None).unwrap();
+        println!("vrf out bytes: {:?}", into_i8(vrf_out_serialized.clone()));
+        let vrf_out_deserialized = deserialize_from_buffer(&vrf_out_serialized, None, None).unwrap();
+        assert_eq!(vrf_out, vrf_out_deserialized);
+
+        let vrf_out_dup = vrf_proof_to_hash(&msg, &pk, &vrf_proof).unwrap(); //Verify vrf proof and get vrf out for msg
+        assert_eq!(vrf_out, vrf_out_dup);
+
+        //Negative case
+        let wrong_msg = FieldElement::rand(&mut rng);
+        assert!(vrf_proof_to_hash(&wrong_msg, &pk, &vrf_proof).is_err());
     }
 }

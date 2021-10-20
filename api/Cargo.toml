@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 algebra = {version = "0.1.0", git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "rc/audit_chain"}
-primitives = {version = "0.1.0", features = ["signature", "merkle_tree"], git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "rc/audit_chain"}
+primitives = {version = "0.1.0", features = ["signature", "merkle_tree", "vrf"], git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "rc/audit_chain"}
 
 jni = "0.19.0"
 derivative = "2.2.0"
@@ -17,6 +17,8 @@ radix_trie = "0.2.1"
 rand = { version = "0.8.4" }
 rand_xorshift = { version = "0.3.0" }
 blake2 = { version = "0.8.1", default-features = false }
+blake2s_simd = "0.5"
+bit-vec = "0.6.1"
 
 [features]
 asm = [ "algebra/llvm_asm"]

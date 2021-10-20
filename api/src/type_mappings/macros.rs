@@ -1,3 +1,4 @@
+#[macro_export]
 macro_rules! generate_algebraic_types {
     ($curve: ident, $curve_parameters: ty) => {
         // Basic algebraic types
@@ -32,6 +33,7 @@ macro_rules! generate_algebraic_types {
     };
 }
 
+#[macro_export]
 macro_rules! generate_poseidon_hash_types {
     ($field_hash: ident, $batch_field_hash: ident) => {
         pub type FieldHash = $field_hash;
@@ -39,6 +41,7 @@ macro_rules! generate_poseidon_hash_types {
     };
 }
 
+#[macro_export]
 macro_rules! generate_merkle_tree_types {
     ($tree_params: ident, $tree_arity: expr) => {
         #[derive(Clone, Debug)]
@@ -62,6 +65,7 @@ macro_rules! generate_merkle_tree_types {
     };
 }
 
+#[macro_export]
 macro_rules! generate_schnorr_signature_types {
     ($projective_curve: ident, $affine_curve: ident) => {
         pub const SCHNORR_PK_SIZE: usize = GROUP_COMPRESSED_SIZE;
@@ -74,4 +78,111 @@ macro_rules! generate_schnorr_signature_types {
         pub type SchnorrPk = $affine_curve;
         pub type SchnorrSk = ScalarFieldElement;
     };
+}
+
+#[macro_export]
+macro_rules! generate_vrf_types {
+    ($projective_curve: ident, $affine_curve: ident) => {
+
+        // Group hash personalizations
+        /// BLAKE2s Personalization for Group hash generators used for VRF.
+        const VRF_GROUP_HASH_GENERATORS_PERSONALIZATION: &'static [u8; 8]
+        = b"ZenVrfPH";
+
+        #[derive(Clone)]
+        pub struct VRFWindow {}
+        impl PedersenWindow for VRFWindow {
+            const WINDOW_SIZE: usize = 128;
+            const NUM_WINDOWS: usize = 2;
+        }
+
+        lazy_static!{
+            pub static ref VRF_GH_PARAMS: BoweHopwoodPedersenParameters<$projective_curve> = get_vrf_params();
+        }
+
+        fn compute_group_hash_table(generators: Vec<$projective_curve>)
+        -> Vec<Vec<$projective_curve>>
+        {
+            let mut gen_table = Vec::new();
+            for i in 0..VRFWindow::NUM_WINDOWS {
+                let mut generators_for_segment = Vec::new();
+                let mut base = generators[i];
+                for _ in 0..VRFWindow::WINDOW_SIZE {
+                    generators_for_segment.push(base);
+                    for _ in 0..4 {
+                        base.double_in_place();
+                    }
+                }
+                gen_table.push(generators_for_segment);
+            }
+            gen_table
+        }
+
+        fn get_vrf_params() -> BoweHopwoodPedersenParameters<$projective_curve> {
+            let personalization = VRF_GROUP_HASH_GENERATORS_PERSONALIZATION;
+
+            //Gen1
+            let tag = b"Magnesium Mg 12";
+            let htc_g1_out = hash_to_curve::<FieldElement, $affine_curve>(tag, personalization)
+                .unwrap()
+                .into_projective();
+    
+            //Gen2
+            let tag = b"Gold Au 79";
+            let htc_g2_out = hash_to_curve::<FieldElement, $affine_curve>(tag, personalization)
+                .unwrap()
+                .into_projective();
+    
+            //Check GH generators
+            let gh_generators = compute_group_hash_table(
+                [htc_g1_out, htc_g2_out].to_vec()
+            );
+
+            BoweHopwoodPedersenParameters::<$projective_curve>{generators: gh_generators}
+        }
+
+        pub const VRF_PK_SIZE: usize = GROUP_COMPRESSED_SIZE;
+        pub const VRF_SK_SIZE: usize = SCALAR_FIELD_SIZE;
+        pub const VRF_PROOF_SIZE: usize = GROUP_COMPRESSED_SIZE + 2 * FIELD_SIZE;
+
+        pub type GroupHash = BoweHopwoodPedersenCRH<$projective_curve, VRFWindow>;
+
+        pub type VRFScheme = FieldBasedEcVrf<FieldElement, $projective_curve, FieldHash, GroupHash>;
+        pub type VRFProof = FieldBasedEcVrfProof<FieldElement, $projective_curve>;
+        pub type VRFPk = $affine_curve;
+        pub type VRFSk = ScalarFieldElement;
+    }
+}
+
+#[macro_export]
+macro_rules! generate_phantom_bindings {
+    ($projective_curve: ident, $affine_curve: ident) => {
+        lazy_static!{
+            pub static ref PHANTOM_SIG: SchnorrSig = SchnorrSig::new(FieldElement::one(), FieldElement::one());
+        }
+
+        const NULL_PK_PERSONALIZATION: &'static [u8; 8]
+        = b"ZenullPK";
+
+        lazy_static!{
+            pub static ref PHANTOM_PK: $projective_curve = {
+                let tag = b"Strontium Sr 90";
+                let personalization = NULL_PK_PERSONALIZATION;
+                hash_to_curve::<FieldElement, $affine_curve>(tag, personalization)
+                    .unwrap()
+                    .into_projective()
+            };
+        }
+    }
+}
+
+#[macro_export]
+macro_rules! generate_all_algebraic_crypto_types {
+    ($affine_curve: ident, $projective_curve: ident, $curve_parameters: ty, $field_hash: ident, $batch_field_hash: ident, $tree_params: ident, $tree_arity: expr) => {
+        generate_algebraic_types!($affine_curve, $curve_parameters);
+        generate_poseidon_hash_types!($field_hash, $batch_field_hash);
+        generate_merkle_tree_types!($tree_params, $tree_arity);
+        generate_schnorr_signature_types!($projective_curve, $affine_curve);
+        generate_vrf_types!($projective_curve, $affine_curve);
+    }
 }
