@@ -344,7 +344,10 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_merkletreenative_BaseMerkleTree_nativeReset(_env: JNIEnv, _tree: JObject) {
+    fn Java_com_horizen_common_merkletreenative_BaseMerkleTree_nativeReset(
+        _env: JNIEnv,
+        _tree: JObject,
+    ) {
         let tree = parse_mut_rust_struct_from_jobject::<GingerMHT>(
             &_env,
             _tree,

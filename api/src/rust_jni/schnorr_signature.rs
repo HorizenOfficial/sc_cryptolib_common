@@ -170,10 +170,16 @@ ffi_export!(
     ) -> jobject {
         let (pk, sk) = schnorr_generate_key();
 
-        let secret_key_object =
-            return_jobject(&_env, sk, "com/horizen/common/schnorrnative/SchnorrSecretKey");
-        let public_key_object =
-            return_jobject(&_env, pk, "com/horizen/common/schnorrnative/SchnorrPublicKey");
+        let secret_key_object = return_jobject(
+            &_env,
+            sk,
+            "com/horizen/common/schnorrnative/SchnorrSecretKey",
+        );
+        let public_key_object = return_jobject(
+            &_env,
+            pk,
+            "com/horizen/common/schnorrnative/SchnorrPublicKey",
+        );
 
         let class = _env
             .find_class("com/horizen/common/schnorrnative/SchnorrKeyPair")
@@ -264,7 +270,12 @@ ffi_export!(
 
         let pk = schnorr_get_public_key(secret_key);
 
-        return_jobject(&_env, pk, "com/horizen/common/schnorrnative/SchnorrPublicKey").into_inner()
+        return_jobject(
+            &_env,
+            pk,
+            "com/horizen/common/schnorrnative/SchnorrPublicKey",
+        )
+        .into_inner()
     }
 );
 

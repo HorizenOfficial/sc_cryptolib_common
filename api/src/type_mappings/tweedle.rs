@@ -8,11 +8,13 @@ use {
     primitives::merkle_tree::tweedle_dee::TWEEDLE_DEE_MHT_POSEIDON_PARAMETERS,
 };
 
-use algebra::{Field, FpParameters, ModelParameters, PrimeField, AffineCurve, ProjectiveCurve};
+use crate::hash_to_curve;
+use algebra::{AffineCurve, Field, FpParameters, ModelParameters, PrimeField, ProjectiveCurve};
+use lazy_static::lazy_static;
 use primitives::{
     crh::{
         bowe_hopwood::{BoweHopwoodPedersenCRH, BoweHopwoodPedersenParameters},
-        pedersen::PedersenWindow, 
+        pedersen::PedersenWindow,
     },
     merkle_tree::*,
     signature::schnorr::field_based_schnorr::{
@@ -20,12 +22,15 @@ use primitives::{
     },
     vrf::ecvrf::{FieldBasedEcVrf, FieldBasedEcVrfProof},
 };
-use crate::hash_to_curve;
-use lazy_static::lazy_static;
 
 pub type Error = Box<dyn std::error::Error>;
 
 generate_all_algebraic_crypto_types!(
-    DumAffine, DumProjective, TweedledumParameters, TweedleFrPoseidonHash,
-    TweedleFrBatchPoseidonHash, TWEEDLE_DEE_MHT_POSEIDON_PARAMETERS, 2
+    DumAffine,
+    DumProjective,
+    TweedledumParameters,
+    TweedleFrPoseidonHash,
+    TweedleFrBatchPoseidonHash,
+    TWEEDLE_DEE_MHT_POSEIDON_PARAMETERS,
+    2
 );

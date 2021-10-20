@@ -1,7 +1,8 @@
 use super::*;
 use algebra::{AffineCurve, ProjectiveCurve, ToConstraintField};
 use primitives::{
-    vrf::{FieldBasedVrf, ecvrf::*}, crh::FieldBasedHash,
+    crh::FieldBasedHash,
+    vrf::{ecvrf::*, FieldBasedVrf},
 };
 use rand::rngs::OsRng;
 
@@ -19,7 +20,11 @@ pub fn vrf_verify_public_key(pk: &VRFPk) -> bool {
     VRFScheme::keyverify(&FieldBasedEcVrfPk(pk.into_projective()))
 }
 
-pub fn vrf_prove(msg: &FieldElement, sk: &VRFSk, pk: &VRFPk) -> Result<(VRFProof, FieldElement), Error> {
+pub fn vrf_prove(
+    msg: &FieldElement,
+    sk: &VRFSk,
+    pk: &VRFPk,
+) -> Result<(VRFProof, FieldElement), Error> {
     let mut rng = OsRng;
 
     //Compute proof
@@ -28,7 +33,7 @@ pub fn vrf_prove(msg: &FieldElement, sk: &VRFSk, pk: &VRFPk) -> Result<(VRFProof
         &VRF_GH_PARAMS,
         &FieldBasedEcVrfPk(pk.into_projective()),
         sk,
-        msg.clone()
+        msg.clone(),
     )?;
 
     //Convert gamma from proof to field elements
@@ -38,18 +43,24 @@ pub fn vrf_prove(msg: &FieldElement, sk: &VRFSk, pk: &VRFPk) -> Result<(VRFProof
     let output = {
         let mut h = FieldHash::init_constant_length(3, None);
         h.update(msg.clone());
-        gamma_coords.into_iter().for_each(|c| { h.update(c); });
+        gamma_coords.into_iter().for_each(|c| {
+            h.update(c);
+        });
         h.finalize()
     }?;
 
     Ok((proof, output))
 }
 
-pub fn vrf_proof_to_hash(msg: &FieldElement, pk: &VRFPk, proof: &VRFProof) -> Result<FieldElement, Error> {
+pub fn vrf_proof_to_hash(
+    msg: &FieldElement,
+    pk: &VRFPk,
+    proof: &VRFProof,
+) -> Result<FieldElement, Error> {
     VRFScheme::proof_to_hash(
         &VRF_GH_PARAMS,
         &FieldBasedEcVrfPk(pk.into_projective()),
         msg.clone(),
-        proof
+        proof,
     )
 }

@@ -16,11 +16,10 @@ ffi_export!(
         _class: JClass,
         _input_size: jint,
         _personalization: jobjectArray,
-    ) -> jobject 
-    {
+    ) -> jobject {
         // Read personalization as vector of field element
         let mut personalization = vec![];
-        
+
         parse_rust_struct_vec_from_jobject_array!(
             _env,
             _personalization,
@@ -51,10 +50,9 @@ ffi_export!(
         _mod_rate: jboolean,
         _personalization: jobjectArray,
     ) -> jobject {
-        
         // Read personalization as vector of field element
         let mut personalization = vec![];
-        
+
         parse_rust_struct_vec_from_jobject_array!(
             _env,
             _personalization,
@@ -127,7 +125,7 @@ ffi_export!(
 
         // Read personalization as vector of field element
         let mut personalization = vec![];
-        
+
         parse_rust_struct_vec_from_jobject_array!(
             _env,
             _personalization,

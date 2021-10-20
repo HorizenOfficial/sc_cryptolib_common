@@ -61,7 +61,6 @@ macro_rules! throw_and_exit {
 /// Given a type Result<T, E> throw exception if Err() otherwise do nothing
 #[macro_export]
 macro_rules! ok_or_throw_exc {
-
     // For types Result<T, E>, for which is necessary to specify a default return type
     // in Err() case
     ($env:expr, $result: expr, $exception:expr, $description:expr, $default:expr) => {{
@@ -72,7 +71,7 @@ macro_rules! ok_or_throw_exc {
                 $exception,
                 format!("{:?}: {:?}", $description, e).as_str(),
                 $default
-            )
+            ),
         }
     }};
 

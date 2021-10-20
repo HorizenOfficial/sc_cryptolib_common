@@ -1,5 +1,7 @@
 use super::*;
-use crate::ginger_calls::{field_element::read_field_element_from_buffer_with_padding, serialization::*};
+use crate::ginger_calls::{
+    field_element::read_field_element_from_buffer_with_padding, serialization::*,
+};
 use algebra::{serialize::*, SemanticallyValid};
 use std::{any::type_name, fmt::Debug};
 
@@ -117,22 +119,19 @@ pub fn parse_rust_struct_from_jobject<'a, T: Sized>(
 macro_rules! parse_rust_struct_vec_from_jobject_array {
     ($_env: expr, $obj_array: expr, $rust_struct_array: expr, $array_name: expr, $field_name: expr) => {
         // Array can be empty
-        for i in 0..$_env.get_array_length($obj_array).expect(format!("Should be able to read {:?} array size", $array_name).as_str())
+        for i in 0..$_env
+            .get_array_length($obj_array)
+            .expect(format!("Should be able to read {:?} array size", $array_name).as_str())
         {
             let obj = $_env.get_object_array_element($obj_array, i).expect(
                 format!(
                     "Should be able to read elem {} of the {:?} array",
-                    i,
-                    $array_name
+                    i, $array_name
                 )
                 .as_str(),
             );
 
-            let rust_struct = parse_rust_struct_from_jobject(
-                &$_env,
-                obj,
-                $field_name,
-            );
+            let rust_struct = parse_rust_struct_from_jobject(&$_env, obj, $field_name);
 
             $rust_struct_array.push(rust_struct);
         }
@@ -295,14 +294,17 @@ pub fn serialize_from_jobject<T: CanonicalSerialize>(
 pub fn parse_field_element_from_jbyte_array<'a>(
     _env: &'a JNIEnv,
     bytes: jbyteArray,
-) -> Result<FieldElement, Error> 
-{
+) -> Result<FieldElement, Error> {
     let fe_bytes = parse_fixed_jbyte_array(&_env, bytes, FIELD_SIZE)?;
     let fe = read_field_element_from_buffer_with_padding(fe_bytes.as_slice())?;
     Ok(fe)
 }
 
-
 pub fn return_field_element(_env: JNIEnv, fe: FieldElement) -> jobject {
-    return_jobject(&_env, fe, "com/horizen/common/librustsidechains/FieldElement").into_inner()
+    return_jobject(
+        &_env,
+        fe,
+        "com/horizen/common/librustsidechains/FieldElement",
+    )
+    .into_inner()
 }

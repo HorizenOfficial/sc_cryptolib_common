@@ -1,3 +1,10 @@
+#![allow(
+    clippy::upper_case_acronyms,
+    clippy::too_many_arguments,
+    clippy::try_err,
+    clippy::map_collect_result_unit
+)]
+
 pub mod ginger_calls;
 
 #[macro_use]

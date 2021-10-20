@@ -4,8 +4,8 @@ pub mod field_element;
 pub mod merkle_tree;
 pub mod poseidon_hash;
 pub mod schnorr_signature;
-pub mod vrf;
 pub mod serialization;
+pub mod vrf;
 
 pub(crate) fn into_i8(v: Vec<u8>) -> Vec<i8> {
     // first, make sure v's destructor doesn't free the data
@@ -164,9 +164,9 @@ mod test {
     }
 
     #[test]
-    fn sample_calls_vrf_prove_verify(){
+    fn sample_calls_vrf_prove_verify() {
         use vrf::*;
-        
+
         let mut rng = OsRng;
         let msg = FieldElement::rand(&mut rng);
         {
@@ -181,7 +181,8 @@ mod test {
         //Serialize/deserialize pk
         let pk_serialized = serialize_to_buffer(&pk, Some(true)).unwrap();
         assert_eq!(pk_serialized.len(), VRF_PK_SIZE);
-        let pk_deserialized: VRFPk = deserialize_from_buffer(&pk_serialized, Some(true), Some(true)).unwrap();
+        let pk_deserialized: VRFPk =
+            deserialize_from_buffer(&pk_serialized, Some(true), Some(true)).unwrap();
         assert_eq!(pk, pk_deserialized);
 
         //Serialize/deserialize sk
@@ -198,13 +199,15 @@ mod test {
         let proof_serialized = serialize_to_buffer(&vrf_proof, Some(true)).unwrap();
         assert_eq!(proof_serialized.len(), VRF_PROOF_SIZE);
         println!("proof bytes: {:?}", into_i8(proof_serialized.clone()));
-        let proof_deserialized = deserialize_from_buffer(&proof_serialized, Some(true), Some(true)).unwrap();
+        let proof_deserialized =
+            deserialize_from_buffer(&proof_serialized, Some(true), Some(true)).unwrap();
         assert_eq!(vrf_proof, proof_deserialized);
 
         //Serialize/deserialize vrf out (i.e. a field element)
         let vrf_out_serialized = serialize_to_buffer(&vrf_out, None).unwrap();
         println!("vrf out bytes: {:?}", into_i8(vrf_out_serialized.clone()));
-        let vrf_out_deserialized = deserialize_from_buffer(&vrf_out_serialized, None, None).unwrap();
+        let vrf_out_deserialized =
+            deserialize_from_buffer(&vrf_out_serialized, None, None).unwrap();
         assert_eq!(vrf_out, vrf_out_deserialized);
 
         let vrf_out_dup = vrf_proof_to_hash(&msg, &pk, &vrf_proof).unwrap(); //Verify vrf proof and get vrf out for msg
