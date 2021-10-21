@@ -1,7 +1,13 @@
 [package]
 name = "sc-common-cryptolib"
 version = "0.1.0"
-authors = ["DanieleDiBenedetto <daniele@horizenlabs.io>"]
+authors = [
+    "DanieleDiBenedetto <daniele@horizenlabs.io>",
+    "Maksym Vereshchak <phoinic@gmail.com>",
+    "Oleksandr Iozhytsia <oleksandr@zensystem.io>",
+    "Luigi Varriale <luigi@horizenlabs.io>",
+    "cronicc <cronic@horizenlabs.io>",
+]
 edition = "2018"
 
 [dependencies]
