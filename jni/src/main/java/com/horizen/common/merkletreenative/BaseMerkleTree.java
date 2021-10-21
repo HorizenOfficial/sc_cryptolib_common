@@ -120,7 +120,7 @@ public class BaseMerkleTree implements MerkleTree {
     public FieldBasedMerklePath getMerklePath(MerkleTreeLeaf leaf) throws MerkleTreeException, MerkleTreeLeafException {        
         long leafIndex = getLeafIndex(leaf);
         if (leafIndex == -1)
-            throw new IllegalStateException("Address not found inside tree");
+            throw new IllegalStateException("Leaf not found inside tree");
 
         return getMerklePath(leafIndex);
     }
@@ -142,10 +142,5 @@ public class BaseMerkleTree implements MerkleTree {
             nativeFreeMerkleTree();
             inMemoryOptimizedMerkleTreePointer = 0;
         }
-    }
-
-    @Override
-    public void close() throws MerkleTreeException {
-        freeMerkleTree();
     }
 }

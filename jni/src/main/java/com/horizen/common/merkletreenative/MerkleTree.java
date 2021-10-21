@@ -70,4 +70,12 @@ public interface MerkleTree extends AutoCloseable, Serializable {
      * Free memory Rust side
      */
     public abstract void freeMerkleTree();
+
+    /**
+     * Downcast exception to MerkleTreeException
+     */
+    @Override
+    default void close() throws MerkleTreeException {
+        this.freeMerkleTree();
+    }
 }
