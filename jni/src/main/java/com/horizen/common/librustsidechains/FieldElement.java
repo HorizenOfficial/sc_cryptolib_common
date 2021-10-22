@@ -1,6 +1,8 @@
 package com.horizen.common.librustsidechains;
 
 import com.horizen.common.merkletreenative.MerkleTreeLeaf;
+import com.horizen.common.merkletreenative.MerkleTreeLeafException;
+
 import java.util.Random;
 import java.util.*;
 import java.lang.Cloneable;
@@ -126,7 +128,11 @@ public class FieldElement implements MerkleTreeLeaf, Cloneable {
     }
 
     @Override
-    public FieldElement getLeafAsFieldElement() {
-        return this;
+    public FieldElement getLeafAsFieldElement() throws MerkleTreeLeafException {
+        try {
+            return this.clone();
+        } catch (CloneNotSupportedException fee) {
+            throw new MerkleTreeLeafException(fee.getMessage(), fee);
+        }
     }
 }
