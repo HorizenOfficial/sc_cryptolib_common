@@ -9,5 +9,5 @@ public interface MerkleTreeLeaf extends AutoCloseable {
      * @return FieldElement representation of this instance
      * @throws MerkleTreeLeafException if some error occurs during conversion between this and FieldElement
      */
-    public abstract FieldElement getLeafAsFieldElement() throws MerkleTreeLeafException;
+    FieldElement getLeafAsFieldElement() throws MerkleTreeLeafException;
 }

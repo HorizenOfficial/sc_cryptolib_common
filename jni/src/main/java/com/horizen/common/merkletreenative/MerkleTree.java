@@ -14,14 +14,14 @@ public interface MerkleTree extends AutoCloseable, Serializable {
      * @throws MerkleTreeException if unable to append input leaf to this tree
      * @throws MerkleTreeLeafException for any error during conversion from MerkleTreeLeaf to FieldElement
      */
-    public abstract void append(MerkleTreeLeaf input) throws MerkleTreeException, MerkleTreeLeafException;
+    void append(MerkleTreeLeaf input) throws MerkleTreeException, MerkleTreeLeafException;
 
     /*
      * Finalize the tree by computing the root and returns the finalized tree. It is possible
      * to continue updating the original tree.
      * Return NULL if it was not possible to finalize the tree.
      */
-    public abstract MerkleTree finalizeTree() throws MerkleTreeException;
+    MerkleTree finalizeTree() throws MerkleTreeException;
 
     /**
      * Finalize the tree by computing the root and updates the actual instance. It is not possible
@@ -30,46 +30,46 @@ public interface MerkleTree extends AutoCloseable, Serializable {
      *
      * @throws MerkleTreeException if unable to finalize this tree
      */
-    public abstract void finalizeTreeInPlace() throws MerkleTreeException;
+     void finalizeTreeInPlace() throws MerkleTreeException;
 
 
     /* Returns the root of the Merkle Tree. This function must be called on a finalized tree.
      * If not, the call will result in an exception.
      * Return NULL if it was not possible to get the root.
      */
-    public abstract FieldElement root() throws MerkleTreeException;
+     FieldElement root() throws MerkleTreeException;
 
     /**
      * Return the index of the leaf in the tree if present, -1 otherwise.
      */
-    public abstract long getLeafIndex(MerkleTreeLeaf leaf) throws MerkleTreeLeafException;
+     long getLeafIndex(MerkleTreeLeaf leaf) throws MerkleTreeLeafException;
 
     /**
      * Return true if leaf is present in tree, false otherwise.
      */
-    public abstract boolean isLeafInTree(MerkleTreeLeaf leaf) throws MerkleTreeLeafException;
+     boolean isLeafInTree(MerkleTreeLeaf leaf) throws MerkleTreeLeafException;
 
     /*
     * Compute and return the MerklePath from the leaf at `leafIndex` to the root of the tree.
     * Return NULL if it was not possible to get the MerklePath.
     */
-    public abstract FieldBasedMerklePath getMerklePath(long leafIndex) throws MerkleTreeException;
+     FieldBasedMerklePath getMerklePath(long leafIndex) throws MerkleTreeException;
 
     /*
     * Compute and return the MerklePath from 'leaf' to the root of the tree.
     * Return NULL if it was not possible to get the MerklePath.
     */
-    public abstract FieldBasedMerklePath getMerklePath(MerkleTreeLeaf leaf) throws MerkleTreeException, MerkleTreeLeafException;
+     FieldBasedMerklePath getMerklePath(MerkleTreeLeaf leaf) throws MerkleTreeException, MerkleTreeLeafException;
 
     /*
      * Restore the internal state of this instance to its initial one.
      */
-    public abstract void reset();
+     void reset();
 
     /**
      * Free memory Rust side
      */
-    public abstract void freeMerkleTree();
+     void freeMerkleTree();
 
     /**
      * Downcast exception to MerkleTreeException
