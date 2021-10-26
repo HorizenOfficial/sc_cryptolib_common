@@ -60,6 +60,13 @@ public class FieldElementTest {
             // Clone fe
             feClone = fe.clone();
             
+            // Assert two fe are equal in terms of values
+            assertEquals("Original and cloned FieldElement must be equal", fe, feClone);
+
+            // Assert that they are actually two different ones
+            assertTrue("Original and cloned FieldElement pointers must be different",
+                fe.getFieldElementPointer() != feClone.getFieldElementPointer());
+
             // Free original field element
             fe.freeFieldElement();
 

@@ -25,6 +25,10 @@ public class FieldElement implements MerkleTreeLeaf, Cloneable {
         this.fieldElementPointer = fieldElementPointer;
     }
 
+    protected long getFieldElementPointer() {
+        return this.fieldElementPointer;
+    }
+
     private static native FieldElement nativeCreateFromLong(long value);
 
     public static FieldElement createFromLong(long value) {
@@ -83,8 +87,6 @@ public class FieldElement implements MerkleTreeLeaf, Cloneable {
         if (fieldElementPointer == 0)
             throw new IllegalStateException("Field element was freed.");
         FieldElement clone = nativeClone();
-        if (this.fieldElementPointer == clone.fieldElementPointer)
-            throw new CloneNotSupportedException("Field element clone failed");
         return clone;
     }
 
