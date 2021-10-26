@@ -1,7 +1,6 @@
 package com.horizen.common.vrfnative;
 
 import com.horizen.common.librustsidechains.FieldElement;
-import com.horizen.common.librustsidechains.FieldElementException;
 import com.horizen.common.librustsidechains.Library;
 
 public class VRFProveResult implements AutoCloseable {
@@ -26,12 +25,8 @@ public class VRFProveResult implements AutoCloseable {
     }
 
     @Override
-    public void close() throws VRFException {
+    public void close() {
         this.vrfProof.close();
-        try {
-            this.vrfOutput.close();
-        } catch (FieldElementException fee) {
-            throw new VRFException(fee.getMessage(), fee);
-        }
+        this.vrfOutput.close();
     }
 }

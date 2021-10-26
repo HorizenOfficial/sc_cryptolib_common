@@ -1,13 +1,9 @@
 package com.horizen.common.librustsidechains;
 
-import com.horizen.common.merkletreenative.MerkleTreeLeaf;
-import com.horizen.common.merkletreenative.MerkleTreeLeafException;
-
 import java.util.Random;
-import java.util.*;
 import java.lang.Cloneable;
 
-public class FieldElement implements MerkleTreeLeaf, Cloneable {
+public class FieldElement implements AutoCloseable, Cloneable {
 
     public static final int FIELD_ELEMENT_LENGTH;
 
@@ -64,17 +60,17 @@ public class FieldElement implements MerkleTreeLeaf, Cloneable {
         return nativeSerializeFieldElement();
     }
 
-    private static native FieldElement nativeDeserializeFieldElement(byte[] fieldElementBytes) throws FieldElementException;
+    private static native FieldElement nativeDeserializeFieldElement(byte[] fieldElementBytes) throws DeserializationException;
 
     /**
      * Deserialize a FieldElement from "fieldElementBytes"
      * @param fieldElementBytes bytes of the FieldElement to be deserialized
      * @return The deserialized FieldElement
-     * @throws FieldElementException If fieldElementBytes.len() > FIELD_ELEMENT_LENGTH or if the bytes represent an invalid FieldElement
+     * @throws DeserializationException If fieldElementBytes.len() > FIELD_ELEMENT_LENGTH or if the bytes represent an invalid FieldElement
      */
-    public static FieldElement deserialize(byte[] fieldElementBytes) throws FieldElementException {
+    public static FieldElement deserialize(byte[] fieldElementBytes) throws DeserializationException {
         if (fieldElementBytes.length > FIELD_ELEMENT_LENGTH)
-            throw new FieldElementException(String.format("Field element length exceeded: limit %d , %d found",
+            throw new DeserializationException(String.format("Field element length exceeded: limit %d , %d found",
                     FIELD_ELEMENT_LENGTH, fieldElementBytes.length));
 
         return nativeDeserializeFieldElement(fieldElementBytes);
@@ -83,7 +79,7 @@ public class FieldElement implements MerkleTreeLeaf, Cloneable {
     private native FieldElement nativeClone();
 
     @Override
-    public FieldElement clone() throws CloneNotSupportedException {
+    public FieldElement clone() {
         if (fieldElementPointer == 0)
             throw new IllegalStateException("Field element was freed.");
         FieldElement clone = nativeClone();
@@ -125,16 +121,7 @@ public class FieldElement implements MerkleTreeLeaf, Cloneable {
     }
 
     @Override
-    public void close() throws FieldElementException {
+    public void close() {
         freeFieldElement();
-    }
-
-    @Override
-    public FieldElement getLeafAsFieldElement() throws MerkleTreeLeafException {
-        try {
-            return this.clone();
-        } catch (CloneNotSupportedException fee) {
-            throw new MerkleTreeLeafException(fee.getMessage(), fee);
-        }
     }
 }

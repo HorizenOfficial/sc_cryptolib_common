@@ -42,7 +42,7 @@ public class SchnorrKeyPair implements AutoCloseable {
     }
 
     @Override
-    public void close() throws SchnorrSignatureException {
+    public void close() {
         this.publicKey.close();
         this.secretKey.close();
     }

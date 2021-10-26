@@ -1,6 +1,6 @@
 package com.horizen.common.poseidonnative;
 
-import com.horizen.common.librustsidechains.FieldElement;
+import com.horizen.common.librustsidechains.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class PoseidonHashTest {
             try {
                 digest.finalizeHash();
                 assertTrue("Finalizing with smaller input size than specified must be forbidden", false); // Must be unreachable
-            } catch (PoseidonHashException phe) {
+            } catch (FinalizationException phe) {
                 assertTrue(phe.getMessage().contains("attempt to finalize with an input of invalid size"));
             }
 
@@ -65,7 +65,7 @@ public class PoseidonHashTest {
             try {
                 digest.finalizeHash();
                 assertTrue("Finalizing with bigger input size than specified must be forbidden", false); // Must be unreachable
-            } catch (PoseidonHashException phe) {
+            } catch (FinalizationException phe) {
                 assertTrue(phe.getMessage().contains("attempt to finalize with an input of invalid size"));
             }
         }
@@ -122,7 +122,7 @@ public class PoseidonHashTest {
             try {
                 digest.finalizeHash();
                 assertTrue("Finalizing with input size non mod rate must be forbidden", false); // Must be unreachable
-            } catch (PoseidonHashException phe) {
+            } catch (FinalizationException phe) {
                 assertTrue(phe.getMessage().contains("attempt to finalize with an input of invalid size"));
             }
 

@@ -1,6 +1,6 @@
 package com.horizen.common.schnorrnative;
 
-import com.horizen.common.librustsidechains.Library;
+import com.horizen.common.librustsidechains.*;
 
 public class SchnorrSignature implements AutoCloseable
 {
@@ -27,21 +27,20 @@ public class SchnorrSignature implements AutoCloseable
 
   private native byte[] nativeSerializeSignature();
 
-  private static native SchnorrSignature nativeDeserializeSignature(byte[] signatureBytes, boolean checkSignature) throws SchnorrSignatureException;
+  private static native SchnorrSignature nativeDeserializeSignature(byte[] signatureBytes, boolean checkSignature) throws DeserializationException;
 
   private native void nativefreeSignature();
 
-  public static SchnorrSignature deserialize(byte[] signatureBytes, boolean checkSignature) throws SchnorrSignatureException {
+  public static SchnorrSignature deserialize(byte[] signatureBytes, boolean checkSignature) throws DeserializationException {
     if (signatureBytes.length != SIGNATURE_LENGTH)
       throw new IllegalArgumentException(String.format("Incorrect signature length, %d expected, %d found", SIGNATURE_LENGTH, signatureBytes.length));
 
     return nativeDeserializeSignature(signatureBytes, checkSignature);
   }
 
-  public static SchnorrSignature deserialize(byte[] signatureBytes) throws SchnorrSignatureException {
+  public static SchnorrSignature deserialize(byte[] signatureBytes) throws DeserializationException {
     return deserialize(signatureBytes, true);
   }
-
 
   public byte[] serializeSignature() {
     return nativeSerializeSignature();
@@ -64,7 +63,7 @@ public class SchnorrSignature implements AutoCloseable
   }
 
   @Override
-  public void close() throws SchnorrSignatureException {
+  public void close() {
     freeSignature();
   }
 }

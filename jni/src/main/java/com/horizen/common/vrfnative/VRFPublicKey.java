@@ -1,7 +1,6 @@
 package com.horizen.common.vrfnative;
 
-import com.horizen.common.librustsidechains.FieldElement;
-import com.horizen.common.librustsidechains.Library;
+import com.horizen.common.librustsidechains.*;
 
 public class VRFPublicKey implements AutoCloseable
 {
@@ -23,20 +22,20 @@ public class VRFPublicKey implements AutoCloseable
     this.publicKeyPointer = publicKeyPointer;
   }
 
-  private static native VRFPublicKey nativeDeserializePublicKey(byte[] publicKeyBytes, boolean checkPublicKey, boolean compressed) throws VRFException;
+  private static native VRFPublicKey nativeDeserializePublicKey(byte[] publicKeyBytes, boolean checkPublicKey, boolean compressed) throws DeserializationException;
 
-  public static VRFPublicKey deserialize(byte[] publicKeyBytes, boolean checkPublicKey, boolean compressed) throws VRFException {
+  public static VRFPublicKey deserialize(byte[] publicKeyBytes, boolean checkPublicKey, boolean compressed) throws DeserializationException {
     if (publicKeyBytes.length != PUBLIC_KEY_LENGTH)
       throw new IllegalArgumentException(String.format("Incorrect public key length, %d expected, %d found", PUBLIC_KEY_LENGTH, publicKeyBytes.length));
 
     return nativeDeserializePublicKey(publicKeyBytes, checkPublicKey, compressed);
   }
 
-  public static VRFPublicKey deserialize(byte[] publicKeyBytes, boolean checkPublicKey) throws VRFException {
+  public static VRFPublicKey deserialize(byte[] publicKeyBytes, boolean checkPublicKey) throws DeserializationException {
     return deserialize(publicKeyBytes, checkPublicKey, true);
   }
 
-  public static VRFPublicKey deserialize(byte[] publicKeyBytes) throws VRFException {
+  public static VRFPublicKey deserialize(byte[] publicKeyBytes) throws DeserializationException {
     return deserialize(publicKeyBytes, true, true);
   }
 
@@ -82,7 +81,7 @@ public class VRFPublicKey implements AutoCloseable
   }
 
   @Override
-  public void close() throws VRFException {
+  public void close() {
     freePublicKey();
   }
 }

@@ -1,6 +1,7 @@
 package com.horizen.common.merkletreenative;
 
 import com.horizen.common.librustsidechains.Library;
+import com.horizen.common.librustsidechains.DeserializationException;
 import com.horizen.common.librustsidechains.FieldElement;
 
 public class FieldBasedMerklePath implements AutoCloseable {
@@ -109,13 +110,13 @@ public class FieldBasedMerklePath implements AutoCloseable {
         return nativeSerialize();
     }
 
-    private static native FieldBasedMerklePath nativeDeserialize(byte[] merklePathBytes, boolean semanticChecks)  throws MerklePathException;
+    private static native FieldBasedMerklePath nativeDeserialize(byte[] merklePathBytes, boolean semanticChecks)  throws DeserializationException;
 
-    public static FieldBasedMerklePath deserialize(byte[] merklePathBytes, boolean semanticChecks) throws MerklePathException {
+    public static FieldBasedMerklePath deserialize(byte[] merklePathBytes, boolean semanticChecks) throws DeserializationException {
         return nativeDeserialize(merklePathBytes, semanticChecks);
     }
 
-    public static FieldBasedMerklePath deserialize(byte[] merklePathBytes) throws MerklePathException {
+    public static FieldBasedMerklePath deserialize(byte[] merklePathBytes) throws DeserializationException {
         return nativeDeserialize(merklePathBytes, true);
     }
 
@@ -129,7 +130,7 @@ public class FieldBasedMerklePath implements AutoCloseable {
     }
 
     @Override
-    public void close() throws MerklePathException {
+    public void close() {
         freeMerklePath();
     }
 }

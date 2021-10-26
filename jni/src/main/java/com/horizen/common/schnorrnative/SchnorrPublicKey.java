@@ -22,20 +22,20 @@ public class SchnorrPublicKey implements AutoCloseable
     this.publicKeyPointer = publicKeyPointer;
   }
 
-  private static native SchnorrPublicKey nativeDeserializePublicKey(byte[] publicKeyBytes, boolean checkPublicKey, boolean compressed) throws SchnorrSignatureException;
+  private static native SchnorrPublicKey nativeDeserializePublicKey(byte[] publicKeyBytes, boolean checkPublicKey, boolean compressed) throws DeserializationException;
 
-  public static SchnorrPublicKey deserialize(byte[] publicKeyBytes, boolean checkPublicKey, boolean compressed) throws SchnorrSignatureException {
+  public static SchnorrPublicKey deserialize(byte[] publicKeyBytes, boolean checkPublicKey, boolean compressed) throws DeserializationException {
     if (publicKeyBytes.length != PUBLIC_KEY_LENGTH)
       throw new IllegalArgumentException(String.format("Incorrect public key length, %d expected, %d found", PUBLIC_KEY_LENGTH, publicKeyBytes.length));
 
     return nativeDeserializePublicKey(publicKeyBytes, checkPublicKey, compressed);
   }
 
-  public static SchnorrPublicKey deserialize(byte[] publicKeyBytes, boolean checkPublicKey) throws SchnorrSignatureException {
+  public static SchnorrPublicKey deserialize(byte[] publicKeyBytes, boolean checkPublicKey) throws DeserializationException {
     return deserialize(publicKeyBytes, checkPublicKey, true);
   }
 
-  public static SchnorrPublicKey deserialize(byte[] publicKeyBytes) throws SchnorrSignatureException {
+  public static SchnorrPublicKey deserialize(byte[] publicKeyBytes) throws DeserializationException {
     return deserialize(publicKeyBytes, true, true);
   }
 
@@ -81,7 +81,7 @@ public class SchnorrPublicKey implements AutoCloseable
   }
 
   @Override
-  public void close() throws SchnorrSignatureException {
+  public void close() {
     freePublicKey();
   }
 }

@@ -1,6 +1,6 @@
 package com.horizen.common.vrfnative;
 
-import com.horizen.common.librustsidechains.Library;
+import com.horizen.common.librustsidechains.*;
 
 public class VRFSecretKey implements AutoCloseable
 {
@@ -21,9 +21,9 @@ public class VRFSecretKey implements AutoCloseable
         this.secretKeyPointer = secretKeyPointer;
     }
 
-    private static native VRFSecretKey nativeDeserializeSecretKey(byte[] secretKeyBytes) throws VRFException;
+    private static native VRFSecretKey nativeDeserializeSecretKey(byte[] secretKeyBytes) throws DeserializationException;
 
-    public static VRFSecretKey deserialize(byte[] secretKeyBytes) throws VRFException {
+    public static VRFSecretKey deserialize(byte[] secretKeyBytes) throws DeserializationException {
         if (secretKeyBytes.length != SECRET_KEY_LENGTH)
             throw new IllegalArgumentException(String.format("Incorrect secret key length, %d expected, %d found", SECRET_KEY_LENGTH, secretKeyBytes.length));
 
@@ -59,7 +59,7 @@ public class VRFSecretKey implements AutoCloseable
     }
 
     @Override
-    public void close() throws VRFException {
+    public void close() {
         freeSecretKey();
     }
 }

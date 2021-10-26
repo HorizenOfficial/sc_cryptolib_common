@@ -40,7 +40,7 @@ ffi_export!(
             Some(_check_public_key),
             Some(_compressed),
             "com/horizen/common/vrfnative/VRFPublicKey",
-            "com/horizen/common/vrfnative/VRFException",
+            "com/horizen/common/librustsidechains/DeserializationException",
         )
     }
 );
@@ -126,7 +126,7 @@ ffi_export!(
             None,
             None,
             "com/horizen/common/vrfnative/VRFSecretKey",
-            "com/horizen/common/vrfnative/VRFException",
+            "com/horizen/common/librustsidechains/DeserializationException",
         )
     }
 );
@@ -185,7 +185,7 @@ ffi_export!(
             Some(_check_proof),
             Some(_compressed),
             "com/horizen/common/vrfnative/VRFProof",
-            "com/horizen/common/vrfnative/VRFException",
+            "com/horizen/common/librustsidechains/DeserializationException",
         )
     }
 );

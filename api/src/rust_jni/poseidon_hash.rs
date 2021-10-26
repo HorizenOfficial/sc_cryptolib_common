@@ -107,7 +107,7 @@ ffi_export!(
             _env,
             finalize_poseidon_hash(digest),
             "com/horizen/common/librustsidechains/FieldElement",
-            "com/horizen/common/poseidonnative/PoseidonHashException",
+            "com/horizen/common/librustsidechains/FinalizationException",
             "Unable to finalize hash",
         )
     }

@@ -39,7 +39,7 @@ ffi_export!(
             Some(_check_public_key),
             Some(_compressed),
             "com/horizen/common/schnorrnative/SchnorrPublicKey",
-            "com/horizen/common/schnorrnative/SchnorrSignatureException",
+            "com/horizen/common/librustsidechains/DeserializationException",
         )
     }
 );
@@ -83,7 +83,7 @@ ffi_export!(
             None,
             None,
             "com/horizen/common/schnorrnative/SchnorrSecretKey",
-            "com/horizen/common/schnorrnative/SchnorrSignatureException",
+            "com/horizen/common/librustsidechains/DeserializationException",
         )
     }
 );
@@ -129,7 +129,7 @@ ffi_export!(
             Some(_check_sig),
             None,
             "com/horizen/common/schnorrnative/SchnorrSignature",
-            "com/horizen/common/schnorrnative/SchnorrSignatureException",
+            "com/horizen/common/librustsidechains/DeserializationException",
         )
     }
 );

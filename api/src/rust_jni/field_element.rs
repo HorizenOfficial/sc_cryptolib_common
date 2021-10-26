@@ -32,7 +32,7 @@ ffi_export!(
             _env,
             read_field_element_from_buffer_with_padding(fe_bytes.as_slice()),
             "com/horizen/common/librustsidechains/FieldElement",
-            "com/horizen/common/librustsidechains/FieldElementException",
+            "com/horizen/common/librustsidechains/DeserializationException",
             "Unable to deserialize FieldElement",
         )
     }

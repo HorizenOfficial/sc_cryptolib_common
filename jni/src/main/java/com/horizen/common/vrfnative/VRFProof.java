@@ -1,5 +1,6 @@
 package com.horizen.common.vrfnative;
 
+import com.horizen.common.librustsidechains.DeserializationException;
 import com.horizen.common.librustsidechains.Library;
 
 public class VRFProof implements AutoCloseable
@@ -23,22 +24,22 @@ public class VRFProof implements AutoCloseable
 
   private native byte[] nativeSerializeProof(boolean compressed);
 
-  private static native VRFProof nativeDeserializeProof(byte[] proofBytes, boolean checkVRFProof, boolean compressed) throws VRFException;
+  private static native VRFProof nativeDeserializeProof(byte[] proofBytes, boolean checkVRFProof, boolean compressed) throws DeserializationException;
 
   private native void nativeFreeProof();
 
-  public static VRFProof deserialize(byte[] proofBytes, boolean checkVRFProof, boolean compressed) throws VRFException {
+  public static VRFProof deserialize(byte[] proofBytes, boolean checkVRFProof, boolean compressed) throws DeserializationException {
     if (proofBytes.length != PROOF_LENGTH)
       throw new IllegalArgumentException(String.format("Incorrect proof length, %d expected, %d found", PROOF_LENGTH, proofBytes.length));
 
     return nativeDeserializeProof(proofBytes, checkVRFProof, compressed);
   }
 
-  public static VRFProof deserialize(byte[] proofBytes, boolean checkVRFProof) throws VRFException {
+  public static VRFProof deserialize(byte[] proofBytes, boolean checkVRFProof) throws DeserializationException {
     return deserialize(proofBytes, checkVRFProof, true);
   }
 
-  public static VRFProof deserialize(byte[] proofBytes) throws VRFException {
+  public static VRFProof deserialize(byte[] proofBytes) throws DeserializationException {
     return deserialize(proofBytes, true, true);
   }
 
@@ -71,7 +72,7 @@ public class VRFProof implements AutoCloseable
   }
 
   @Override
-  public void close() throws VRFException {
+  public void close() {
     freeProof();
   }
 }

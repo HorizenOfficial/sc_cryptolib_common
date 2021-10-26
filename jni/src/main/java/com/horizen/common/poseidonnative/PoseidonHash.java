@@ -1,6 +1,7 @@
 package com.horizen.common.poseidonnative;
 
 import com.horizen.common.librustsidechains.FieldElement;
+import com.horizen.common.librustsidechains.FinalizationException;
 import com.horizen.common.librustsidechains.Library;
 
 public class PoseidonHash implements AutoCloseable {
@@ -78,7 +79,7 @@ public class PoseidonHash implements AutoCloseable {
         nativeUpdate(input);
     }
 
-    private native FieldElement nativeFinalize() throws PoseidonHashException;
+    private native FieldElement nativeFinalize() throws FinalizationException;
 
     /*
     * Compute and return the digest.
@@ -88,7 +89,7 @@ public class PoseidonHash implements AutoCloseable {
     * - This instance was constructed by calling getInstanceVariableLength(True, ...)
     *   but the number of times update() has been called is not multiple of the hash rate.
     */
-    public FieldElement finalizeHash() throws PoseidonHashException {
+    public FieldElement finalizeHash() throws FinalizationException {
         if (poseidonHashPointer == 0)
             throw new IllegalStateException("PoseidonHash instance was freed.");
         return nativeFinalize();
@@ -117,7 +118,7 @@ public class PoseidonHash implements AutoCloseable {
      * procedure instead.
      */
     @Deprecated
-    public static FieldElement computePoseidonHash(FieldElement[] inputs)  throws PoseidonHashException {
+    public static FieldElement computePoseidonHash(FieldElement[] inputs) throws FinalizationException {
         PoseidonHash digest = PoseidonHash.getInstanceConstantLength(inputs.length);
         for (FieldElement fe: inputs)
             digest.update(fe);
@@ -137,7 +138,7 @@ public class PoseidonHash implements AutoCloseable {
     }
 
     @Override
-    public void close() throws PoseidonHashException {
+    public void close() {
         freePoseidonHash();
     }
 }

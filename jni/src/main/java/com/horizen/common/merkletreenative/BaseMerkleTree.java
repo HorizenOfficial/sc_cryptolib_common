@@ -1,7 +1,6 @@
 package com.horizen.common.merkletreenative;
 
-import com.horizen.common.librustsidechains.FieldElement;
-import com.horizen.common.librustsidechains.Library;
+import com.horizen.common.librustsidechains.*;
 
 import java.io.*;
 
@@ -23,13 +22,13 @@ public class BaseMerkleTree implements MerkleTree {
         this.inMemoryOptimizedMerkleTreePointer = 0;
     }
 
-    private static native BaseMerkleTree nativeInit(int height, long processingStep) throws MerkleTreeException;
+    private static native BaseMerkleTree nativeInit(int height, long processingStep) throws InitializationException;
 
-    public static BaseMerkleTree init(int height, long processingStep) throws MerkleTreeException {
+    public static BaseMerkleTree init(int height, long processingStep) throws InitializationException {
         return nativeInit(height, processingStep);
     }
 
-    public static BaseMerkleTree init(int height) throws MerkleTreeException {
+    public static BaseMerkleTree init(int height) throws InitializationException {
         return nativeInit(height, 1 << height);
     }
 
@@ -41,13 +40,13 @@ public class BaseMerkleTree implements MerkleTree {
         out.write(nativeSerialize());
     }
 
-    protected static native BaseMerkleTree nativeDeserialize(byte[] serializedTree) throws MerkleTreeException;
+    protected static native BaseMerkleTree nativeDeserialize(byte[] serializedTree) throws DeserializationException;
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         byte[] serialized = in.readAllBytes();
         try {
             this.inMemoryOptimizedMerkleTreePointer = nativeDeserialize(serialized).inMemoryOptimizedMerkleTreePointer;
-        } catch (MerkleTreeException ex) {
+        } catch (DeserializationException ex) {
             throw new IOException(ex.getMessage());
         }
     }
@@ -55,27 +54,25 @@ public class BaseMerkleTree implements MerkleTree {
     private native void nativeAppend(FieldElement input) throws MerkleTreeException;
 
     @Override
-    public void append(MerkleTreeLeaf input) throws MerkleTreeException, MerkleTreeLeafException {
+    public void append(FieldElement input) throws MerkleTreeException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
-        FieldElement leafFe = input.getLeafAsFieldElement();
-        nativeAppend(leafFe);
-        leafFe.freeFieldElement();
+        nativeAppend(input);
     }
 
-    private native BaseMerkleTree nativeFinalize() throws MerkleTreeException;
+    private native BaseMerkleTree nativeFinalize() throws FinalizationException;
 
     @Override
-    public BaseMerkleTree finalizeTree() throws MerkleTreeException {
+    public BaseMerkleTree finalizeTree() throws FinalizationException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
         return nativeFinalize();
     }
 
-    private native void nativeFinalizeInPlace() throws MerkleTreeException;
+    private native void nativeFinalizeInPlace() throws FinalizationException;
 
     @Override
-    public void finalizeTreeInPlace() throws MerkleTreeException {
+    public void finalizeTreeInPlace() throws FinalizationException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
         nativeFinalizeInPlace();
@@ -93,17 +90,14 @@ public class BaseMerkleTree implements MerkleTree {
     private native long nativeGetLeafIndex(FieldElement leaf);
     
     @Override
-    public long getLeafIndex(MerkleTreeLeaf leaf) throws MerkleTreeLeafException {
+    public long getLeafIndex(FieldElement leaf) {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
-        FieldElement leafFe = leaf.getLeafAsFieldElement();
-        long idx = nativeGetLeafIndex(leaf.getLeafAsFieldElement());
-        leafFe.freeFieldElement();
-        return idx;
+        return nativeGetLeafIndex(leaf);
     }
 
     @Override
-    public boolean isLeafInTree(MerkleTreeLeaf leaf) throws MerkleTreeLeafException {
+    public boolean isLeafInTree(FieldElement leaf) {
         return getLeafIndex(leaf) != -1;
     }
 
@@ -117,7 +111,7 @@ public class BaseMerkleTree implements MerkleTree {
     }
 
     @Override
-    public FieldBasedMerklePath getMerklePath(MerkleTreeLeaf leaf) throws MerkleTreeException, MerkleTreeLeafException {        
+    public FieldBasedMerklePath getMerklePath(FieldElement leaf) throws MerkleTreeException {        
         long leafIndex = getLeafIndex(leaf);
         if (leafIndex == -1)
             throw new IllegalStateException("Leaf not found inside tree");

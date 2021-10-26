@@ -148,7 +148,7 @@ ffi_export!(
             Some(_checked),
             None,
             "com/horizen/common/merkletreenative/FieldBasedMerklePath",
-            "com/horizen/common/merkletreenative/MerklePathException",
+            "com/horizen/common/librustsidechains/DeserializationException",
         )
     }
 );
@@ -174,7 +174,7 @@ ffi_export!(
             _env,
             new_ginger_mht(_height as usize, _processing_step as usize),
             "com/horizen/common/merkletreenative/BaseMerkleTree",
-            "com/horizen/common/merkletreenative/MerkleTreeException",
+            "com/horizen/common/librustsidechains/InitializationException",
             "Unable to inizialize MerkleTree",
         )
     }
@@ -219,7 +219,7 @@ ffi_export!(
             _env,
             finalize_ginger_mht(tree),
             "com/horizen/common/merkletreenative/BaseMerkleTree",
-            "com/horizen/common/merkletreenative/MerkleTreeException",
+            "com/horizen/common/librustsidechains/FinalizationException",
             "Unable to finalize MerkleTree",
         )
     }
@@ -239,7 +239,7 @@ ffi_export!(
         ok_or_throw_exc!(
             _env,
             finalize_ginger_mht_in_place(tree),
-            "com/horizen/common/merkletreenative/MerkleTreeException",
+            "com/horizen/common/librustsidechains/FinalizationException",
             "Unable to finalize MerkleTree in place"
         )
     }
@@ -337,7 +337,7 @@ ffi_export!(
             _env,
             <GingerMHT as CanonicalDeserialize>::deserialize(obj_bytes.as_slice()),
             "com/horizen/common/merkletreenative/BaseMerkleTree",
-            "com/horizen/common/merkletreenative/MerkleTreeException",
+            "com/horizen/common/librustsidechains/DeserializationException",
             "Unable to deserialize MerkleTree",
         )
     }

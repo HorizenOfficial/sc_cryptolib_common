@@ -1,6 +1,6 @@
 package com.horizen.common.merkletreenative;
 
-import com.horizen.common.librustsidechains.FieldElement;
+import com.horizen.common.librustsidechains.*;
 
 import org.junit.Test;
 import org.junit.Before;
@@ -95,7 +95,7 @@ public class MerkleTreeTest {
         try {
             BaseMerkleTree.init(100, 1 << 100);
             assertTrue("Must be unable to init a MerkleTree with unsupported height", false);
-        } catch (MerkleTreeException mte) {
+        } catch (InitializationException mte) {
             assertTrue(mte.getMessage().contains("Unsupported height"));
         }
 

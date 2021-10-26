@@ -75,8 +75,6 @@ public class FieldElementTest {
 
             // Free clone
             feClone.freeFieldElement();
-        } catch (CloneNotSupportedException cnse) {
-            assertTrue("Must be able to clone FieldElement", false);
         } catch (IllegalStateException ise) {
             assertTrue("Must be able to use cloned FieldElement after the original has been freed", false);
         }
@@ -92,7 +90,7 @@ public class FieldElementTest {
             FieldElement.deserialize(invalidFeBytes);
 
             assertFalse("Must be unable to deserialize a FieldElement over the modulus", true);
-        } catch (FieldElementException fee) {
+        } catch (DeserializationException fee) {
             assertTrue(fee.getMessage().contains("Attempt to deserialize a field element over the modulus"));
         }
 
@@ -103,7 +101,7 @@ public class FieldElementTest {
             FieldElement.deserialize(invalidFeBytes);
 
             assertFalse("Must be unable to deserialize a FieldElement from a byte array bigger than FIELD_ELEMENT_LENGTH", true);
-        } catch (FieldElementException fee) {
+        } catch (DeserializationException fee) {
             assertTrue(fee.getMessage().contains("Field element length exceeded"));
         }
 
