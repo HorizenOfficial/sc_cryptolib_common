@@ -8,7 +8,7 @@ public interface FieldElementConvertible {
     /**
      * Convert this instance into a FieldElement
      * @return the FieldElement conversion result starting from this instance
-     * @throws ConversionException if the conversion fails
+     * @throws FieldElementConversionException if the conversion fails
      */
-    FieldElement toFieldElement() throws ConversionException;
+    FieldElement toFieldElement() throws FieldElementConversionException;
 }
