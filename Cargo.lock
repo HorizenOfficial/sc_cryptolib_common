@@ -3,7 +3,7 @@
 [[package]]
 name = "algebra"
 version = "0.3.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#43543a5064f48aa8f82fa8008ab9cd806d214cbf"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
 dependencies = [
  "algebra-derive",
  "byteorder",
@@ -19,7 +19,7 @@ dependencies = [
 [[package]]
 name = "algebra-derive"
 version = "0.2.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#43543a5064f48aa8f82fa8008ab9cd806d214cbf"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -47,7 +47,7 @@ checksum = "cdb031dd78e28731d87d56cc8ffef4a8f36ca26c38fe2de700543e627f8a464a"
 [[package]]
 name = "bench-utils"
 version = "0.3.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#43543a5064f48aa8f82fa8008ab9cd806d214cbf"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
 
 [[package]]
 name = "bit-vec"
@@ -110,9 +110,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "combine"
-version = "4.6.1"
+version = "4.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a909e4d93292cd8e9c42e189f61681eff9d67b6541f96b8a1a737f23737bd001"
+checksum = "b2b2f5d0ee456f3928812dfc8c6d9a1d592b98678f6d56db9b0cd2b7bc6c8db5"
 dependencies = [
  "bytes",
  "memchr",
@@ -231,7 +231,7 @@ checksum = "c34f04666d835ff5d62e058c3995147c06f42fe86ff053337632bca83e42702d"
 [[package]]
 name = "field-assembly"
 version = "0.1.1-alpha.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#43543a5064f48aa8f82fa8008ab9cd806d214cbf"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
 dependencies = [
  "mince",
 ]
@@ -330,7 +330,7 @@ dependencies = [
 [[package]]
 name = "mince"
 version = "0.1.1-alpha.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#43543a5064f48aa8f82fa8008ab9cd806d214cbf"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
 dependencies = [
  "quote",
  "syn",
@@ -370,7 +370,7 @@ checksum = "ed0cfbc8191465bed66e1718596ee0b0b35d5ee1f41c5df2189d0fe8bde535ba"
 [[package]]
 name = "primitives"
 version = "0.3.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#43543a5064f48aa8f82fa8008ab9cd806d214cbf"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
 dependencies = [
  "algebra",
  "bench-utils",
@@ -588,7 +588,7 @@ dependencies = [
 [[package]]
 name = "type-mappings"
 version = "0.1.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#43543a5064f48aa8f82fa8008ab9cd806d214cbf"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#56bc244d32c735b2f0d2f7b584ef94e807748137"
 dependencies = [
  "algebra",
  "bit-vec",
