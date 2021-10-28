@@ -26,3 +26,4 @@ panic = "unwind"
 # [patch.'https://github.com/HorizenOfficial/ginger-lib.git']
 # algebra = { path = '../ginger-lib/algebra' }
 # primitives = { path = '../ginger-lib/primitives' }
+# type-mappings = { path = '../ginger-lib/type-mappings' }

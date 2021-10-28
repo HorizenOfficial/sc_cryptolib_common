@@ -1,5 +1,4 @@
 use super::*;
-use crate::ginger_calls::{field_element::*, into_i8};
 
 ffi_export!(
     fn Java_com_horizen_common_librustsidechains_FieldElement_nativeGetFieldElementSize(

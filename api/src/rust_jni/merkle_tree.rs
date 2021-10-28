@@ -1,5 +1,4 @@
 use super::*;
-use crate::ginger_calls::merkle_tree::*;
 use algebra::{CanonicalDeserialize, SemanticallyValid};
 
 ffi_export!(

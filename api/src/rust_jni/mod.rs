@@ -1,4 +1,5 @@
 use super::*;
+use crate::type_mappings::*;
 use jni::{
     objects::{JClass, JObject, JValue},
     sys::{jboolean, jbyteArray, jint, jlong, jobject, jobjectArray, JNI_FALSE, JNI_TRUE},

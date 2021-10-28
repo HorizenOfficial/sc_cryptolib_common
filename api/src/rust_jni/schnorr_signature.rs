@@ -1,5 +1,4 @@
 use super::*;
-use crate::ginger_calls::{schnorr_signature::*, serialization::is_valid};
 
 ffi_export!(
     fn Java_com_horizen_common_schnorrnative_SchnorrPublicKey_nativeGetPublicKeySize(

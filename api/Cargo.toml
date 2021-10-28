@@ -13,8 +13,9 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-algebra = { git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "development" }
-primitives = { features = ["signature", "merkle_tree", "vrf"], git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "development" }
+algebra = { git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "feat/concrete_instantiations" }
+primitives = { features = ["signature", "merkle_tree", "vrf"], git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "feat/concrete_instantiations" }
+type-mappings = { git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "feat/concrete_instantiations"}
 
 jni = "0.19.0"
 derivative = "2.2.0"

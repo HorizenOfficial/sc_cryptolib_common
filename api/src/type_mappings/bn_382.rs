@@ -5,26 +5,10 @@ use {
     },
     primitives::crh::poseidon::parameters::bn382::{BN382FrBatchPoseidonHash, BN382FrPoseidonHash},
     primitives::merkle_tree::bn382::BN382_MHT_POSEIDON_PARAMETERS,
+    type_mappings::*,
 };
 
-use crate::hash_to_curve;
-use algebra::{AffineCurve, Field, FpParameters, ModelParameters, PrimeField, ProjectiveCurve};
-use lazy_static::lazy_static;
-use primitives::{
-    crh::{
-        bowe_hopwood::{BoweHopwoodPedersenCRH, BoweHopwoodPedersenParameters},
-        pedersen::PedersenWindow,
-    },
-    merkle_tree::*,
-    signature::schnorr::field_based_schnorr::{
-        FieldBasedSchnorrSignature, FieldBasedSchnorrSignatureScheme,
-    },
-    vrf::ecvrf::{FieldBasedEcVrf, FieldBasedEcVrfProof},
-};
-
-pub type Error = Box<dyn std::error::Error>;
-
-generate_all_algebraic_crypto_types!(
+generate_all_types_and_functions!(
     Bn382DualAffine,
     Bn382DualProjective,
     Bn382DualParameters,

@@ -1,5 +1,4 @@
 use super::*;
-use crate::ginger_calls::{serialization::is_valid, vrf::*};
 
 // VRF related functions
 ffi_export!(

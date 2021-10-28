@@ -1,5 +1,4 @@
 use super::*;
-use crate::ginger_calls::poseidon_hash::*;
 
 ffi_export!(
     fn Java_com_horizen_common_poseidonnative_PoseidonHash_nativeGetHashSize(
