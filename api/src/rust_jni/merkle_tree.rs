@@ -1,5 +1,4 @@
 use super::*;
-use algebra::{CanonicalDeserialize, SemanticallyValid};
 
 ffi_export!(
     fn Java_com_horizen_common_merkletreenative_FieldBasedMerklePath_nativeVerify(

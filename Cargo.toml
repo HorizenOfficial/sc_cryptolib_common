@@ -23,7 +23,7 @@ panic = "unwind"
 
 # Uncomment these lines for local development paths
 #
-[patch.'https://github.com/HorizenOfficial/ginger-lib.git']
+#[patch.'https://github.com/HorizenOfficial/ginger-lib.git']
 # algebra = { path = '../ginger-lib/algebra' }
 # primitives = { path = '../ginger-lib/primitives' }
 # proof-systems = { path = '../ginger-lib/proof-systems' }

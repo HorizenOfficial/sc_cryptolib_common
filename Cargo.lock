@@ -122,16 +122,12 @@ dependencies = [
 name = "common-api"
 version = "0.1.0"
 dependencies = [
- "algebra",
  "bit-vec",
  "blake2",
  "blake2s_simd",
  "derivative",
  "jni",
  "lazy_static",
- "primitives",
- "proof-systems",
- "r1cs-core",
  "radix_trie",
  "rand",
  "rand_xorshift",
@@ -614,7 +610,7 @@ dependencies = [
 [[package]]
 name = "type-mappings"
 version = "0.1.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#ea2aa40c807c72c6f8a29f36046dc49d12b55d54"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#dc76e4dff62dad1c84dcedcc33bb6f5b9f769e63"
 dependencies = [
  "algebra",
  "bit-vec",

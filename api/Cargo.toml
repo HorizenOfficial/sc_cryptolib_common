@@ -13,12 +13,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-algebra = { git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "development" }
-primitives = { features = ["signature", "merkle_tree", "vrf"], git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "development" }
 type-mappings = { git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "feat/concrete_instantiations"}
-
-proof-systems = { git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "development", optional = true }
-r1cs-core = { git = "https://github.com/HorizenOfficial/ginger-lib.git", branch = "development", optional = true }
 
 jni = "0.19.0"
 derivative = "2.2.0"
@@ -31,7 +26,6 @@ blake2s_simd = "0.5"
 bit-vec = "0.6.1"
 
 [features]
-asm = [ "algebra/llvm_asm"]
-tweedle = ["algebra/tweedle", "primitives/tweedle"]
-bn_382 = ["algebra/bn_382", "primitives/bn_382"]
-groth16 = ["proof-systems/groth16", "type-mappings/groth16", "r1cs-core"]
+tweedle = ["type-mappings/tweedle"]
+bn_382 = ["type-mappings/bn_382"]
+groth16 = ["type-mappings/groth16"]

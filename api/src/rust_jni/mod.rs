@@ -1,10 +1,16 @@
 use super::*;
-use crate::type_mappings::*;
 use jni::{
     objects::{JClass, JObject, JValue},
     sys::{jboolean, jbyteArray, jint, jlong, jobject, jobjectArray, JNI_FALSE, JNI_TRUE},
     JNIEnv,
 };
+use type_mappings::macros::*;
+
+#[cfg(feature = "bn_382")]
+use type_mappings::instantiated::bn_382::*;
+
+#[cfg(feature = "tweedle")]
+use type_mappings::instantiated::tweedle::*;
 
 pub mod utils;
 use utils::*;

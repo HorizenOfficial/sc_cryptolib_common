@@ -1,5 +1,4 @@
 use super::*;
-use algebra::{serialize::*, SemanticallyValid};
 use std::{any::type_name, fmt::Debug};
 
 pub fn read_raw_pointer<'a, T>(env: &JNIEnv, input: *const T) -> &'a T {
