@@ -130,6 +130,8 @@ dependencies = [
  "jni",
  "lazy_static",
  "primitives",
+ "proof-systems",
+ "r1cs-core",
  "radix_trie",
  "rand",
  "rand_xorshift",
@@ -393,12 +395,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "proof-systems"
+version = "0.3.0"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
+dependencies = [
+ "algebra",
+ "bench-utils",
+ "byteorder",
+ "r1cs-core",
+ "rand",
+ "rayon",
+ "serde",
+ "smallvec",
+]
+
+[[package]]
 name = "quote"
 version = "1.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "38bc8cc6a5f2e3655e0899c1b848643b2562f853f114bfec7be120678e3ace05"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "r1cs-core"
+version = "0.3.0"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
+dependencies = [
+ "algebra",
+ "smallvec",
 ]
 
 [[package]]
@@ -588,13 +614,14 @@ dependencies = [
 [[package]]
 name = "type-mappings"
 version = "0.1.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#56bc244d32c735b2f0d2f7b584ef94e807748137"
 dependencies = [
  "algebra",
  "bit-vec",
  "blake2s_simd",
  "lazy_static",
  "primitives",
+ "proof-systems",
+ "r1cs-core",
  "rand",
  "rand_xorshift",
 ]

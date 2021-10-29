@@ -1,7 +1,10 @@
 use {
-    algebra::curves::bn_382::g::{
-        Affine as Bn382DualAffine, Bn382GParameters as Bn382DualParameters,
-        Projective as Bn382DualProjective,
+    algebra::curves::bn_382::{
+        g::{
+            Affine as Bn382DualAffine, Bn382GParameters as Bn382DualParameters,
+            Projective as Bn382DualProjective,
+        },
+        Bn382
     },
     primitives::crh::poseidon::parameters::bn382::{BN382FrBatchPoseidonHash, BN382FrPoseidonHash},
     primitives::merkle_tree::bn382::BN382_MHT_POSEIDON_PARAMETERS,
@@ -17,3 +20,6 @@ generate_all_types_and_functions!(
     BN382_MHT_POSEIDON_PARAMETERS,
     2
 );
+
+#[cfg(feature = "groth16")]
+generate_groth16_functions!(Bn382);
