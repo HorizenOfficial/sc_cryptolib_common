@@ -29,4 +29,4 @@ panic = "unwind"
 # proof-systems = { path = '../ginger-lib/proof-systems' }
 # r1cs-core = { path = '../ginger-lib/r1cs/core' }
 #
-type-mappings = { path = '../ginger-lib/type-mappings' }
+#type-mappings = { path = '../ginger-lib/type-mappings' }
