@@ -1,24 +1,36 @@
 use {
-    algebra::{
-        curves::tweedle::dum::{Affine as DumAffine, Projective as DumProjective, TweedledumParameters},
+    algebra::curves::tweedle::dum::{
+        Affine as DumAffine, Projective as DumProjective, TweedledumParameters,
     },
-    primitives::crh::poseidon::parameters::tweedle_dee::{TweedleFrPoseidonHash, TweedleFrBatchPoseidonHash},
+    primitives::crh::poseidon::parameters::tweedle_dee::{
+        TweedleFrBatchPoseidonHash, TweedleFrPoseidonHash,
+    },
     primitives::merkle_tree::tweedle_dee::TWEEDLE_DEE_MHT_POSEIDON_PARAMETERS,
 };
 
-use algebra::{Field, FpParameters, ModelParameters, PrimeField,};
+use crate::hash_to_curve;
+use algebra::{AffineCurve, Field, FpParameters, ModelParameters, PrimeField, ProjectiveCurve};
+use lazy_static::lazy_static;
 use primitives::{
+    crh::{
+        bowe_hopwood::{BoweHopwoodPedersenCRH, BoweHopwoodPedersenParameters},
+        pedersen::PedersenWindow,
+    },
     merkle_tree::*,
-    signature::{
-        schnorr::field_based_schnorr::{
-            FieldBasedSchnorrSignatureScheme, FieldBasedSchnorrSignature,
-        },
-    }
+    signature::schnorr::field_based_schnorr::{
+        FieldBasedSchnorrSignature, FieldBasedSchnorrSignatureScheme,
+    },
+    vrf::ecvrf::{FieldBasedEcVrf, FieldBasedEcVrfProof},
 };
 
 pub type Error = Box<dyn std::error::Error>;
 
-generate_algebraic_types!(DumAffine, TweedledumParameters);
-generate_poseidon_hash_types!(TweedleFrPoseidonHash, TweedleFrBatchPoseidonHash);
-generate_merkle_tree_types!(TWEEDLE_DEE_MHT_POSEIDON_PARAMETERS, 2);
-generate_schnorr_signature_types!(DumProjective, DumAffine);
+generate_all_algebraic_crypto_types!(
+    DumAffine,
+    DumProjective,
+    TweedledumParameters,
+    TweedleFrPoseidonHash,
+    TweedleFrBatchPoseidonHash,
+    TWEEDLE_DEE_MHT_POSEIDON_PARAMETERS,
+    2
+);

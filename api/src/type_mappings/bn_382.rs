@@ -1,23 +1,35 @@
 use {
     algebra::curves::bn_382::g::{
-        Affine as Bn382DualAffine, Projective as Bn382DualProjective, Bn382GParameters as Bn382DualParameters
+        Affine as Bn382DualAffine, Bn382GParameters as Bn382DualParameters,
+        Projective as Bn382DualProjective,
     },
-    primitives::crh::poseidon::parameters::bn382::{BN382FrPoseidonHash, BN382FrBatchPoseidonHash},
+    primitives::crh::poseidon::parameters::bn382::{BN382FrBatchPoseidonHash, BN382FrPoseidonHash},
     primitives::merkle_tree::bn382::BN382_MHT_POSEIDON_PARAMETERS,
 };
 
-use algebra::{Field, FpParameters, ModelParameters, PrimeField,};
+use crate::hash_to_curve;
+use algebra::{AffineCurve, Field, FpParameters, ModelParameters, PrimeField, ProjectiveCurve};
+use lazy_static::lazy_static;
 use primitives::{
-    merkle_tree::*,
-    signature::{
-    schnorr::field_based_schnorr::{
-        FieldBasedSchnorrSignatureScheme, FieldBasedSchnorrSignature,
+    crh::{
+        bowe_hopwood::{BoweHopwoodPedersenCRH, BoweHopwoodPedersenParameters},
+        pedersen::PedersenWindow,
     },
-}};
+    merkle_tree::*,
+    signature::schnorr::field_based_schnorr::{
+        FieldBasedSchnorrSignature, FieldBasedSchnorrSignatureScheme,
+    },
+    vrf::ecvrf::{FieldBasedEcVrf, FieldBasedEcVrfProof},
+};
 
 pub type Error = Box<dyn std::error::Error>;
 
-generate_algebraic_types!(Bn382DualAffine, Bn382DualParameters);
-generate_poseidon_hash_types!(BN382FrPoseidonHash, BN382FrBatchPoseidonHash);
-generate_merkle_tree_types!(BN382_MHT_POSEIDON_PARAMETERS, 2);
-generate_schnorr_signature_types!(Bn382DualProjective, Bn382DualAffine);
+generate_all_algebraic_crypto_types!(
+    Bn382DualAffine,
+    Bn382DualProjective,
+    Bn382DualParameters,
+    BN382FrPoseidonHash,
+    BN382FrBatchPoseidonHash,
+    BN382_MHT_POSEIDON_PARAMETERS,
+    2
+);
