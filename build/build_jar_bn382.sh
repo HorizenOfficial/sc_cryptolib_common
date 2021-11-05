@@ -1,4 +1,10 @@
+#!/bin/bash
+
+set -euo pipefail
+
 cargo clean
+
+cargo test --features "bn_382"
 
 cargo build -j$(($(nproc)+1)) --release --features "bn_382" --target=x86_64-pc-windows-gnu
 cargo build -j$(($(nproc)+1)) --release --features "bn_382" --target=x86_64-unknown-linux-gnu

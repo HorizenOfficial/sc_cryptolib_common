@@ -2,7 +2,7 @@ use super::*;
 use crate::ginger_calls::poseidon_hash::*;
 
 ffi_export!(
-    fn Java_com_horizen_common_poseidonnative_PoseidonHash_nativeGetHashSize(
+    fn Java_io_horizen_common_poseidonnative_PoseidonHash_nativeGetHashSize(
         _env: JNIEnv,
         _class: JClass,
     ) -> jint {
@@ -11,7 +11,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_poseidonnative_PoseidonHash_nativeGetConstantLengthPoseidonHash(
+    fn Java_io_horizen_common_poseidonnative_PoseidonHash_nativeGetConstantLengthPoseidonHash(
         _env: JNIEnv,
         _class: JClass,
         _input_size: jint,
@@ -39,12 +39,12 @@ ffi_export!(
         );
 
         //Return PoseidonHash instance
-        return_jobject(&_env, h, "com/horizen/common/poseidonnative/PoseidonHash").into_inner()
+        return_jobject(&_env, h, "io/horizen/common/poseidonnative/PoseidonHash").into_inner()
     }
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_poseidonnative_PoseidonHash_nativeGetVariableLengthPoseidonHash(
+    fn Java_io_horizen_common_poseidonnative_PoseidonHash_nativeGetVariableLengthPoseidonHash(
         _env: JNIEnv,
         _class: JClass,
         _mod_rate: jboolean,
@@ -72,12 +72,12 @@ ffi_export!(
         );
 
         //Return PoseidonHash instance
-        return_jobject(&_env, h, "com/horizen/common/poseidonnative/PoseidonHash").into_inner()
+        return_jobject(&_env, h, "io/horizen/common/poseidonnative/PoseidonHash").into_inner()
     }
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_poseidonnative_PoseidonHash_nativeUpdate(
+    fn Java_io_horizen_common_poseidonnative_PoseidonHash_nativeUpdate(
         _env: JNIEnv,
         _h: JObject,
         _input: JObject,
@@ -95,7 +95,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_poseidonnative_PoseidonHash_nativeFinalize(
+    fn Java_io_horizen_common_poseidonnative_PoseidonHash_nativeFinalize(
         _env: JNIEnv,
         _h: JObject,
     ) -> jobject {
@@ -106,15 +106,15 @@ ffi_export!(
         map_to_jobject_or_throw_exc(
             _env,
             finalize_poseidon_hash(digest),
-            "com/horizen/common/librustsidechains/FieldElement",
-            "com/horizen/common/librustsidechains/FinalizationException",
+            "io/horizen/common/librustsidechains/FieldElement",
+            "io/horizen/common/librustsidechains/FinalizationException",
             "Unable to finalize hash",
         )
     }
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_poseidonnative_PoseidonHash_nativeReset(
+    fn Java_io_horizen_common_poseidonnative_PoseidonHash_nativeReset(
         _env: JNIEnv,
         _h: JObject,
         _personalization: jobjectArray,
@@ -145,7 +145,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_poseidonnative_PoseidonHash_nativeFreePoseidonHash(
+    fn Java_io_horizen_common_poseidonnative_PoseidonHash_nativeFreePoseidonHash(
         _env: JNIEnv,
         _h: JObject,
     ) {
