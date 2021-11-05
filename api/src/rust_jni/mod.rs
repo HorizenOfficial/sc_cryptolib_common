@@ -25,7 +25,7 @@ pub mod schnorr_signature;
 pub mod vrf;
 
 ffi_export!(
-    fn Java_com_horizen_common_librustsidechains_Library_nativePanickingFunction(
+    fn Java_io_horizen_common_librustsidechains_Library_nativePanickingFunction(
         _env: JNIEnv,
         _class: JClass,
     ) {

@@ -1,7 +1,7 @@
 use super::*;
 
 ffi_export!(
-    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeGetFieldElementSize(
+    fn Java_io_horizen_common_librustsidechains_FieldElement_nativeGetFieldElementSize(
         _env: JNIEnv,
         _field_element_class: JClass,
     ) -> jint {
@@ -10,7 +10,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeSerializeFieldElement(
+    fn Java_io_horizen_common_librustsidechains_FieldElement_nativeSerializeFieldElement(
         _env: JNIEnv,
         _field_element: JObject,
     ) -> jbyteArray {
@@ -19,7 +19,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeDeserializeFieldElement(
+    fn Java_io_horizen_common_librustsidechains_FieldElement_nativeDeserializeFieldElement(
         _env: JNIEnv,
         _class: JClass,
         _field_element_bytes: jbyteArray,
@@ -30,15 +30,15 @@ ffi_export!(
         map_to_jobject_or_throw_exc::<FieldElement, _>(
             _env,
             read_field_element_from_buffer_with_padding(fe_bytes.as_slice()),
-            "com/horizen/common/librustsidechains/FieldElement",
-            "com/horizen/common/librustsidechains/DeserializationException",
+            "io/horizen/common/librustsidechains/FieldElement",
+            "io/horizen/common/librustsidechains/DeserializationException",
             "Unable to deserialize FieldElement",
         )
     }
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeCreateRandom(
+    fn Java_io_horizen_common_librustsidechains_FieldElement_nativeCreateRandom(
         _env: JNIEnv,
         _class: JClass,
         _seed: jlong,
@@ -51,7 +51,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeCreateSecureRandom(
+    fn Java_io_horizen_common_librustsidechains_FieldElement_nativeCreateSecureRandom(
         _env: JNIEnv,
         _class: JClass,
     ) -> jobject {
@@ -63,7 +63,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeCreateFromLong(
+    fn Java_io_horizen_common_librustsidechains_FieldElement_nativeCreateFromLong(
         _env: JNIEnv,
         _class: JClass,
         _long: jlong,
@@ -76,7 +76,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeClone(
+    fn Java_io_horizen_common_librustsidechains_FieldElement_nativeClone(
         _env: JNIEnv,
         _field_element: JObject,
     ) -> jobject {
@@ -90,7 +90,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_librustsidechains_FieldElement_nativePrintFieldElementBytes(
+    fn Java_io_horizen_common_librustsidechains_FieldElement_nativePrintFieldElementBytes(
         _env: JNIEnv,
         _field_element: JObject,
     ) {
@@ -106,7 +106,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeFreeFieldElement(
+    fn Java_io_horizen_common_librustsidechains_FieldElement_nativeFreeFieldElement(
         _env: JNIEnv,
         _fe: JObject,
     ) {
@@ -115,7 +115,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_librustsidechains_FieldElement_nativeEquals(
+    fn Java_io_horizen_common_librustsidechains_FieldElement_nativeEquals(
         _env: JNIEnv,
         _field_element_1: JObject,
         _field_element_2: JObject,

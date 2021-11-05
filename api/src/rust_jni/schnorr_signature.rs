@@ -1,7 +1,7 @@
 use super::*;
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrPublicKey_nativeGetPublicKeySize(
+    fn Java_io_horizen_common_schnorrnative_SchnorrPublicKey_nativeGetPublicKeySize(
         _env: JNIEnv,
         _schnorr_public_key_class: JClass,
     ) -> jint {
@@ -10,7 +10,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrPublicKey_nativeSerializePublicKey(
+    fn Java_io_horizen_common_schnorrnative_SchnorrPublicKey_nativeSerializePublicKey(
         _env: JNIEnv,
         _schnorr_public_key: JObject,
         _compressed: jboolean,
@@ -25,7 +25,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrPublicKey_nativeDeserializePublicKey(
+    fn Java_io_horizen_common_schnorrnative_SchnorrPublicKey_nativeDeserializePublicKey(
         _env: JNIEnv,
         _schnorr_public_key_class: JClass,
         _public_key_bytes: jbyteArray,
@@ -37,14 +37,14 @@ ffi_export!(
             _public_key_bytes,
             Some(_check_public_key),
             Some(_compressed),
-            "com/horizen/common/schnorrnative/SchnorrPublicKey",
-            "com/horizen/common/librustsidechains/DeserializationException",
+            "io/horizen/common/schnorrnative/SchnorrPublicKey",
+            "io/horizen/common/librustsidechains/DeserializationException",
         )
     }
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrPublicKey_nativeFreePublicKey(
+    fn Java_io_horizen_common_schnorrnative_SchnorrPublicKey_nativeFreePublicKey(
         _env: JNIEnv,
         _schnorr_public_key: JObject,
     ) {
@@ -53,7 +53,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrSecretKey_nativeGetSecretKeySize(
+    fn Java_io_horizen_common_schnorrnative_SchnorrSecretKey_nativeGetSecretKeySize(
         _env: JNIEnv,
         _schnorr_secret_key_class: JClass,
     ) -> jint {
@@ -62,7 +62,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrSecretKey_nativeSerializeSecretKey(
+    fn Java_io_horizen_common_schnorrnative_SchnorrSecretKey_nativeSerializeSecretKey(
         _env: JNIEnv,
         _schnorr_secret_key: JObject,
     ) -> jbyteArray {
@@ -71,7 +71,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrSecretKey_nativeDeserializeSecretKey(
+    fn Java_io_horizen_common_schnorrnative_SchnorrSecretKey_nativeDeserializeSecretKey(
         _env: JNIEnv,
         _schnorr_secret_key_class: JClass,
         _secret_key_bytes: jbyteArray,
@@ -81,14 +81,14 @@ ffi_export!(
             _secret_key_bytes,
             None,
             None,
-            "com/horizen/common/schnorrnative/SchnorrSecretKey",
-            "com/horizen/common/librustsidechains/DeserializationException",
+            "io/horizen/common/schnorrnative/SchnorrSecretKey",
+            "io/horizen/common/librustsidechains/DeserializationException",
         )
     }
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrSecretKey_nativeFreeSecretKey(
+    fn Java_io_horizen_common_schnorrnative_SchnorrSecretKey_nativeFreeSecretKey(
         _env: JNIEnv,
         _schnorr_secret_key: JObject,
     ) {
@@ -98,7 +98,7 @@ ffi_export!(
 
 //Schnorr signature utility functions
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrSignature_nativeGetSignatureSize(
+    fn Java_io_horizen_common_schnorrnative_SchnorrSignature_nativeGetSignatureSize(
         _env: JNIEnv,
         _class: JClass,
     ) -> jint {
@@ -107,7 +107,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrSignature_nativeSerializeSignature(
+    fn Java_io_horizen_common_schnorrnative_SchnorrSignature_nativeSerializeSignature(
         _env: JNIEnv,
         _schnorr_sig: JObject,
     ) -> jbyteArray {
@@ -116,7 +116,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrSignature_nativeDeserializeSignature(
+    fn Java_io_horizen_common_schnorrnative_SchnorrSignature_nativeDeserializeSignature(
         _env: JNIEnv,
         _class: JClass,
         _sig_bytes: jbyteArray,
@@ -127,14 +127,14 @@ ffi_export!(
             _sig_bytes,
             Some(_check_sig),
             None,
-            "com/horizen/common/schnorrnative/SchnorrSignature",
-            "com/horizen/common/librustsidechains/DeserializationException",
+            "io/horizen/common/schnorrnative/SchnorrSignature",
+            "io/horizen/common/librustsidechains/DeserializationException",
         )
     }
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrSignature_nativeIsValidSignature(
+    fn Java_io_horizen_common_schnorrnative_SchnorrSignature_nativeIsValidSignature(
         _env: JNIEnv,
         _sig: JObject,
     ) -> jboolean {
@@ -149,7 +149,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrSignature_nativefreeSignature(
+    fn Java_io_horizen_common_schnorrnative_SchnorrSignature_nativefreeSignature(
         _env: JNIEnv,
         _sig: JObject,
     ) {
@@ -159,7 +159,7 @@ ffi_export!(
 
 //Schnorr signature functions
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrKeyPair_nativeGenerate(
+    fn Java_io_horizen_common_schnorrnative_SchnorrKeyPair_nativeGenerate(
         _env: JNIEnv,
         // this is the class that owns our
         // static method. Not going to be
@@ -172,21 +172,21 @@ ffi_export!(
         let secret_key_object = return_jobject(
             &_env,
             sk,
-            "com/horizen/common/schnorrnative/SchnorrSecretKey",
+            "io/horizen/common/schnorrnative/SchnorrSecretKey",
         );
         let public_key_object = return_jobject(
             &_env,
             pk,
-            "com/horizen/common/schnorrnative/SchnorrPublicKey",
+            "io/horizen/common/schnorrnative/SchnorrPublicKey",
         );
 
         let class = _env
-            .find_class("com/horizen/common/schnorrnative/SchnorrKeyPair")
+            .find_class("io/horizen/common/schnorrnative/SchnorrKeyPair")
             .expect("Should be able to find SchnorrKeyPair class");
 
         let result = _env.new_object(
         class,
-        "(Lcom/horizen/common/schnorrnative/SchnorrSecretKey;Lcom/horizen/common/schnorrnative/SchnorrPublicKey;)V",
+        "(Lio/horizen/common/schnorrnative/SchnorrSecretKey;Lio/horizen/common/schnorrnative/SchnorrPublicKey;)V",
         &[JValue::Object(secret_key_object), JValue::Object(public_key_object)]
     ).expect("Should be able to create new (SchnorrSecretKey, SchnorrPublicKey) object");
 
@@ -195,7 +195,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrKeyPair_nativeSignMessage(
+    fn Java_io_horizen_common_schnorrnative_SchnorrKeyPair_nativeSignMessage(
         _env: JNIEnv,
         _schnorr_key_pair: JObject,
         _message: JObject,
@@ -205,7 +205,7 @@ ffi_export!(
             .get_field(
                 _schnorr_key_pair,
                 "secretKey",
-                "Lcom/horizen/common/schnorrnative/SchnorrSecretKey;",
+                "Lio/horizen/common/schnorrnative/SchnorrSecretKey;",
             )
             .expect("Should be able to get field secretKey")
             .l()
@@ -219,7 +219,7 @@ ffi_export!(
             .get_field(
                 _schnorr_key_pair,
                 "publicKey",
-                "Lcom/horizen/common/schnorrnative/SchnorrPublicKey;",
+                "Lio/horizen/common/schnorrnative/SchnorrPublicKey;",
             )
             .expect("Should be able to get field publicKey")
             .l()
@@ -236,15 +236,15 @@ ffi_export!(
         map_to_jobject_or_throw_exc(
             _env,
             schnorr_sign(message, secret_key, public_key),
-            "com/horizen/common/schnorrnative/SchnorrSignature",
-            "com/horizen/common/schnorrnative/SchnorrSignatureException",
+            "io/horizen/common/schnorrnative/SchnorrSignature",
+            "io/horizen/common/schnorrnative/SchnorrSignatureException",
             "Unable to sign message",
         )
     }
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrPublicKey_nativeVerifyKey(
+    fn Java_io_horizen_common_schnorrnative_SchnorrPublicKey_nativeVerifyKey(
         _env: JNIEnv,
         _public_key: JObject,
     ) -> jboolean {
@@ -260,7 +260,7 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrSecretKey_nativeGetPublicKey(
+    fn Java_io_horizen_common_schnorrnative_SchnorrSecretKey_nativeGetPublicKey(
         _env: JNIEnv,
         _secret_key: JObject,
     ) -> jobject {
@@ -272,14 +272,14 @@ ffi_export!(
         return_jobject(
             &_env,
             pk,
-            "com/horizen/common/schnorrnative/SchnorrPublicKey",
+            "io/horizen/common/schnorrnative/SchnorrPublicKey",
         )
         .into_inner()
     }
 );
 
 ffi_export!(
-    fn Java_com_horizen_common_schnorrnative_SchnorrPublicKey_nativeVerifySignature(
+    fn Java_io_horizen_common_schnorrnative_SchnorrPublicKey_nativeVerifySignature(
         _env: JNIEnv,
         _public_key: JObject,
         _signature: JObject,
@@ -301,7 +301,7 @@ ffi_export!(
         map_to_jboolean_or_throw_exc(
             _env,
             schnorr_verify_signature(message, public_key, signature),
-            "com/horizen/common/schnorrnative/SchnorrSignatureException",
+            "io/horizen/common/schnorrnative/SchnorrSignatureException",
             "Unable to verify signature",
         )
     }
