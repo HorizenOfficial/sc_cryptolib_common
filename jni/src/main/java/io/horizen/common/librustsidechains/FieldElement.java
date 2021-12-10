@@ -1,7 +1,11 @@
 package io.horizen.common.librustsidechains;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.lang.Cloneable;
+import java.nio.charset.StandardCharsets;
 
 public class FieldElement implements AutoCloseable, Cloneable {
 
@@ -63,7 +67,7 @@ public class FieldElement implements AutoCloseable, Cloneable {
     private static native FieldElement nativeDeserializeFieldElement(byte[] fieldElementBytes) throws DeserializationException;
 
     /**
-     * Deserialize a FieldElement from "fieldElementBytes"
+     * Deserialize a FieldElement from "fieldElementBytes". Bytes are assumed to be in little-endian (as per output of serializeFieldElement)
      * @param fieldElementBytes bytes of the FieldElement to be deserialized
      * @return The deserialized FieldElement
      * @throws DeserializationException If fieldElementBytes.len() > FIELD_ELEMENT_LENGTH or if the bytes represent an invalid FieldElement
@@ -74,6 +78,53 @@ public class FieldElement implements AutoCloseable, Cloneable {
                     FIELD_ELEMENT_LENGTH, fieldElementBytes.length));
 
         return nativeDeserializeFieldElement(fieldElementBytes);
+    }
+
+    /**
+     * Deserialize as many FieldElements as possible from bytes.
+     * @param bytes - the bytes to be deserialized into FieldElements
+     * @param strict - if set to true, the function tries to read a FieldElement out of a
+     *                 chunk of size exactly FIELD_ELEMENT_LENGTH, thus assuming each chunk
+     *                 of this size would contain a valid FieldElement; otherwise this
+     *                 assumption is dropped and the chunk size will be set to FIELD_ELEMENT_LENGTH - 1,
+     *                 from which it is always possible to deserialize a valid FieldElement (typical usage
+     *                 would be this one)
+     * @return the FieldElements deserialized from bytes
+     * @throws DeserializationException - If any error occures during deserialization
+     */
+    public static List<FieldElement> deserializeMany(byte[] bytes, boolean strict) throws DeserializationException {
+        List<FieldElement> deserializedFes = new ArrayList<>();
+        int chunkSize = strict ? FIELD_ELEMENT_LENGTH: FIELD_ELEMENT_LENGTH - 1;
+        int start = 0;
+        while (start < bytes.length) {
+            int end = Math.min(bytes.length, start + chunkSize);
+            deserializedFes.add(FieldElement.deserialize(Arrays.copyOfRange(bytes, start, end)));
+            start += chunkSize;
+        }
+        return deserializedFes;
+    }
+
+    /**
+     * Deserialize as many FieldElements as possible from bytes in a safe way, i.e. reading a FieldElement
+     * out of each chunk of size FIELD_ELEMENT_LENGTH - 1 (from which it is always possible to read a valid
+     * FieldElement).
+     * @param bytes - the bytes to be deserialized into FieldElements
+     * @return the FieldElements deserialized from bytes
+     * @throws DeserializationException - If any error occures during deserialization
+     */
+    public static List<FieldElement> deserializeMany(byte[] bytes) throws DeserializationException {
+        return FieldElement.deserializeMany(bytes, false);
+    }
+
+    /**
+     * Deserialize a FieldElement from a String. The same rule as per deserialize(byte[]) method apply.
+     * @param s - the string to be deserialized into a FieldElement
+     * @return the FieldElement deserialized from the input string
+     * @throws DeserializationException 
+     */
+    public static FieldElement deserializeFromString(String s) throws DeserializationException {
+        byte[] stringBytes = s.getBytes(StandardCharsets.UTF_8);
+        return FieldElement.deserialize(stringBytes);
     }
 
     private native FieldElement nativeClone();
