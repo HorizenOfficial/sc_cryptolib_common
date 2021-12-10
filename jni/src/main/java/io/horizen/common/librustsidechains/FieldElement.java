@@ -123,7 +123,7 @@ public class FieldElement implements AutoCloseable, Cloneable {
      * @throws DeserializationException 
      */
     public static FieldElement deserializeFromString(String s) throws DeserializationException {
-        byte[] stringBytes = s.getBytes(StandardCharsets.UTF_8);
+        byte[] stringBytes = s.getBytes(StandardCharsets.US_ASCII);
         return FieldElement.deserialize(stringBytes);
     }
 

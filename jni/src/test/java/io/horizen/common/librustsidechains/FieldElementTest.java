@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,10 +12,10 @@ import java.util.Random;
 
 public class FieldElementTest {
 
+    static int samples = 100;
+
     @Test
     public void testRandomSerializeDeserialize() throws Exception {
-
-        int samples = 100;
 
         for( int i = 0; i < samples; i++ ) {
             
@@ -58,8 +58,6 @@ public class FieldElementTest {
     @Test
     public void testRandomSerializeManyDeserializeMany() throws Exception {
 
-        int samples = 100;
-
         for( int i = 1; i <= samples; i++ ) {
             
             // Generate random FieldElements and the corresponding bytes
@@ -69,9 +67,14 @@ public class FieldElementTest {
             int numFeToGenerate = new Random().nextInt(samples);
             for(int j = 0; j < numFeToGenerate; j++) {
                 FieldElement randomFe = FieldElement.createRandom();
-                randomFes.add(FieldElement.createRandom());
+                randomFes.add(randomFe);
 
                 byte[] serializedFe = randomFe.serializeFieldElement();
+                assertEquals("serializedFe size must be - " + FieldElement.FIELD_ELEMENT_LENGTH,
+                    FieldElement.FIELD_ELEMENT_LENGTH,
+                    serializedFe.length
+                );
+
                 for (byte b: serializedFe)
                     randomFesBytes.add((Byte)b);
             }
@@ -86,7 +89,7 @@ public class FieldElementTest {
                 FieldElement.deserializeMany(randomFesPrimitiveByteArray, true);
 
             assertTrue("Original and deserialized FieldElements must be the same", randomFes.equals(deserializedRandomFes));
-
+    
             // Should be able also to deserialize in a non strict way
             List<FieldElement> deserializedNonStrictFes = FieldElement.deserializeMany(randomFesPrimitiveByteArray, false);
 
@@ -101,12 +104,33 @@ public class FieldElementTest {
     }
 
     @Test
+    public void testNonStrictDeserializeManyFromRandomByteArray() throws Exception {
+        int maxByteArraySize = 1024;
+
+        for(int i = 0; i < samples; i++) {
+            Random r = new Random();
+
+            // Generate random byte array of random size
+            int size = r.nextInt(maxByteArraySize);
+            byte[] randomBytes = new byte[size];
+            r.nextBytes(randomBytes);
+
+            // Deserialize FieldElements from it
+            List<FieldElement> deserializedRandomFes = FieldElement.deserializeMany(randomBytes);
+
+            // Assert deserialization of expected number of FieldElements
+            assertEquals(deserializedRandomFes.size(), (size + FieldElement.FIELD_ELEMENT_LENGTH - 2)/(FieldElement.FIELD_ELEMENT_LENGTH - 1));
+        }
+    }
+
+    @Test
     public void testRandomDeserializeFromString() throws Exception {
         for(int i = 1; i < FieldElement.FIELD_ELEMENT_LENGTH; i++) {
-            // Generate random UTF8 String
+            // Generate random UTF-8 String
             byte[] stringBytes = new byte[i];
             new Random().nextBytes(stringBytes);
-            String generatedString = new String(stringBytes, Charset.forName("UTF-8"));
+            String generatedString = new String(stringBytes, StandardCharsets.US_ASCII);
+            assertEquals(generatedString.length(), i);
 
             // FieldElement deserialization must be successfull
             FieldElement fe = FieldElement.deserializeFromString(generatedString);
