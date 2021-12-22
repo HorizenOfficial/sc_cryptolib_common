@@ -3,7 +3,6 @@ package io.horizen.common.vrfnative;
 import io.horizen.common.librustsidechains.FieldElement;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
