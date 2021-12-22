@@ -60,7 +60,7 @@ macro_rules! generate_merkle_tree_types {
             type BH = BatchFieldHash;
         }
 
-        pub type GingerMHT = FieldBasedOptimizedMHT<GingerMHTParams>;
+        pub type GingerMHT = FieldBasedAppendOnlyMHT<GingerMHTParams>;
         pub type GingerMHTPath = FieldBasedBinaryMHTPath<GingerMHTParams>;
     };
 }
