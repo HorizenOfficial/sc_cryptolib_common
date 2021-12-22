@@ -185,6 +185,7 @@ public class MerkleTreeTest {
 
             // Get/Verify Merkle Path
             FieldBasedMerklePath path = mht.getMerklePath((long)i);
+            assertEquals("Invalid length for path", path.getLength(), 6);
             assertTrue("Merkle Path must be verified", path.verify(testLeaves.get(i), mhtRoot));
 
             // Serialization/Deserialization test
