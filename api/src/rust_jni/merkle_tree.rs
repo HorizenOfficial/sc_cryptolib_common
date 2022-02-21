@@ -1,37 +1,22 @@
 use super::*;
 
 ffi_export!(
-    fn Java_io_horizen_common_merkletreenative_FieldBasedMerklePath_nativeVerify(
+    fn Java_io_horizen_common_merkletreenative_FieldBasedMerklePath_nativeGetLength(
         _env: JNIEnv,
         _path: JObject,
-        _height: jint,
-        _leaf: JObject,
-        _root: JObject,
-    ) -> jboolean {
-        let leaf =
-            parse_rust_struct_from_jobject::<FieldElement>(&_env, _leaf, "fieldElementPointer");
-
-        let root =
-            parse_rust_struct_from_jobject::<FieldElement>(&_env, _root, "fieldElementPointer");
+    ) -> jint 
+    {
+        use primitives::FieldBasedMerkleTreePath;
 
         let path =
             parse_rust_struct_from_jobject::<GingerMHTPath>(&_env, _path, "merklePathPointer");
 
-        if !path.is_valid() {
-            return JNI_FALSE;
-        }
-
-        map_to_jboolean_or_throw_exc(
-            _env,
-            verify_ginger_merkle_path(path, _height as usize, leaf, root),
-            "io/horizen/common/merkletreenative/MerklePathException",
-            "Unable to verify MerklePath",
-        )
+        path.get_length() as jint
     }
 );
 
 ffi_export!(
-    fn Java_io_horizen_common_merkletreenative_FieldBasedMerklePath_nativeVerifyWithoutLengthCheck(
+    fn Java_io_horizen_common_merkletreenative_FieldBasedMerklePath_nativeVerify(
         _env: JNIEnv,
         _path: JObject,
         _leaf: JObject,
@@ -47,14 +32,10 @@ ffi_export!(
             parse_rust_struct_from_jobject::<GingerMHTPath>(&_env, _path, "merklePathPointer");
 
         if !path.is_valid() {
-            return JNI_FALSE;
+            throw!(&_env, "io/horizen/common/merkletreenative/MerklePathException", "Invalid Path", JNI_FALSE);
         }
 
-        if verify_ginger_merkle_path_without_length_check(path, leaf, root) {
-            JNI_TRUE
-        } else {
-            JNI_FALSE
-        }
+        verify_ginger_merkle_path_without_length_check(path, leaf, root) as jboolean
     }
 );
 
