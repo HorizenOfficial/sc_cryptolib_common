@@ -2,13 +2,14 @@
 # It is not intended for manual editing.
 [[package]]
 name = "algebra"
-version = "0.3.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
+version = "0.4.0"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
 dependencies = [
  "algebra-derive",
  "byteorder",
  "derivative",
  "field-assembly",
+ "num-bigint",
  "rand",
  "rayon",
  "rustc_version",
@@ -19,7 +20,7 @@ dependencies = [
 [[package]]
 name = "algebra-derive"
 version = "0.2.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -40,14 +41,14 @@ checksum = "23b62fc65de8e4e7f52534fb52b0f3ed04746ae267519eef2a83941e8085068b"
 
 [[package]]
 name = "autocfg"
-version = "1.0.1"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cdb031dd78e28731d87d56cc8ffef4a8f36ca26c38fe2de700543e627f8a464a"
+checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 
 [[package]]
 name = "bench-utils"
-version = "0.3.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
+version = "0.4.0"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
 
 [[package]]
 name = "bit-vec"
@@ -110,9 +111,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "combine"
-version = "4.6.2"
+version = "4.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b2b2f5d0ee456f3928812dfc8c6d9a1d592b98678f6d56db9b0cd2b7bc6c8db5"
+checksum = "50b727aacc797f9fc28e355d21f34709ac4fc9adecfe470ad07b8f4464f53062"
 dependencies = [
  "bytes",
  "memchr",
@@ -142,9 +143,9 @@ checksum = "245097e9a4535ee1e3e3931fcfcd55a796a44c643e8596ff6566d68f09b87bbc"
 
 [[package]]
 name = "crossbeam-channel"
-version = "0.5.1"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "06ed27e177f16d65f0f0c22a213e17c696ace5dd64b14258b52f9417ccb52db4"
+checksum = "e54ea8bc3fb1ee042f5aace6e3c6e025d3874866da222930f70ce62aceba0bfa"
 dependencies = [
  "cfg-if",
  "crossbeam-utils",
@@ -163,9 +164,9 @@ dependencies = [
 
 [[package]]
 name = "crossbeam-epoch"
-version = "0.9.5"
+version = "0.9.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ec02e091aa634e2c3ada4a392989e7c3116673ef0ac5b72232439094d73b7fd"
+checksum = "c00d6d2ea26e8b151d99093005cb442fb9a37aeaca582a03ec70946f49ab5ed9"
 dependencies = [
  "cfg-if",
  "crossbeam-utils",
@@ -176,9 +177,9 @@ dependencies = [
 
 [[package]]
 name = "crossbeam-utils"
-version = "0.8.5"
+version = "0.8.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d82cfc11ce7f2c3faef78d8a684447b40d503d9681acebed6cb728d45940c4db"
+checksum = "b5e5bed1f1c269533fa816a0a5492b3545209a205ca1a54842be180eb63a16a6"
 dependencies = [
  "cfg-if",
  "lazy_static",
@@ -229,7 +230,7 @@ checksum = "c34f04666d835ff5d62e058c3995147c06f42fe86ff053337632bca83e42702d"
 [[package]]
 name = "field-assembly"
 version = "0.1.1-alpha.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
 dependencies = [
  "mince",
 ]
@@ -245,9 +246,9 @@ dependencies = [
 
 [[package]]
 name = "getrandom"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fcd999463524c52659517fe2cea98493cfe485d10565e7b0fb07dbba7ad2753"
+checksum = "418d37c8b1d42553c93648be529cb70f920d3baf8ef469b74b9638df426e0b4c"
 dependencies = [
  "cfg-if",
  "libc",
@@ -297,9 +298,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.105"
+version = "0.2.119"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "869d572136620d55835903746bcb5cdc54cb2851fd0aeec53220b4bb65ef3013"
+checksum = "1bf2e165bb3457c8e098ea76f3e3bc9db55f87aa90d52d0e6be741470916aaa4"
 
 [[package]]
 name = "log"
@@ -311,6 +312,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "marlin"
+version = "0.2.2"
+source = "git+https://github.com/HorizenLabs/marlin?branch=dev#1aca34c169da3162e1ba6dd591283ff721d11b5e"
+dependencies = [
+ "algebra",
+ "bench-utils",
+ "derivative",
+ "digest",
+ "poly-commit",
+ "r1cs-core",
+ "r1cs-std",
+ "rand",
+ "rand_chacha",
+ "rand_core",
+ "rayon",
+]
+
+[[package]]
 name = "memchr"
 version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -318,9 +337,9 @@ checksum = "308cc39be01b73d0d18f82a0e7b2a3df85245f84af96fdddc5d202d27e47b86a"
 
 [[package]]
 name = "memoffset"
-version = "0.6.4"
+version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59accc507f1338036a0477ef61afdae33cde60840f4dfe481319ce3ad116ddf9"
+checksum = "5aa361d4faea93603064a027415f07bd8e1d5c88c9fbf68bf56a285428fd79ce"
 dependencies = [
  "autocfg",
 ]
@@ -328,7 +347,7 @@ dependencies = [
 [[package]]
 name = "mince"
 version = "0.1.1-alpha.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
 dependencies = [
  "quote",
  "syn",
@@ -344,10 +363,40 @@ dependencies = [
 ]
 
 [[package]]
-name = "num_cpus"
-version = "1.13.0"
+name = "num-bigint"
+version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "05499f3756671c15885fee9034446956fff3f243d6077b91e5767df161f766b3"
+checksum = "f93ab6289c7b344a8a9f60f88d80aa20032336fe78da341afc91c8a2341fc75f"
+dependencies = [
+ "autocfg",
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
+name = "num-integer"
+version = "0.1.44"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d2cc698a63b549a70bc047073d2949cce27cd1c7b0a4a862d08a8031bc2801db"
+dependencies = [
+ "autocfg",
+ "num-traits",
+]
+
+[[package]]
+name = "num-traits"
+version = "0.2.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9a64b1ec5cda2586e284722486d802acf1f7dbdc623e2bfc57e65ca1cd099290"
+dependencies = [
+ "autocfg",
+]
+
+[[package]]
+name = "num_cpus"
+version = "1.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "19e64526ebdee182341572e50e9ad03965aa510cd94427a4549448f285e957a1"
 dependencies = [
  "hermit-abi",
  "libc",
@@ -360,15 +409,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2839e79665f131bdb5782e51f2c6c9599c133c6098982a54c794358bf432529c"
 
 [[package]]
+name = "poly-commit"
+version = "0.2.2"
+source = "git+https://github.com/HorizenLabs/poly-commit?branch=dev#d3e3ac5143a441e2876536382ee1e8f15884bfbe"
+dependencies = [
+ "algebra",
+ "bench-utils",
+ "derivative",
+ "digest",
+ "rand",
+ "rand_chacha",
+ "rand_core",
+ "rayon",
+]
+
+[[package]]
 name = "ppv-lite86"
-version = "0.2.15"
+version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed0cfbc8191465bed66e1718596ee0b0b35d5ee1f41c5df2189d0fe8bde535ba"
+checksum = "eb9f9e6e233e5c4a35559a617bf40a4ec447db2e84c20b55a6f83167b7e57872"
 
 [[package]]
 name = "primitives"
-version = "0.3.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
+version = "0.4.0"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
 dependencies = [
  "algebra",
  "bench-utils",
@@ -392,13 +456,18 @@ dependencies = [
 
 [[package]]
 name = "proof-systems"
-version = "0.3.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
+version = "0.4.0"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
 dependencies = [
  "algebra",
  "bench-utils",
  "byteorder",
+ "derivative",
+ "digest",
+ "marlin",
+ "poly-commit",
  "r1cs-core",
+ "r1cs-std",
  "rand",
  "rayon",
  "serde",
@@ -416,11 +485,26 @@ dependencies = [
 
 [[package]]
 name = "r1cs-core"
-version = "0.3.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#e10cb027de2b045a8296ef6f14535498199d83e7"
+version = "0.4.0"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
 dependencies = [
  "algebra",
+ "radix_trie",
+ "rand",
  "smallvec",
+]
+
+[[package]]
+name = "r1cs-std"
+version = "0.4.0"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
+dependencies = [
+ "algebra",
+ "derivative",
+ "hex",
+ "r1cs-core",
+ "radix_trie",
+ "rand",
 ]
 
 [[package]]
@@ -540,9 +624,9 @@ checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
 
 [[package]]
 name = "semver"
-version = "1.0.4"
+version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "568a8e6258aa33c13358f81fd834adb854c6f7c9468520910a9b1e8fac068012"
+checksum = "0486718e92ec9a68fbed73bb5ef687d71103b142595b406835649bebd33f72c7"
 
 [[package]]
 name = "serde"
@@ -610,12 +694,15 @@ dependencies = [
 [[package]]
 name = "type-mappings"
 version = "0.1.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#dc76e4dff62dad1c84dcedcc33bb6f5b9f769e63"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#41aa2b530f780e9e8d1f9b4b38ded5a5acb14fd6"
 dependencies = [
  "algebra",
  "bit-vec",
+ "blake2",
  "blake2s_simd",
  "lazy_static",
+ "marlin",
+ "poly-commit",
  "primitives",
  "proof-systems",
  "r1cs-core",
@@ -625,9 +712,9 @@ dependencies = [
 
 [[package]]
 name = "typenum"
-version = "1.14.0"
+version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b63708a265f51345575b27fe43f9500ad611579e764c79edbc2037b1121959ec"
+checksum = "dcf81ac59edc17cc8697ff311e8f5ef2d99fcbd9817b34cec66f90b6c3dfd987"
 
 [[package]]
 name = "unicode-xid"

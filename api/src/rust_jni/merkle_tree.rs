@@ -6,8 +6,6 @@ ffi_export!(
         _path: JObject,
     ) -> jint 
     {
-        use primitives::FieldBasedMerkleTreePath;
-
         let path =
             parse_rust_struct_from_jobject::<GingerMHTPath>(&_env, _path, "merklePathPointer");
 
