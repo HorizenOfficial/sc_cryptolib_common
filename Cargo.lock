@@ -51,6 +51,11 @@ version = "0.4.0"
 source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
 
 [[package]]
+name = "bench-utils"
+version = "0.4.0"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#31af62193df3de24d686401c561aeac12b9c38bc"
+
+[[package]]
 name = "bit-vec"
 version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -317,12 +322,12 @@ version = "0.2.2"
 source = "git+https://github.com/HorizenLabs/marlin?branch=dev#1aca34c169da3162e1ba6dd591283ff721d11b5e"
 dependencies = [
  "algebra",
- "bench-utils",
+ "bench-utils 0.4.0 (git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development)",
  "derivative",
  "digest",
  "poly-commit",
  "r1cs-core",
- "r1cs-std",
+ "r1cs-std 0.4.0 (git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development)",
  "rand",
  "rand_chacha",
  "rand_core",
@@ -414,7 +419,7 @@ version = "0.2.2"
 source = "git+https://github.com/HorizenLabs/poly-commit?branch=dev#d3e3ac5143a441e2876536382ee1e8f15884bfbe"
 dependencies = [
  "algebra",
- "bench-utils",
+ "bench-utils 0.4.0 (git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development)",
  "derivative",
  "digest",
  "rand",
@@ -432,10 +437,10 @@ checksum = "eb9f9e6e233e5c4a35559a617bf40a4ec447db2e84c20b55a6f83167b7e57872"
 [[package]]
 name = "primitives"
 version = "0.4.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#31af62193df3de24d686401c561aeac12b9c38bc"
 dependencies = [
  "algebra",
- "bench-utils",
+ "bench-utils 0.4.0 (git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations)",
  "blake2",
  "derivative",
  "digest",
@@ -457,17 +462,17 @@ dependencies = [
 [[package]]
 name = "proof-systems"
 version = "0.4.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#31af62193df3de24d686401c561aeac12b9c38bc"
 dependencies = [
  "algebra",
- "bench-utils",
+ "bench-utils 0.4.0 (git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations)",
  "byteorder",
  "derivative",
  "digest",
  "marlin",
  "poly-commit",
  "r1cs-core",
- "r1cs-std",
+ "r1cs-std 0.4.0 (git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations)",
  "rand",
  "rayon",
  "serde",
@@ -498,6 +503,19 @@ dependencies = [
 name = "r1cs-std"
 version = "0.4.0"
 source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=development#c0f35a95673cea39d07380c6b7180c154e3e7228"
+dependencies = [
+ "algebra",
+ "derivative",
+ "hex",
+ "r1cs-core",
+ "radix_trie",
+ "rand",
+]
+
+[[package]]
+name = "r1cs-std"
+version = "0.4.0"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#31af62193df3de24d686401c561aeac12b9c38bc"
 dependencies = [
  "algebra",
  "derivative",
@@ -694,7 +712,7 @@ dependencies = [
 [[package]]
 name = "type-mappings"
 version = "0.1.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#45bdd06acba4dd7cb951c52f6e2768f2b8d89d8e"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#31af62193df3de24d686401c561aeac12b9c38bc"
 dependencies = [
  "algebra",
  "bit-vec",
