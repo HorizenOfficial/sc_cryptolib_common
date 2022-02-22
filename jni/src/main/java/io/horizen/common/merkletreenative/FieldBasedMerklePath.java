@@ -132,6 +132,22 @@ public class FieldBasedMerklePath implements AutoCloseable {
         return nativeDeserialize(merklePathBytes, true);
     }
 
+    private native boolean nativeEquals(FieldBasedMerklePath otherPath);
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof FieldBasedMerklePath)) {
+            return false;
+        }
+
+        return nativeEquals((FieldBasedMerklePath) o);
+    }
+
     private native void nativeFreeMerklePath();
 
     public void freeMerklePath(){

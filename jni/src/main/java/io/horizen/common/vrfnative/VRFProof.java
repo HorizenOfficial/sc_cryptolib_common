@@ -1,19 +1,15 @@
 package io.horizen.common.vrfnative;
 
+import io.horizen.common.librustsidechains.Constants;
 import io.horizen.common.librustsidechains.DeserializationException;
 import io.horizen.common.librustsidechains.Library;
 
 public class VRFProof implements AutoCloseable
 {
-  public static final int PROOF_LENGTH;
-
   private long proofPointer;
-
-  private static native int nativeGetProofSize();
 
   static {
     Library.load();
-    PROOF_LENGTH = nativeGetProofSize();
   }
 
   private VRFProof(long proofPointer) {
@@ -29,8 +25,8 @@ public class VRFProof implements AutoCloseable
   private native void nativeFreeProof();
 
   public static VRFProof deserialize(byte[] proofBytes, boolean checkVRFProof, boolean compressed) throws DeserializationException {
-    if (proofBytes.length != PROOF_LENGTH)
-      throw new IllegalArgumentException(String.format("Incorrect proof length, %d expected, %d found", PROOF_LENGTH, proofBytes.length));
+    if (proofBytes.length != Constants.VRF_PROOF_LENGTH())
+      throw new IllegalArgumentException(String.format("Incorrect proof length, %d expected, %d found", Constants.VRF_PROOF_LENGTH(), proofBytes.length));
 
     return nativeDeserializeProof(proofBytes, checkVRFProof, compressed);
   }

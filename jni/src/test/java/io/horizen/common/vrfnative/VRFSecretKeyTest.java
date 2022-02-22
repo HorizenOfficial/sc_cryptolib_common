@@ -2,6 +2,8 @@ package io.horizen.common.vrfnative;
 
 import org.junit.Test;
 
+import io.horizen.common.librustsidechains.Constants;
+
 import static org.junit.Assert.*;
 
 public class VRFSecretKeyTest {
@@ -19,11 +21,11 @@ public class VRFSecretKeyTest {
                 byte[] publicKeyBytes = keyPair.getPublicKey().serializePublicKey();
                 byte[] secretKeyBytes = keyPair.getSecretKey().serializeSecretKey();
 
-                assertEquals("Public key size must be - " + VRFPublicKey.PUBLIC_KEY_LENGTH,
-                        VRFPublicKey.PUBLIC_KEY_LENGTH,
+                assertEquals("Public key size must be - " + Constants.VRF_PK_LENGTH(),
+                        Constants.VRF_PK_LENGTH(),
                         publicKeyBytes.length);
-                assertEquals("Secret key size must be - " + VRFSecretKey.SECRET_KEY_LENGTH,
-                        VRFSecretKey.SECRET_KEY_LENGTH,
+                assertEquals("Secret key size must be - " + Constants.VRF_SK_LENGTH(),
+                        Constants.VRF_SK_LENGTH(),
                         secretKeyBytes.length);
                 try
                 (

@@ -4,15 +4,12 @@ import io.horizen.common.librustsidechains.*;
 
 public class VRFSecretKey implements AutoCloseable
 {
-    public static final int SECRET_KEY_LENGTH;
-
     private long secretKeyPointer;
 
     private static native int nativeGetSecretKeySize();
 
     static {
         Library.load();
-        SECRET_KEY_LENGTH = nativeGetSecretKeySize();
     }
 
     private VRFSecretKey(long secretKeyPointer) {
@@ -24,8 +21,8 @@ public class VRFSecretKey implements AutoCloseable
     private static native VRFSecretKey nativeDeserializeSecretKey(byte[] secretKeyBytes) throws DeserializationException;
 
     public static VRFSecretKey deserialize(byte[] secretKeyBytes) throws DeserializationException {
-        if (secretKeyBytes.length != SECRET_KEY_LENGTH)
-            throw new IllegalArgumentException(String.format("Incorrect secret key length, %d expected, %d found", SECRET_KEY_LENGTH, secretKeyBytes.length));
+        if (secretKeyBytes.length != Constants.VRF_SK_LENGTH())
+            throw new IllegalArgumentException(String.format("Incorrect secret key length, %d expected, %d found", Constants.VRF_SK_LENGTH(), secretKeyBytes.length));
 
         return nativeDeserializeSecretKey(secretKeyBytes);
     }

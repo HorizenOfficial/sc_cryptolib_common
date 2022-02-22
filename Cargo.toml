@@ -23,10 +23,9 @@ panic = "unwind"
 
 # Uncomment these lines for local development paths
 #
-#[patch.'https://github.com/HorizenOfficial/ginger-lib.git']
+# [patch.'https://github.com/HorizenOfficial/ginger-lib.git']
 # algebra = { path = '../ginger-lib/algebra' }
 # primitives = { path = '../ginger-lib/primitives' }
 # proof-systems = { path = '../ginger-lib/proof-systems' }
 # r1cs-core = { path = '../ginger-lib/r1cs/core' }
-#
-#type-mappings = { path = '../ginger-lib/type-mappings' }
+# type-mappings = { path = '../ginger-lib/type-mappings' }

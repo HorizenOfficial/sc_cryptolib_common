@@ -4,7 +4,7 @@ import io.horizen.common.librustsidechains.*;
 
 import java.io.*;
 
-public class BaseMerkleTree implements MerkleTree {
+public class BaseAppendOnlyMerkleTree implements AppendOnlyMerkleTree {
     
     protected long inMemoryOptimizedMerkleTreePointer;
 
@@ -12,23 +12,37 @@ public class BaseMerkleTree implements MerkleTree {
         Library.load();
     }
 
-    protected BaseMerkleTree(long inMemoryOptimizedMerkleTreePointer) {
+    protected BaseAppendOnlyMerkleTree(long inMemoryOptimizedMerkleTreePointer) {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalArgumentException("inMemoryOptimizedMerkleTreePointer must be not null.");
         this.inMemoryOptimizedMerkleTreePointer = inMemoryOptimizedMerkleTreePointer;
     }
 
-    private BaseMerkleTree() {
+    private BaseAppendOnlyMerkleTree() {
         this.inMemoryOptimizedMerkleTreePointer = 0;
     }
 
-    private static native BaseMerkleTree nativeInit(int height, long processingStep) throws InitializationException;
+    private static native BaseAppendOnlyMerkleTree nativeInit(int height, long processingStep) throws InitializationException;
 
-    public static BaseMerkleTree init(int height, long processingStep) throws InitializationException {
+    /**
+     * Creates a new tree
+     * @param height - the height of the tree
+     * @param processingStep - number of leaves to store before triggering the computation of the hashes
+     *                         of the upper levels. Changing this parameter will affect the performances.
+     * @return - a new, empty, tree
+     * @throws InitializationException if it was not possible to initialize the tree
+     */
+    public static BaseAppendOnlyMerkleTree init(int height, long processingStep) throws InitializationException {
         return nativeInit(height, processingStep);
     }
 
-    public static BaseMerkleTree init(int height) throws InitializationException {
+    /**
+     * Creates a new tree. Defaults processingStep to 2 ^ height
+     * @param height - the height of the tree
+     * @return - a new, empty, tree
+     * @throws InitializationException if it was not possible to initialize the tree
+     */
+    public static BaseAppendOnlyMerkleTree init(int height) throws InitializationException {
         return nativeInit(height, 1 << height);
     }
 
@@ -40,7 +54,7 @@ public class BaseMerkleTree implements MerkleTree {
         out.write(nativeSerialize());
     }
 
-    protected static native BaseMerkleTree nativeDeserialize(byte[] serializedTree) throws DeserializationException;
+    protected static native BaseAppendOnlyMerkleTree nativeDeserialize(byte[] serializedTree) throws DeserializationException;
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         byte[] serialized = in.readAllBytes();
@@ -60,10 +74,10 @@ public class BaseMerkleTree implements MerkleTree {
         nativeAppend(input);
     }
 
-    private native BaseMerkleTree nativeFinalize() throws FinalizationException;
+    private native BaseAppendOnlyMerkleTree nativeFinalize() throws FinalizationException;
 
     @Override
-    public BaseMerkleTree finalizeTree() throws FinalizationException {
+    public BaseAppendOnlyMerkleTree finalizeTree() throws FinalizationException {
         if (inMemoryOptimizedMerkleTreePointer == 0)
             throw new IllegalStateException("InMemoryOptimizedMerkleTree instance was freed.");
         return nativeFinalize();

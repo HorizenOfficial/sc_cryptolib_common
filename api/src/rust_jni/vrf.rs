@@ -2,15 +2,6 @@ use super::*;
 
 // VRF related functions
 ffi_export!(
-    fn Java_io_horizen_common_vrfnative_VRFPublicKey_nativeGetPublicKeySize(
-        _env: JNIEnv,
-        _vrf_public_key_class: JClass,
-    ) -> jint {
-        VRF_PK_SIZE as jint
-    }
-);
-
-ffi_export!(
     fn Java_io_horizen_common_vrfnative_VRFPublicKey_nativeSerializePublicKey(
         _env: JNIEnv,
         _vrf_public_key: JObject,
@@ -96,15 +87,6 @@ ffi_export!(
 
 //Secret VRF key utility functions
 ffi_export!(
-    fn Java_io_horizen_common_vrfnative_VRFSecretKey_nativeGetSecretKeySize(
-        _env: JNIEnv,
-        _vrf_secret_key_class: JClass,
-    ) -> jint {
-        VRF_SK_SIZE as jint
-    }
-);
-
-ffi_export!(
     fn Java_io_horizen_common_vrfnative_VRFSecretKey_nativeSerializeSecretKey(
         _env: JNIEnv,
         _vrf_secret_key: JObject,
@@ -148,15 +130,6 @@ ffi_export!(
             parse_rust_struct_from_jobject::<VRFSk>(&_env, _vrf_secret_key, "secretKeyPointer");
         let pk = vrf_get_public_key(sk);
         return_jobject(&_env, pk, "io/horizen/common/vrfnative/VRFPublicKey").into_inner()
-    }
-);
-
-ffi_export!(
-    fn Java_io_horizen_common_vrfnative_VRFProof_nativeGetProofSize(
-        _env: JNIEnv,
-        _class: JClass,
-    ) -> jint {
-        VRF_PROOF_SIZE as jint
     }
 );
 

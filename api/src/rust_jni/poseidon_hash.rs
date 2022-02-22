@@ -1,15 +1,6 @@
 use super::*;
 
 ffi_export!(
-    fn Java_io_horizen_common_poseidonnative_PoseidonHash_nativeGetHashSize(
-        _env: JNIEnv,
-        _class: JClass,
-    ) -> jint {
-        FIELD_SIZE as jint
-    }
-);
-
-ffi_export!(
     fn Java_io_horizen_common_poseidonnative_PoseidonHash_nativeGetConstantLengthPoseidonHash(
         _env: JNIEnv,
         _class: JClass,

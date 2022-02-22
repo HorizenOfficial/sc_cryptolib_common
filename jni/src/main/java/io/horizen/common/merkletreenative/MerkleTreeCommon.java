@@ -6,21 +6,15 @@ import java.io.Serializable;
 /**
  * Interface for a MerkleTree accepting leaves as FieldElement.
  */
-public interface MerkleTree extends AutoCloseable, Serializable {
-    /**
-     * Append a new leaf `input` to this instance.
-     * @param input data to append to the tree
-     * @throws MerkleTreeException if unable to append input leaf to this tree
-     */
-    void append(FieldElement input) throws MerkleTreeException;
-
+public interface MerkleTreeCommon extends AutoCloseable, Serializable {
+    
     /**
      * Finalize the tree by computing the root and returns the finalized tree. It is possible
      * to continue updating the original tree. 
      * @return the finalized tree
      * @throws FinalizationException if unable to finalize the tree
      */
-    MerkleTree finalizeTree() throws FinalizationException;
+    MerkleTreeCommon finalizeTree() throws FinalizationException;
 
     /**
      * Finalize the tree by computing the root and updates the actual instance. It is not possible

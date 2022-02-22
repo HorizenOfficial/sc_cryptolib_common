@@ -26,11 +26,11 @@ public class FieldElementTest {
             byte[] serialized1 = fieldElement1.serializeFieldElement();
             byte[] serialized2 = fieldElement2.serializeFieldElement();
 
-            assertEquals("fieldElement1 size must be - " + FieldElement.FIELD_ELEMENT_LENGTH,
-                    FieldElement.FIELD_ELEMENT_LENGTH,
+            assertEquals("fieldElement1 size must be - " + Constants.FIELD_ELEMENT_LENGTH(),
+                    Constants.FIELD_ELEMENT_LENGTH(),
                     serialized1.length);
-            assertEquals("fieldElement2 size must be - " + FieldElement.FIELD_ELEMENT_LENGTH,
-                    FieldElement.FIELD_ELEMENT_LENGTH,
+            assertEquals("fieldElement2 size must be - " + Constants.FIELD_ELEMENT_LENGTH(),
+                    Constants.FIELD_ELEMENT_LENGTH(),
                     serialized2.length);
 
             FieldElement fieldElementDeserialized1 = FieldElement.deserialize(serialized1);
@@ -70,8 +70,8 @@ public class FieldElementTest {
                 randomFes.add(randomFe);
 
                 byte[] serializedFe = randomFe.serializeFieldElement();
-                assertEquals("serializedFe size must be - " + FieldElement.FIELD_ELEMENT_LENGTH,
-                    FieldElement.FIELD_ELEMENT_LENGTH,
+                assertEquals("serializedFe size must be - " + Constants.FIELD_ELEMENT_LENGTH(),
+                    Constants.FIELD_ELEMENT_LENGTH(),
                     serializedFe.length
                 );
 
@@ -119,13 +119,13 @@ public class FieldElementTest {
             List<FieldElement> deserializedRandomFes = FieldElement.deserializeMany(randomBytes);
 
             // Assert deserialization of expected number of FieldElements
-            assertEquals(deserializedRandomFes.size(), (size + FieldElement.FIELD_ELEMENT_LENGTH - 2)/(FieldElement.FIELD_ELEMENT_LENGTH - 1));
+            assertEquals(deserializedRandomFes.size(), (size + Constants.FIELD_ELEMENT_LENGTH() - 2)/(Constants.FIELD_ELEMENT_LENGTH() - 1));
         }
     }
 
     @Test
     public void testRandomDeserializeFromString() throws Exception {
-        for(int i = 1; i < FieldElement.FIELD_ELEMENT_LENGTH; i++) {
+        for(int i = 1; i < Constants.FIELD_ELEMENT_LENGTH(); i++) {
             // Generate random UTF-8 String
             byte[] stringBytes = new byte[i];
             new Random().nextBytes(stringBytes);
@@ -136,6 +136,122 @@ public class FieldElementTest {
             FieldElement fe = FieldElement.deserializeFromString(generatedString);
             fe.close();
         }
+    }
+
+    @Test
+    public void testSplitPositive() throws Exception {
+        // Positive case
+        for(int i = 1; i < Constants.FIELD_ELEMENT_LENGTH(); i++) {
+            // Generate random FieldElement and split it into two FieldElements at index i
+            FieldElement feToBeSplit = FieldElement.createRandom(); 
+            List<FieldElement> splitFes = feToBeSplit.splitAt(i);
+
+            // Assert that the resulting FieldElement are 2
+            assertEquals(splitFes.size(), 2);
+
+            // Rejoin the two FieldElements at the same index and check equality with the original one
+            FieldElement restoredFe = FieldElement.joinAt(splitFes.get(0), i, splitFes.get(1), Constants.FIELD_ELEMENT_LENGTH() - i, true);
+            assertEquals("Must be able to reconstruct the original FieldElement split ad index:" + i, feToBeSplit, restoredFe);
+
+            // Free memory
+            feToBeSplit.close();
+            restoredFe.close();
+            splitFes.get(0).close();
+            splitFes.get(1).close();
+        }
+    }
+
+    @Test
+    public void testSplitNegative() throws Exception {
+        // Split then rejoin at wrong index and assert we are not able to reconstruct the original FieldElement
+        for(int i = 1; i < Constants.FIELD_ELEMENT_LENGTH() - 1; i++) {
+            // Generate random FieldElement and split it into two FieldElements at index i
+            FieldElement feToBeSplit = FieldElement.createRandom(); 
+            List<FieldElement> splitFes = feToBeSplit.splitAt(i);
+
+            // Assert that the resulting FieldElement are 2
+            assertEquals(splitFes.size(), 2);
+
+            // Rejoin the two FieldElements at an index shifted by one with respect to the original and
+            // assert reconstruction of a different FieldElement
+            try {
+                FieldElement restoredFe = FieldElement.joinAt(splitFes.get(0), i + 1, splitFes.get(1), Constants.FIELD_ELEMENT_LENGTH() - i - 1);
+                assertNotEquals("Mustn't be able to reconstruct the original FieldElement split ad index:" + i, feToBeSplit, restoredFe);
+                restoredFe.close();
+            } catch (DeserializationException dex) {
+                // Since we combine the two FieldElements incorrectly, might also happen that we generate an invalid (i.e. over the modulus) FieldElement
+            }
+            
+            // Free memory
+            feToBeSplit.close();
+            splitFes.get(0).close();
+            splitFes.get(1).close();
+        }
+    }
+
+    @Test
+    public void testSplitExceptions() throws Exception {
+        FieldElement fe1 = FieldElement.createRandom();
+        FieldElement fe2 = FieldElement.createRandom();
+
+        // Try to split at 0
+        try {
+            fe1.splitAt(0);
+            assertTrue(false); // Mustn't be able to reach this point
+        } catch (IndexOutOfBoundsException ex) {
+            assertTrue(ex.getMessage().contains("Invalid split index"));
+        };
+
+        // Try to split at FIELD_ELEMENT_LENGTH
+        try {
+            fe1.splitAt(Constants.FIELD_ELEMENT_LENGTH());
+            assertTrue(false); // Mustn't be able to reach this point
+        } catch (IndexOutOfBoundsException ex) {
+            assertTrue(ex.getMessage().contains("Invalid split index"));
+        };
+
+        // Try to join by forming a non valid FieldElement
+        try {
+            FieldElement.joinAt(fe1, 20, fe2, 20);
+            assertTrue(false); // Mustn't be able to reach this point
+        } catch (IllegalArgumentException ex) {
+            assertTrue(
+                ex.getMessage().contains(
+                    "Invalid values for index1 + index2: the resulting array would overflow FIELD_ELEMENT_LENGTH"
+                )
+            );
+        }
+
+        // Try to join not passing the zero check
+        try {
+            FieldElement.joinAt(fe1, 1, fe2, 1, true);
+            assertTrue(false); // Mustn't be able to reach this point
+        } catch (IllegalArgumentException ex) {
+            // Zero check failed on bytes of fe1
+            assertTrue(
+                ex.getMessage().contains(
+                    "Zero check failed on bytes of fe1"
+                )
+            );
+        }
+
+        FieldElement zero = FieldElement.createFromLong(0L);
+        try {
+            FieldElement.joinAt(zero, 1, fe2, 1, true);
+            assertTrue(false); // Mustn't be able to reach this point
+        } catch (IllegalArgumentException ex) {
+            // Zero check failed on bytes of fe2
+            assertTrue(
+                ex.getMessage().contains(
+                    "Zero check failed on bytes of fe2"
+                )
+            );
+            zero.close();
+        }
+
+        // Free data
+        fe1.close();
+        fe2.close();
     }
 
     @Test
@@ -172,7 +288,7 @@ public class FieldElementTest {
         
         // Attempt to deserialize a FieldElement over the modulus
         try {
-            byte[] invalidFeBytes = new byte[FieldElement.FIELD_ELEMENT_LENGTH];
+            byte[] invalidFeBytes = new byte[Constants.FIELD_ELEMENT_LENGTH()];
             Arrays.fill(invalidFeBytes, (byte)255);
             FieldElement.deserialize(invalidFeBytes);
 
@@ -183,7 +299,7 @@ public class FieldElementTest {
 
         // Attempt to deserialize a byte array bigger than FIELD_ELEMENT_LENGTH
         try {
-            byte[] invalidFeBytes = new byte[FieldElement.FIELD_ELEMENT_LENGTH + 1];
+            byte[] invalidFeBytes = new byte[Constants.FIELD_ELEMENT_LENGTH() + 1];
             Arrays.fill(invalidFeBytes, (byte)0);
             FieldElement.deserialize(invalidFeBytes);
 
