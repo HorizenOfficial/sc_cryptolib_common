@@ -53,7 +53,7 @@ source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=developme
 [[package]]
 name = "bench-utils"
 version = "0.4.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#31af62193df3de24d686401c561aeac12b9c38bc"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#b18c0be6728759819aec912e3d5fdf1fa4071862"
 
 [[package]]
 name = "bit-vec"
@@ -437,7 +437,7 @@ checksum = "eb9f9e6e233e5c4a35559a617bf40a4ec447db2e84c20b55a6f83167b7e57872"
 [[package]]
 name = "primitives"
 version = "0.4.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#31af62193df3de24d686401c561aeac12b9c38bc"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#b18c0be6728759819aec912e3d5fdf1fa4071862"
 dependencies = [
  "algebra",
  "bench-utils 0.4.0 (git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations)",
@@ -462,7 +462,7 @@ dependencies = [
 [[package]]
 name = "proof-systems"
 version = "0.4.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#31af62193df3de24d686401c561aeac12b9c38bc"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#b18c0be6728759819aec912e3d5fdf1fa4071862"
 dependencies = [
  "algebra",
  "bench-utils 0.4.0 (git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations)",
@@ -515,7 +515,7 @@ dependencies = [
 [[package]]
 name = "r1cs-std"
 version = "0.4.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#31af62193df3de24d686401c561aeac12b9c38bc"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#b18c0be6728759819aec912e3d5fdf1fa4071862"
 dependencies = [
  "algebra",
  "derivative",
@@ -712,7 +712,7 @@ dependencies = [
 [[package]]
 name = "type-mappings"
 version = "0.1.0"
-source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#31af62193df3de24d686401c561aeac12b9c38bc"
+source = "git+https://github.com/HorizenOfficial/ginger-lib.git?branch=feat/concrete_instantiations#b18c0be6728759819aec912e3d5fdf1fa4071862"
 dependencies = [
  "algebra",
  "bit-vec",
