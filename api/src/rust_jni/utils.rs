@@ -197,6 +197,23 @@ pub fn cast_joption_to_rust_option<'a>(
     }
 }
 
+pub fn parse_joption_from_jobject<'a>(
+    _env: &'a JNIEnv,
+    obj: JObject<'a>,
+    opt_name: &'a str,
+) -> Option<JObject<'a>> {
+    // Parse Optional object
+    let opt_object = parse_jobject_from_jobject(
+        _env,
+        obj,
+        opt_name,
+        "java/util/Optional"
+    );
+
+    // Cast it to Rust option
+    cast_joption_to_rust_option(_env, opt_object)
+}
+
 pub fn parse_jobject_array_from_jobject(
     _env: &JNIEnv,
     obj: JObject,
