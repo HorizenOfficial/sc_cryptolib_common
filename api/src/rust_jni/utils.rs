@@ -276,7 +276,6 @@ pub fn drop_rust_struct_from_jobject<'a, T: Sized>(
 }
 
 pub fn return_jobject<'a, T: Sized>(_env: &'a JNIEnv, obj: T, class_path: &str) -> JObject<'a> {
-    //Return field element
     let obj_ptr: jlong = Box::into_raw(Box::new(obj)) as i64;
 
     let obj_class = _env
@@ -284,6 +283,13 @@ pub fn return_jobject<'a, T: Sized>(_env: &'a JNIEnv, obj: T, class_path: &str) 
         .expect("Should be able to find class");
 
     _env.new_object(obj_class, "(J)V", &[JValue::Long(obj_ptr)])
+        .expect("Should be able to create new jobject")
+}
+
+pub fn return_jobject_from_class<'a, T: Sized>(_env: &'a JNIEnv, obj: T, class: JClass<'a>) -> JObject<'a> {
+    let obj_ptr: jlong = Box::into_raw(Box::new(obj)) as i64;
+
+    _env.new_object(class, "(J)V", &[JValue::Long(obj_ptr)])
         .expect("Should be able to create new jobject")
 }
 
