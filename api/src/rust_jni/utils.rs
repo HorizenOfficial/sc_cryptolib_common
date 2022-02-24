@@ -1,9 +1,5 @@
 use super::*;
-use crate::ginger_calls::{
-    field_element::read_field_element_from_buffer_with_padding, serialization::*,
-};
-use algebra::{serialize::*, SemanticallyValid};
-use std::{any::type_name, fmt::Debug};
+use std::{any::type_name, fmt::Debug, convert::TryInto};
 
 pub fn read_raw_pointer<'a, T>(env: &JNIEnv, input: *const T) -> &'a T {
     if input.is_null() {
@@ -103,6 +99,38 @@ pub fn parse_fixed_jbyte_array(
     Ok(vec)
 }
 
+pub fn parse_fixed_size_byte_array_from_jobject<const N: usize>(
+    _env: &JNIEnv,
+    obj: JObject,
+    name: &str,
+) -> Result<[u8; N], Error> {
+    let j_bytes = parse_jbyte_array_from_jobject(_env, obj, name);
+    Ok(
+        parse_fixed_jbyte_array(_env, j_bytes, N)?
+            .try_into()
+            .unwrap()
+    )
+}
+
+#[allow(unused)]
+pub fn parse_fixed_size_bits_from_jbytearray_in_jobject<const N: usize>(
+    _env: &JNIEnv,
+    obj: JObject,
+    name: &str,
+) -> Result<[bool; N], Error> {
+    let j_bytes = parse_jbyte_array_from_jobject(_env, obj, name);
+    let len = (N as f32 / 8f32).ceil() as usize;
+    let fixed_bytes = parse_fixed_jbyte_array(_env, j_bytes, len)?;
+    let mut bits = Vec::with_capacity(fixed_bytes.len() * 8);
+    for byte in fixed_bytes {
+        for i in 0..8 {
+            let bit = (byte >> i) & 1;
+            bits.push(bit == 1)
+        }
+    }
+   Ok(bits[..N].try_into().unwrap())
+}
+
 pub fn parse_rust_struct_from_jobject<'a, T: Sized>(
     _env: &'a JNIEnv,
     obj: JObject<'a>,
@@ -112,6 +140,91 @@ pub fn parse_rust_struct_from_jobject<'a, T: Sized>(
         &_env,
         parse_long_from_jobject(_env, obj, field_name) as *const T,
     )
+}
+
+pub fn parse_jobject_from_jobject<'a>(
+    _env: &'a JNIEnv,
+    obj: JObject<'a>,
+    field_name: &'a str,
+    field_class_path: &'a str,
+) -> JObject<'a> {
+    _env
+        .get_field(obj, field_name, format!("L{};", field_class_path))
+        .expect(format!("Should be able to get {} field", field_class_path).as_str())
+        .l()
+        .unwrap()
+}
+
+/// Parse a Rust struct from a JObject 'outer_obj' containing another JObject
+/// of type 'outer_obj_field_class_path', named 'outer_obj_field_name'.
+/// We want to parse and convert the latter 'inner_field_name' into a Rust struct T.
+pub fn parse_rust_struct_from_composite_jobject<'a, T: Sized>(
+    _env: &'a JNIEnv,
+    outer_obj: JObject<'a>,
+    outer_obj_field_name: &'a str,
+    outer_obj_field_class_path: &'a str,
+    inner_obj_field_name: &'a str,
+) -> &'a T {
+
+    let inner_obj = parse_jobject_from_jobject(
+        _env,
+        outer_obj,
+        outer_obj_field_name,
+        outer_obj_field_class_path
+    );
+
+    parse_rust_struct_from_jobject(_env, inner_obj, inner_obj_field_name)
+}
+
+pub fn cast_joption_to_rust_option<'a>(
+    _env: &'a JNIEnv,
+    opt_object: JObject<'a>,
+) -> Option<JObject<'a>> {
+    if !_env
+        .call_method(opt_object, "isPresent", "()Z", &[])
+        .expect("Should be able to call isPresent method on Optional object")
+        .z()
+        .unwrap()
+    {
+        None
+    } else {
+        Some(
+            _env.call_method(opt_object, "get", "()Ljava/lang/Object;", &[])
+                .expect("Should be able to unwrap a non empty Optional")
+                .l()
+                .unwrap(),
+        )
+    }
+}
+
+pub fn parse_joption_from_jobject<'a>(
+    _env: &'a JNIEnv,
+    obj: JObject<'a>,
+    opt_name: &'a str,
+) -> Option<JObject<'a>> {
+    // Parse Optional object
+    let opt_object = parse_jobject_from_jobject(
+        _env,
+        obj,
+        opt_name,
+        "java/util/Optional"
+    );
+
+    // Cast it to Rust option
+    cast_joption_to_rust_option(_env, opt_object)
+}
+
+pub fn parse_jobject_array_from_jobject(
+    _env: &JNIEnv,
+    obj: JObject,
+    field_name: &str,
+    list_obj_name: &str,
+) -> jobjectArray {
+    _env.get_field(obj, field_name, format!("[L{};", list_obj_name).as_str())
+        .unwrap_or_else(|_| panic!("Should be able to get {}", field_name))
+        .l()
+        .unwrap()
+        .cast()
 }
 
 #[macro_export]
@@ -163,7 +276,6 @@ pub fn drop_rust_struct_from_jobject<'a, T: Sized>(
 }
 
 pub fn return_jobject<'a, T: Sized>(_env: &'a JNIEnv, obj: T, class_path: &str) -> JObject<'a> {
-    //Return field element
     let obj_ptr: jlong = Box::into_raw(Box::new(obj)) as i64;
 
     let obj_class = _env
@@ -171,6 +283,13 @@ pub fn return_jobject<'a, T: Sized>(_env: &'a JNIEnv, obj: T, class_path: &str) 
         .expect("Should be able to find class");
 
     _env.new_object(obj_class, "(J)V", &[JValue::Long(obj_ptr)])
+        .expect("Should be able to create new jobject")
+}
+
+pub fn return_jobject_from_class<'a, T: Sized>(_env: &'a JNIEnv, obj: T, class: JClass<'a>) -> JObject<'a> {
+    let obj_ptr: jlong = Box::into_raw(Box::new(obj)) as i64;
+
+    _env.new_object(class, "(J)V", &[JValue::Long(obj_ptr)])
         .expect("Should be able to create new jobject")
 }
 

@@ -1,14 +1,4 @@
 use super::*;
-use crate::ginger_calls::{field_element::*, into_i8};
-
-ffi_export!(
-    fn Java_io_horizen_common_librustsidechains_FieldElement_nativeGetFieldElementSize(
-        _env: JNIEnv,
-        _field_element_class: JClass,
-    ) -> jint {
-        FIELD_SIZE as jint
-    }
-);
 
 ffi_export!(
     fn Java_io_horizen_common_librustsidechains_FieldElement_nativeSerializeFieldElement(

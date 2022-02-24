@@ -6,15 +6,10 @@ import io.horizen.common.librustsidechains.Library;
 
 public class PoseidonHash implements AutoCloseable {
 
-    public static final int HASH_LENGTH;
-
     private long poseidonHashPointer;
-
-    private static native int nativeGetHashSize();
 
     static {
         Library.load();
-        HASH_LENGTH = nativeGetHashSize();
     }
 
     private PoseidonHash(long poseidonHashPointer) {
@@ -71,7 +66,7 @@ public class PoseidonHash implements AutoCloseable {
     private native void nativeUpdate(FieldElement input);
 
     /*
-     * Update this isntance with the specified input.
+     * Update this instance with the specified input.
      */
     public void update(FieldElement input) {
         if (poseidonHashPointer == 0)
@@ -95,21 +90,21 @@ public class PoseidonHash implements AutoCloseable {
         return nativeFinalize();
     }
 
-    private native FieldElement nativeReset(FieldElement[] personalization);
+    private native void nativeReset(FieldElement[] personalization);
 
     /*
     * Reinitialize this instance to its starting state.
     */
-    public FieldElement reset(FieldElement[] personalization) {
+    public void reset(FieldElement[] personalization) {
         if (poseidonHashPointer == 0)
             throw new IllegalStateException("PoseidonHash instance was freed.");
-        return nativeReset(personalization);
+        nativeReset(personalization);
     }
 
-    public FieldElement reset() {
+    public void reset() {
         if (poseidonHashPointer == 0)
             throw new IllegalStateException("PoseidonHash instance was freed.");
-        return nativeReset(new FieldElement[0]);
+        nativeReset(new FieldElement[0]);
     }
 
     /**

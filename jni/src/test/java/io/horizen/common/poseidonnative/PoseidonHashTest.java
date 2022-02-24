@@ -1,8 +1,10 @@
 package io.horizen.common.poseidonnative;
 
+import io.horizen.common.TestUtils;
 import io.horizen.common.librustsidechains.*;
 
 import java.util.List;
+import java.util.Random;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -140,6 +142,33 @@ public class PoseidonHashTest {
                 assertEquals(".finalizeHash() is not idempotent", hash, hashTemp);
             }
         }
+    }
+
+    @Test
+    public void testReset() throws Exception {
+        long seed = 4123352525293977497L;
+        String expectedHashForReset =
+            "e9908b5f42f8670e64fcde81517449304c7aa3a9aada4bc590329283405c8202";
+
+        Random r = new Random(seed);
+        FieldElement expectedHash = FieldElement.deserialize(TestUtils.fromHexString(expectedHashForReset));
+        PoseidonHash h = PoseidonHash.getInstanceConstantLength(2);
+
+        // Generate random FieldElement
+        FieldElement input1 = FieldElement.createRandom(r);
+        FieldElement input2 = FieldElement.createRandom(r);
+
+        for (int i = 0; i < 100; i++) {
+            // Update acc
+            h.update(input1);
+            h.update(input2);
+            FieldElement hash = h.finalizeHash();
+            h.reset();
+
+            assertEquals("hash must be equal to expected hash", hash, expectedHash);
+            hash.close();
+        }
+        h.close();
     }
 
     @AfterClass

@@ -1,14 +1,4 @@
 use super::*;
-use crate::ginger_calls::{schnorr_signature::*, serialization::is_valid};
-
-ffi_export!(
-    fn Java_io_horizen_common_schnorrnative_SchnorrPublicKey_nativeGetPublicKeySize(
-        _env: JNIEnv,
-        _schnorr_public_key_class: JClass,
-    ) -> jint {
-        SCHNORR_PK_SIZE as jint
-    }
-);
 
 ffi_export!(
     fn Java_io_horizen_common_schnorrnative_SchnorrPublicKey_nativeSerializePublicKey(
@@ -54,15 +44,6 @@ ffi_export!(
 );
 
 ffi_export!(
-    fn Java_io_horizen_common_schnorrnative_SchnorrSecretKey_nativeGetSecretKeySize(
-        _env: JNIEnv,
-        _schnorr_secret_key_class: JClass,
-    ) -> jint {
-        SCHNORR_SK_SIZE as jint
-    }
-);
-
-ffi_export!(
     fn Java_io_horizen_common_schnorrnative_SchnorrSecretKey_nativeSerializeSecretKey(
         _env: JNIEnv,
         _schnorr_secret_key: JObject,
@@ -98,15 +79,6 @@ ffi_export!(
 );
 
 //Schnorr signature utility functions
-ffi_export!(
-    fn Java_io_horizen_common_schnorrnative_SchnorrSignature_nativeGetSignatureSize(
-        _env: JNIEnv,
-        _class: JClass,
-    ) -> jint {
-        SCHNORR_SIG_SIZE as jint
-    }
-);
-
 ffi_export!(
     fn Java_io_horizen_common_schnorrnative_SchnorrSignature_nativeSerializeSignature(
         _env: JNIEnv,

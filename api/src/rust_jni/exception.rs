@@ -1,6 +1,5 @@
 use super::*;
 use std::{any::Any, error::Error};
-
 pub const JNI_NULL: jobject = std::ptr::null::<jobject>() as jobject;
 
 /// Tries to get meaningful description from panic-error.

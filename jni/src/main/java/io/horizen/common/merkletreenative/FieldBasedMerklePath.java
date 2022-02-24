@@ -18,28 +18,40 @@ public class FieldBasedMerklePath implements AutoCloseable {
         this.merklePathPointer = merklePathPointer;
     }
 
-    private native boolean nativeVerify(int merkleTreeHeight, FieldElement leaf, FieldElement root) throws MerklePathException;
+    private native int nativeGetLength();
+
+    /**
+     * Get the length of this FieldBasedMerklePath
+     * @return the length of this FieldBasedMerklePath
+     */
+    public int getLength() {
+        return nativeGetLength();
+    }
+
+    private native boolean nativeVerify(FieldElement leaf, FieldElement root) throws MerklePathException;
 
     /*
     * Verify the Merkle Path for `leaf` given the `root` of a Merkle Tree with height `merkleTreeHeight`.
     */
     public boolean verify(int merkleTreeHeight, FieldElement leaf, FieldElement root) throws MerklePathException {
         if (merklePathPointer == 0)
-            throw new IllegalStateException("MerklePath instance was freed.");
-        return nativeVerify(merkleTreeHeight, leaf, root);
+            throw new IllegalStateException("FieldBasedMerklePath instance was freed.");
+        
+        int pathLength = this.getLength();
+        if (merkleTreeHeight != pathLength)
+            throw new MerklePathException("IncorrectPathLength. Expected: " + merkleTreeHeight + "; Found: " + pathLength);
+        return nativeVerify(leaf, root);
     }
-
-    private native boolean nativeVerifyWithoutLengthCheck(FieldElement leaf, FieldElement root);
 
     /*
     * Verify the Merkle Path for `leaf` given the `root` of a Merkle Tree. Doesn't check if the
     * length of the Merkle Path is consistent with the height of the corresponding Merkle Tree,
     * therefore it is advisable to use it when it's certain that `leaf` is actually a leaf.
     */
-    public boolean verify(FieldElement leaf, FieldElement root) {
+    public boolean verify(FieldElement leaf, FieldElement root) throws MerklePathException {
         if (merklePathPointer == 0)
-            throw new IllegalStateException("MerklePath instance was freed.");
-        return nativeVerifyWithoutLengthCheck(leaf, root);
+            throw new IllegalStateException("FieldBasedMerklePath instance was freed.");
+        return nativeVerify(leaf, root);
     }
 
     private native FieldElement nativeApply(FieldElement leaf);
@@ -49,7 +61,7 @@ public class FieldBasedMerklePath implements AutoCloseable {
     */
     public FieldElement apply(FieldElement leaf) {
         if (merklePathPointer == 0)
-            throw new IllegalStateException("MerklePath instance was freed.");
+            throw new IllegalStateException("FieldBasedMerklePath instance was freed.");
         return nativeApply(leaf);
     }
 
@@ -118,6 +130,22 @@ public class FieldBasedMerklePath implements AutoCloseable {
 
     public static FieldBasedMerklePath deserialize(byte[] merklePathBytes) throws DeserializationException {
         return nativeDeserialize(merklePathBytes, true);
+    }
+
+    private native boolean nativeEquals(FieldBasedMerklePath otherPath);
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof FieldBasedMerklePath)) {
+            return false;
+        }
+
+        return nativeEquals((FieldBasedMerklePath) o);
     }
 
     private native void nativeFreeMerklePath();

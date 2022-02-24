@@ -1,16 +1,18 @@
 package io.horizen.common.merkletreenative;
 
-import io.horizen.common.librustsidechains.*;
+import io.horizen.common.librustsidechains.FieldElement;
 
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
 
 import java.util.List;
-
+import java.util.Map;
+import java.util.Set;
 import java.util.ArrayList;
-
-import java.io.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.junit.Assert.*;
 
@@ -48,8 +50,32 @@ public class MerkleTreeTest {
     @Test
     public void testMerkleTrees() throws Exception {
 
-        //Get InMemoryOptimizedMerkleTree
-        BaseMerkleTree mht = BaseMerkleTree.init(height, numLeaves);
+        //Get BaseSparseMerkleTree
+        BaseSparseMerkleTree smtLazy = BaseSparseMerkleTree.init(height);
+
+        //Add leaves to BaseSparseMerkleTree
+        Map<Long, FieldElement> positionLeaves = new HashMap<>();
+        for(int i = 0; i < numLeaves; i++) {
+            assertTrue("Position must be empty", smtLazy.isPositionEmpty(positions[i]));
+            positionLeaves.put(positions[i], leaves.get(i));
+        }
+        smtLazy.addLeaves(positionLeaves);
+
+        //Remove leaves from BaseSparseMerkleTree
+        Set<Long> leavesToRemove = new HashSet<>(Arrays.asList(458L, 532L));
+        smtLazy.removeLeaves(leavesToRemove);
+
+        //Compute root and assert equality with the expected one
+        smtLazy.finalizeTreeInPlace();
+        FieldElement smtLazyRoot = smtLazy.root();
+        assertEquals("BaseSparseMerkleTree root is not as expected", smtLazyRoot, expectedRoot);
+
+        //Free memory
+        smtLazy.freeMerkleTree();
+        smtLazyRoot.freeFieldElement();
+
+        //Get BaseAppendOnlyMerkleTree
+        BaseAppendOnlyMerkleTree mht = BaseAppendOnlyMerkleTree.init(height, numLeaves);
 
         // Must place the leaves at the same positions of the previous trees
         List<FieldElement> mhtLeaves = new ArrayList<>();
@@ -65,20 +91,20 @@ public class MerkleTreeTest {
 
         //Append all the leaves to mht
         for (FieldElement leaf: mhtLeaves)
-            mht.append(leaf.clone());
+            mht.append(leaf);
 
         //Finalize the tree
         mht.finalizeTreeInPlace();
 
         //Compute root and assert equality with the expected one
         FieldElement mhtRoot = mht.root();
-        assertEquals("InMemoryOptimizedMerkleTree root is not as expected", mhtRoot, expectedRoot);
+        assertEquals("BaseAppendOnlyMerkleTree root is not as expected", mhtRoot, expectedRoot);
 
         //It is the same with finalizeTree()
-        BaseMerkleTree mhtCopy = mht.finalizeTree();
+        BaseAppendOnlyMerkleTree mhtCopy = mht.finalizeTree();
 
         FieldElement mhtRootCopy = mhtCopy.root();
-        assertEquals("InMemoryOptimizedMerkleTree copy root is not as expected", mhtRootCopy, expectedRoot);
+        assertEquals("BaseAppendOnlyMerkleTree copy root is not as expected", mhtRootCopy, expectedRoot);
 
         //Free memory
         zero.freeFieldElement();
@@ -89,102 +115,80 @@ public class MerkleTreeTest {
     }
 
     @Test
-    public void testTreeExceptions() throws Exception {
+    public void testMerkleTreeReset() throws Exception {
+        //Get BaseAppendOnlyMerkleTree
+        BaseAppendOnlyMerkleTree mht = BaseAppendOnlyMerkleTree.init(height, numLeaves);
 
-        // Attempt to init an invalid Merkle Tree
-        try {
-            BaseMerkleTree.init(100, 1 << 100);
-            assertTrue("Must be unable to init a MerkleTree with unsupported height", false);
-        } catch (InitializationException mte) {
-            assertTrue(mte.getMessage().contains("Unsupported height"));
+        // Must place the leaves at the same positions of the previous trees
+        List<FieldElement> mhtLeaves = new ArrayList<>();
+
+        //Initialize all leaves to zero
+        FieldElement zero = FieldElement.createFromLong(0L);
+        for(int j = 0; j < 1024; j++)
+            mhtLeaves.add(zero);
+        //Substitute at positions the correct leaves
+        for (int j = 1; j < numLeaves - 1; j++) {
+            // Warning: Conversion from long to int is not to be used for production.
+            mhtLeaves.set((int)positions[j], leaves.get(j));
         }
 
-        // Init valid tree
-        BaseMerkleTree mht = BaseMerkleTree.init(height, numLeaves);
+        for (int i = 0; i < 100; i++) {
+            //Append all the leaves to mht
+            for (FieldElement leaf: mhtLeaves)
+                mht.append(leaf);
 
-        // Attempt to get root of a non-finalized tree
-        try {
-            mht.root();
-            assertTrue("Must be unable to get the root of a non-finalized tree", false);
-        } catch (MerkleTreeException mte) {
-            assertTrue(mte.getMessage().contains("Unable to get MerkleTree root"));
+            //Finalize the tree
+            mht.finalizeTreeInPlace();
+
+            //Compute root and assert equality with the expected one
+            FieldElement mhtRoot = mht.root();
+            assertEquals("BaseAppendOnlyMerkleTree root is not as expected", mhtRoot, expectedRoot);
+
+            mhtRoot.close();
+            mht.reset();
         }
-
-        // Attempt to get merkle path of a non-finalized tree
-        try {
-            mht.getMerklePath(0);
-            assertTrue("Must be unable to get a Merkle Path from of a non-finalized tree", false);
-        } catch (MerkleTreeException mte) {
-            assertTrue(mte.getMessage().contains("Unable to get MerklePath"));
-        }
-
-        mht.freeMerkleTree();
-    }
-
-    @Test
-    public void testTreeSerializeDeserialize() throws Exception {
-
-        byte[] treeBytes;
-        FieldElement treeRoot;
-
-        try(BaseMerkleTree tree = BaseMerkleTree.init(height, numLeaves)) {
-            for (FieldElement leaf: leaves)
-                tree.append(leaf.clone());
-
-            tree.finalizeTreeInPlace();
-            treeRoot = tree.root();
-
-            try (
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ObjectOutputStream out = new ObjectOutputStream(bos)
-            ) {   
-                out.writeObject(tree);
-                treeBytes =  bos.toByteArray();
-            }
-        }
-
-        try (
-            ByteArrayInputStream bis = new ByteArrayInputStream(treeBytes);
-            ObjectInputStream in = new ObjectInputStream(bis);
-            BaseMerkleTree treeDeserialized = (BaseMerkleTree)in.readObject()
-        ) {
-            FieldElement expectedRoot = treeDeserialized.root();
-            assertEquals(expectedRoot, treeRoot);
-
-            expectedRoot.freeFieldElement();
-            treeRoot.freeFieldElement();
-
-            for (FieldElement leaf: leaves)
-                assertTrue(treeDeserialized.isLeafInTree(leaf.clone()));
-        }
+        mht.close();
     }
 
     @Test
     public void testMerklePaths() throws Exception {
         List<FieldElement> testLeaves = new ArrayList<>();
-        BaseMerkleTree mht = BaseMerkleTree.init(6, numLeaves);
+        Map<Long, FieldElement> testPositionLeaves = new HashMap<>();
+        BaseAppendOnlyMerkleTree mht = BaseAppendOnlyMerkleTree.init(6, numLeaves);
+        BaseSparseMerkleTree smt = BaseSparseMerkleTree.init(6);
 
         int numLeaves = 64;
 
-        // Append leaves to the tree
+        // Append leaves to mht
         for (int i = 0; i < numLeaves/2; i ++) {
             FieldElement leaf = FieldElement.createRandom(i);
             testLeaves.add(leaf);
-            mht.append(leaf.clone());
+            testPositionLeaves.put((long)i, leaf);
+            mht.append(leaf);
         }
         for (int i = numLeaves/2; i < numLeaves; i ++) {
             FieldElement leaf = FieldElement.createFromLong(0L);
             testLeaves.add(leaf);
         }
 
+        // Append leaves to SMT too
+        smt.addLeaves(testPositionLeaves);
+        smt.finalizeTreeInPlace();
+        FieldElement smtRoot = smt.root();
+
         //Finalize the tree and get the root
         mht.finalizeTreeInPlace();
         FieldElement mhtRoot = mht.root();
+        assertEquals("Sparse and Append Merkle Tree roots must be the same", smtRoot, mhtRoot);
 
         for (int i = 0; i < numLeaves; i ++) {
 
             // Get/Verify Merkle Path
             FieldBasedMerklePath path = mht.getMerklePath((long)i);
+            FieldBasedMerklePath smtPath = smt.getMerklePath((long)i);
+
+            assertEquals("Sparse and Append Merkle Tree paths must be the same", path, smtPath);
+
             assertTrue("Merkle Path must be verified", path.verify(testLeaves.get(i), mhtRoot));
 
             // Serialization/Deserialization test
@@ -223,6 +227,7 @@ public class MerkleTreeTest {
         }
 
         // Free memory
+        smt.freeMerkleTree();
         mht.freeMerkleTree();
         mhtRoot.freeFieldElement();
         for (FieldElement leaf: testLeaves)
@@ -230,40 +235,17 @@ public class MerkleTreeTest {
     }
 
     @Test
-    public void testMerklePathExceptions() throws Exception {
-
-        // Init, finalize and get merkle path of a valid tree
-        BaseMerkleTree mht = BaseMerkleTree.init(height, numLeaves);
-        mht.finalizeTreeInPlace();
-        FieldBasedMerklePath path = mht.getMerklePath(0);
-        FieldElement leaf = FieldElement.createFromLong(0L);
-        FieldElement root = mht.root();
-
-        try {
-            path.verify(height + 1, leaf, root);
-            assertTrue("Must not be able to verify a Merkle Path smaller than tree height", false);
-        } catch (MerklePathException mpe) {
-            assertTrue(mpe.getMessage().contains("IncorrectPathLength"));
-        }
-
-        mht.freeMerkleTree();
-        path.freeMerklePath();
-        leaf.freeFieldElement();
-        root.freeFieldElement();
-    }
-
-    @Test
     public void testAreRightLeavesEmpty() throws Exception {
-        BaseMerkleTree mht = BaseMerkleTree.init(6, numLeaves);
+        BaseAppendOnlyMerkleTree mht = BaseAppendOnlyMerkleTree.init(6, numLeaves);
 
         int numLeaves = 64;
 
         // Generate random leaves
         for (int i = 0; i < numLeaves; i ++) {
             FieldElement leaf = FieldElement.createRandom(i);
-            mht.append(leaf.clone());
+            mht.append(leaf);
 
-            BaseMerkleTree mhtCopy = mht.finalizeTree();
+            BaseAppendOnlyMerkleTree mhtCopy = mht.finalizeTree();
 
             FieldBasedMerklePath path = mhtCopy.getMerklePath((long)i);
             assertTrue(path.areRightLeavesEmpty());
